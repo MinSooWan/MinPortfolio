@@ -56,6 +56,32 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+		class UEquipmentComponent* equipmentComp;
+
+	UPROPERTY(VisibleAnywhere)
+		class UChildActorComponent* WeaponChild;
+
+	virtual void BeginPlay() override;
+
+	virtual void Jump() override;
+
+	virtual void Landed(const FHitResult& Hit) override;
+
+	FTimerHandle jumpTimerHandle;
+
+	UPROPERTY(EditAnywhere)
+		float jumpingCool;
+
+	UPROPERTY()
+		bool bJumping = false;
+	
+	UFUNCTION()
+		void LandingEvent();
+
+	UPROPERTY(EditAnywhere)
+		int32 speedValue;
+
 public:
 
 	/** Returns CameraBoom subobject **/
@@ -66,10 +92,18 @@ public:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void SetActionState(const EActionState state) override;
+
+	class UEquipmentComponent* GetEquipmentComp() { return equipmentComp; }
+
+	class UChildActorComponent* GetWeaponChildActor() { return WeaponChild; }
+
 protected:
 
 	virtual void PostInitializeComponents() override;
 
 	void PresedRunStart();
 	void PresedRunStop();
+
+	void PresedRoll();
+
 };

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
+#include "00_Character/99_Component/StatusComponent.h"
 #include "ItemType.generated.h"
 
 UENUM(BlueprintType)
@@ -114,7 +115,7 @@ USTRUCT(BlueprintType)
 struct FIteminfo : public FTableRowBase
 {
 	GENERATED_BODY()
-protected:
+public:
 
 	UPROPERTY(EditAnywhere)
 		FName item_Code;
@@ -134,18 +135,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 		int32 item_Price;
 
-	//조합품 여부
-	UPROPERTY(EditAnywhere)
-		bool bCombined = false;
-	/*
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AItemActor> itemActorClass;
-	*/
 
 public:
 	EItemType GetItemType() { return item_Type; }
-	bool GetCombined() { return bCombined; }
-	void SetCombined(bool combined) { bCombined = combined; }
+	TSubclassOf<class AItemActor> GetItemClass() { return itemActorClass; }
 };
 
 //재료
@@ -153,7 +148,7 @@ USTRUCT(BlueprintType)
 struct FItemMaterial : public FIteminfo
 {
 	GENERATED_BODY()
-protected:
+public:
 
 	UPROPERTY(EditAnywhere)
 		EMateriarType materiar_Type;
@@ -175,6 +170,7 @@ public:
 
 	TArray<EAddOptionsType_Material> GetAddOption() { return addOption; }
 	EMateriarType GetMateriarType() { return materiar_Type; }
+	
 };
 
 //장비
@@ -183,16 +179,16 @@ struct FEquipment : public FIteminfo
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	UPROPERTY(EditAnywhere)
 		TArray<EAddOptionsType_Equipment> addOption;
 	UPROPERTY(EditAnywhere)
 		class USkeletalMesh* mesh;
 	UPROPERTY(EditAnywhere)
 		EEquipmentType equipment_Type;
-	UPROPERTY()
-		bool bEquipped = false;
-	
+	UPROPERTY(EditAnywhere)
+		FCharacterStat equipmentStat;
+
 public:
 	FEquipment() {
 		item_Type = EItemType::EQUIPMENT;
@@ -200,8 +196,7 @@ public:
 
 	TArray<EAddOptionsType_Equipment> GetAddOption() { return addOption; }
 	EEquipmentType GetEquipmentType() { return equipment_Type; }
-	bool GetEquipped() { return bEquipped; }
-	void SetEquipped(bool equipped) { bEquipped = equipped; }
+	FCharacterStat GetEquipmentStat() { return equipmentStat; }
 };
 
 //무기
@@ -209,7 +204,7 @@ USTRUCT(BlueprintType)
 struct FWeapon : public FEquipment
 {
 	GENERATED_BODY()
-protected:
+public:
 
 	UPROPERTY(EditAnywhere)
 		class UAnimBlueprint* weaponAnimationBP;
@@ -239,7 +234,7 @@ struct FArmor : public FEquipment
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	EArmorType armorType;	
 
 public:
@@ -256,7 +251,7 @@ struct FBattleItem : public FIteminfo
 {
 	GENERATED_BODY()
 	
-protected:
+public:
 	UPROPERTY(EditAnywhere)
 		EBattleItemType battleItemType;
 
@@ -282,7 +277,7 @@ struct FBattle_Consume : public FBattleItem
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	UPROPERTY(EditAnywhere)
 		TArray<EAddOptionsType_BattleItem> addOption;	
 	
@@ -303,11 +298,10 @@ struct FRecovery_Consume : public FBattleItem
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	UPROPERTY(EditAnywhere)
 		TArray<EAddOptionsType_RecoveryItem> addOption;
 	
-public:
 	FRecovery_Consume() {
 		battleItemType = EBattleItemType::RECOVERY_CONSUME;
 	}
@@ -325,7 +319,7 @@ struct FGatheringTool : public FIteminfo
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	UPROPERTY(EditAnywhere)
 		class UAnimMontage* useToolAnim;
 

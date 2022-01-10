@@ -105,4 +105,7 @@ public:
 	void SetATC(const float value);
 	void SetDEF(const float value);
 	void SetDEX(const float value);
+
+	void AddStat(const FCharacterStat& statToAdd);
+	void RemoveStat(const FCharacterStat& statToRemove);
 };

@@ -35,6 +35,13 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		EActionState actionState = EActionState::NORMAL;
 
+	UPROPERTY()
+		FTimerHandle landingTimeHandle;
+
+	UPROPERTY(EditAnywhere)
+		float landingTime;
+
+	virtual void Landed(const FHitResult& Hit) override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -49,5 +56,4 @@ public:
 	enum class EActionState GetActionState() { return actionState; }
 
 	virtual void SetActionState(const EActionState state) { }
-
 };

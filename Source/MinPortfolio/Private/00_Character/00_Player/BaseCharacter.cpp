@@ -3,6 +3,8 @@
 
 #include "00_Character/00_Player/BaseCharacter.h"
 #include "00_Character/99_Component/StatusComponent.h"
+#include "TimerManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -19,6 +21,13 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ABaseCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+
 }
 
 // Called every frame
@@ -39,4 +48,3 @@ float ABaseCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, 
 {
 	return 0.0f;
 }
-

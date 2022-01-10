@@ -83,3 +83,13 @@ void UStatusComponent::SetDEX(const float value)
 	characterStat.DEX = value;
 }
 
+void UStatusComponent::AddStat(const FCharacterStat& statToAdd)
+{
+	characterStat += statToAdd;
+}
+
+void UStatusComponent::RemoveStat(const FCharacterStat& statToRemove)
+{
+	characterStat -= statToRemove;
+}
+

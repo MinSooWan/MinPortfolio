@@ -10,6 +10,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/ChildActorComponent.h"
 #include "00_Character/00_Player/BaseCharacter.h"
+#include "Components/ChildActorComponent.h"
+#include "00_Character/99_Component/EquipmentComponent.h"
+#include "01_Item/ItemActor.h"
+#include "01_Item/00_Weapon/WeaponBaseActor.h"
+#include "00_Character/00_Player/00_Controller/CustomController.h"
 
 #define ORIGINAL_WALK_SPPED 600;
 
@@ -47,6 +52,11 @@ APlayerCharacter::APlayerCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	equipmentComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("equipmentComp"));
+
+	WeaponChild = CreateDefaultSubobject<UChildActorComponent>(TEXT("weapon"));
+	WeaponChild->SetupAttachment(GetMesh(), "hand_r_weapon");
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -102,11 +112,45 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
 
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &APlayerCharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedRunStart);
 	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Released, this, &APlayerCharacter::PresedRunStop);
+
+	PlayerInputComponent->BindAction("Roll", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedRoll);
+}
+
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+}
+
+void APlayerCharacter::Jump()
+{
+	if ((actionState == EActionState::NORMAL || actionState == EActionState::RUN) && bJumping == false) {
+		Super::Jump();
+		SetActionState(EActionState::JUMP);
+		bJumping = true;
+	}
+}
+
+void APlayerCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	
+	GetCharacterMovement()->MaxWalkSpeed = speedValue;
+	FTimerDelegate endTimeDel = FTimerDelegate::CreateUObject(this, &APlayerCharacter::LandingEvent);
+
+	GetWorld()->GetTimerManager().SetTimer(jumpTimerHandle, endTimeDel, jumpingCool, false);
+}
+
+void APlayerCharacter::LandingEvent()
+{
+	bJumping = false;
+	SetActionState(EActionState::NORMAL);
 }
 
 float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -131,6 +175,7 @@ void APlayerCharacter::SetActionState(const EActionState state)
 	case EActionState::ATTACK:
 		break;
 	case EActionState::ROLL:
+		GetMesh()->GetAnimInstance()->Montage_Play(GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->rollMontage);
 		break;
 	case EActionState::JUMP:
 		break;
@@ -152,4 +197,11 @@ void APlayerCharacter::PresedRunStart()
 void APlayerCharacter::PresedRunStop()
 {
 	SetActionState(EActionState::NORMAL);
+}
+
+void APlayerCharacter::PresedRoll()
+{
+	if (actionState != EActionState::ROLL && actionState != EActionState::JUMP) {
+		SetActionState(EActionState::ROLL);
+	}
 }
