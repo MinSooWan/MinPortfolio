@@ -183,7 +183,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		TArray<EAddOptionsType_Equipment> addOption;
 	UPROPERTY(EditAnywhere)
-		class USkeletalMesh* mesh;
+		class UStaticMesh* mesh;
 	UPROPERTY(EditAnywhere)
 		EEquipmentType equipment_Type;
 	UPROPERTY(EditAnywhere)

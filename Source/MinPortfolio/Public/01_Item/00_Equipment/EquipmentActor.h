@@ -24,9 +24,9 @@ protected:
 	virtual void ItemChange_Default(class APlayerCharacter* player, const FWeapon* info);
 
 	UPROPERTY(VisibleAnywhere)
-		class USkeletalMeshComponent* skeletaMesh;
+		class UStaticMeshComponent* staticMesh;
 
 public:
 
-	class USkeletalMeshComponent* GetSkeletaMesh() { return skeletaMesh; }
+	class UStaticMeshComponent* GetStaticMesh() { return staticMesh; }
 };

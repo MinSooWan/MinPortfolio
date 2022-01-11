@@ -68,12 +68,14 @@ void AWeaponBaseActor::UseItem(class ABaseCharacter* target)
 AWeaponBaseActor::AWeaponBaseActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	skeletaMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("skelMesh"));
 
-	RootComponent = skeletaMesh;
+	staticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("staticMesh"));
 
-	skeletaMesh->SetGenerateOverlapEvents(true);
-	skeletaMesh->SetCollisionProfileName("NoCollision");
+	RootComponent = staticMesh;
+
+	staticMesh->SetGenerateOverlapEvents(true);
+	staticMesh->SetCollisionProfileName("NoCollision");
+
 }
 
 void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FWeapon* info)
@@ -89,7 +91,7 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FWeapon* info)
 		player->GetEquipmentComp()->SetWeaponActor(*info, spawnItem);
 
 		player->GetWeaponChildActor()->SetChildActorClass(info->itemActorClass);
-		Cast<AWeaponBaseActor>(weapon)->GetSkeletaMesh()->SetSkeletalMesh(info->mesh);
+		Cast<AWeaponBaseActor>(weapon)->GetStaticMesh()->SetStaticMesh(info->mesh);
 
 		player->GetMesh()->SetAnimInstanceClass(info->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 		AddStat(player, info->equipmentStat);
@@ -107,11 +109,10 @@ void AWeaponBaseActor::ItemChange_Default(APlayerCharacter* player, const FWeapo
 			player->GetEquipmentComp()->GetWeaponActor()->Destroy();
 		}
 
-		AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
-		player->GetEquipmentComp()->SetWeaponActor(*info, spawnItem);
+		player->GetEquipmentComp()->SetWeaponActor(*info, player->GetEquipmentComp()->GetDefaultWeaponActor());
 
 		player->GetWeaponChildActor()->SetChildActorClass(info->itemActorClass);
-		Cast<AWeaponBaseActor>(weapon)->GetSkeletaMesh()->SetSkeletalMesh(info->mesh);
+		Cast<AWeaponBaseActor>(weapon)->GetStaticMesh()->SetStaticMesh(info->mesh);
 
 		player->GetMesh()->SetAnimInstanceClass(info->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 

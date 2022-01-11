@@ -32,6 +32,9 @@ protected:
 	//조합품 여부
 	UPROPERTY(EditAnywhere)
 		bool bCombined = false;
+
+	UPROPERTY()
+		int32 itemCount = 1;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -49,6 +52,9 @@ public:
 
 	bool GetCombined() { return bCombined; }
 	void SetCombined(bool combined) { bCombined = combined; }
+
+	int32 GetItemCount() { return itemCount; }
+	void AddItemCount(int32 value) { itemCount += value; }
 };
 
 template <typename T>

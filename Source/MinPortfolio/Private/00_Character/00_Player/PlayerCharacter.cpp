@@ -16,6 +16,7 @@
 #include "01_Item/00_Weapon/WeaponBaseActor.h"
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "01_Item/ItemType.h"
+#include "00_Character/99_Component/InventoryComponent.h"
 
 #define ORIGINAL_WALK_SPPED 600;
 
@@ -58,6 +59,8 @@ APlayerCharacter::APlayerCharacter()
 
 	WeaponChild = CreateDefaultSubobject<UChildActorComponent>(TEXT("weapon"));
 	WeaponChild->SetupAttachment(GetMesh(), "hand_r_weapon");
+
+	inventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("inventoryComp"));
 }
 
 void APlayerCharacter::MoveForward(float Value)

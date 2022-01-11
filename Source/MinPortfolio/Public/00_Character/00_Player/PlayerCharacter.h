@@ -55,6 +55,8 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+		class UInventoryComponent* inventoryComp;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		class UEquipmentComponent* equipmentComp;
@@ -96,6 +98,8 @@ public:
 	class UEquipmentComponent* GetEquipmentComp() { return equipmentComp; }
 
 	class UChildActorComponent* GetWeaponChildActor() { return WeaponChild; }
+
+	class UInventoryComponent* GetInventoryComp() { return inventoryComp; }
 
 protected:
 
