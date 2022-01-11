@@ -15,6 +15,14 @@ class MINPORTFOLIO_API AWeaponBaseActor : public AEquipmentActor
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+		TArray<class AActor*> hitArray;
+
+	UFUNCTION()
+		virtual void OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);
+
+	virtual void PostInitializeComponents() override;
+
 	virtual void UseItem(class ABaseCharacter* target) override;
 
 	virtual void ItemChange(class APlayerCharacter* player, const FWeapon* info) override;
@@ -23,4 +31,7 @@ protected:
 public:
 	AWeaponBaseActor();
 
+	TArray<class AActor*> GetHitArray() { return hitArray; }
+
+	void ClearHitArray() { hitArray.Empty(); }
 };

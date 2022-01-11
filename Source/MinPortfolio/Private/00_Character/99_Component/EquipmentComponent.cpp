@@ -24,7 +24,7 @@ void UEquipmentComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	auto temp = GetWorld()->SpawnActor<AItemActor>(defaultWeaponActorClass);
+	AItemActor* temp = GetWorld()->SpawnActor<AItemActor>(defaultWeaponActorClass);
 	if (temp != nullptr) {
 		defaultWeaponActor = temp;
 

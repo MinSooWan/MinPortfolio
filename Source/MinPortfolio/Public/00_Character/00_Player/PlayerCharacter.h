@@ -106,4 +106,5 @@ protected:
 
 	void PresedRoll();
 
+	void PresedAttack();
 };

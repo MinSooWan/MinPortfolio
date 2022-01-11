@@ -15,6 +15,7 @@
 #include "01_Item/ItemActor.h"
 #include "01_Item/00_Weapon/WeaponBaseActor.h"
 #include "00_Character/00_Player/00_Controller/CustomController.h"
+#include "01_Item/ItemType.h"
 
 #define ORIGINAL_WALK_SPPED 600;
 
@@ -119,6 +120,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Released, this, &APlayerCharacter::PresedRunStop);
 
 	PlayerInputComponent->BindAction("Roll", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedRoll);
+
+	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedAttack);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -203,5 +206,12 @@ void APlayerCharacter::PresedRoll()
 {
 	if (actionState != EActionState::ROLL && actionState != EActionState::JUMP) {
 		SetActionState(EActionState::ROLL);
+	}
+}
+
+void APlayerCharacter::PresedAttack()
+{
+	if (!Cast<AWeaponBaseActor>(GetWeaponChildActor()->GetChildActor())->GetItemInfo<FWeapon>()->item_Code.IsEqual("item_Equipment_NoWeapon")) {
+		GetMesh()->GetAnimInstance()->Montage_Play(Cast<AWeaponBaseActor>(GetWeaponChildActor()->GetChildActor())->GetItemInfo<FWeapon>()->attackMontage);
 	}
 }

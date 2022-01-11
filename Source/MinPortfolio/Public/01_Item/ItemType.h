@@ -218,6 +218,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		EWeaponType weaponType;
 
+	UPROPERTY(EditAnywhere)
+		class UParticleSystem* AttackParticle;
+
 public:
 	FWeapon() {
 		equipment_Type = EEquipmentType::WEAPON;

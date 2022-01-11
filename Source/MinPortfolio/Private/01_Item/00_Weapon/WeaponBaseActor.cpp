@@ -8,6 +8,35 @@
 #include "01_Item/ItemType.h"
 #include "01_Item/ItemActor.h"
 #include "Components/ChildActorComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+
+void AWeaponBaseActor::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)
+{
+
+	if (OtherActor != nullptr && hitArray.Contains(OtherActor) == false) {
+		hitArray.Emplace(OtherActor);
+
+		FHitResult hit;
+
+		TArray<TEnumAsByte<EObjectTypeQuery>> objectType;
+		objectType.Emplace(ECC_GameTraceChannel2);
+
+		if (UKismetSystemLibrary::LineTraceSingleForObjects(this, GetActorLocation(), OtherActor->GetActorLocation(), objectType, false,
+			TArray<AActor*>(), EDrawDebugTrace::ForDuration, hit, true)) {
+			UGameplayStatics::SpawnEmitterAtLocation(this, GetItemInfo<FWeapon>()->AttackParticle, hit.Location, FRotator::ZeroRotator, true);
+		}
+
+		
+	}
+}
+
+void AWeaponBaseActor::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	OnActorBeginOverlap.AddUniqueDynamic(this, &AWeaponBaseActor::OnActorBeginOverlapEvent);
+}
 
 void AWeaponBaseActor::UseItem(class ABaseCharacter* target)
 {
@@ -33,6 +62,7 @@ void AWeaponBaseActor::UseItem(class ABaseCharacter* target)
 			}
 		}
 	}
+
 }
 
 AWeaponBaseActor::AWeaponBaseActor()
@@ -41,6 +71,9 @@ AWeaponBaseActor::AWeaponBaseActor()
 	skeletaMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("skelMesh"));
 
 	RootComponent = skeletaMesh;
+
+	skeletaMesh->SetGenerateOverlapEvents(true);
+	skeletaMesh->SetCollisionProfileName("NoCollision");
 }
 
 void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FWeapon* info)
@@ -52,7 +85,7 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FWeapon* info)
 	if (weapon != nullptr) {
 		player->GetEquipmentComp()->GetWeaponActor()->Destroy();
 
-		auto spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
+		AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
 		player->GetEquipmentComp()->SetWeaponActor(*info, spawnItem);
 
 		player->GetWeaponChildActor()->SetChildActorClass(info->itemActorClass);
@@ -67,20 +100,20 @@ void AWeaponBaseActor::ItemChange_Default(APlayerCharacter* player, const FWeapo
 {
 	Super::ItemChange(player, info);
 
-	auto weapon = player->GetWeaponChildActor()->GetChildActor();
+	AActor* weapon = player->GetWeaponChildActor()->GetChildActor();
 
 	if (weapon != nullptr) {
 		if (player->GetEquipmentComp()->GetWeaponActor() != nullptr) { 
 			player->GetEquipmentComp()->GetWeaponActor()->Destroy();
-			UE_LOG(LogTemp, Log, TEXT("Destroy"));
 		}
 
-		auto spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
+		AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
 		player->GetEquipmentComp()->SetWeaponActor(*info, spawnItem);
 
 		player->GetWeaponChildActor()->SetChildActorClass(info->itemActorClass);
 		Cast<AWeaponBaseActor>(weapon)->GetSkeletaMesh()->SetSkeletalMesh(info->mesh);
 
 		player->GetMesh()->SetAnimInstanceClass(info->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
+
 	}
 }
