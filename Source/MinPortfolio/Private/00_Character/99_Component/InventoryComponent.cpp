@@ -36,16 +36,16 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UInventoryComponent::AddItem(AActor* item)
 {
-	if (itemArray.Contains(item)) {
-		for (auto iter : itemArray) {
-			if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Code.IsEqual(Cast<AItemActor>(item)->GetItemInfo<FIteminfo>()->item_Code)) {
-				Cast<AItemActor>(iter)->AddItemCount(1);
-			}
+	for (auto iter : itemArray) {
+		if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Code.IsEqual(Cast<AItemActor>(item)->GetItemInfo<FIteminfo>()->item_Code)) {
+			Cast<AItemActor>(iter)->AddItemCount(1);
+			item->Destroy();
+			return;
 		}
-	}
-	else {
-		itemArray.Emplace(item);
-	}
+	}	
+
+	itemArray.Emplace(item);
+
 	item->Destroy();
 }
 
@@ -54,6 +54,7 @@ void UInventoryComponent::UseItem(FName itemCode)
 	for (auto item : itemArray) {
 		if (Cast<AItemActor>(item)->GetItemInfo<FIteminfo>()->item_Code.IsEqual(itemCode)) {
 			Cast<AItemActor>(item)->UseItem(GetOwner<APlayerCharacter>());
+			break;
 		}
 	}
 }

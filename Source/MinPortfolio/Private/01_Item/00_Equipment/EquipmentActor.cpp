@@ -8,6 +8,7 @@
 #include "01_Item/ItemType.h"
 #include "01_Item/ItemActor.h"
 #include "Components/ChildActorComponent.h"
+#include "01_Item/00_Weapon/WeaponBaseActor.h"
 
 void AEquipmentActor::UseItem(class ABaseCharacter* target)
 {
@@ -26,8 +27,22 @@ void AEquipmentActor::RemoveStat(ABaseCharacter* target, const FCharacterStat& s
 
 void AEquipmentActor::ItemChange(APlayerCharacter* player, const FWeapon* info)
 {
+	
 }
 
 void AEquipmentActor::ItemChange_Default(APlayerCharacter* player, const FWeapon* info)
 {
+	
+}
+
+AEquipmentActor::AEquipmentActor()
+{
+	PrimaryActorTick.bCanEverTick = false;
+
+	staticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("staticMesh"));
+
+	RootComponent = staticMesh;
+
+	staticMesh->SetGenerateOverlapEvents(true);
+	staticMesh->SetCollisionProfileName("NoCollision");
 }

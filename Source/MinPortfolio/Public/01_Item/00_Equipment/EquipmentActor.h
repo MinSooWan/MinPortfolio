@@ -26,7 +26,14 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* staticMesh;
 
+	UPROPERTY(EditAnywhere)
+		class UParticleSystem* AttackParticle;
+
 public:
 
+	AEquipmentActor();
+
 	class UStaticMeshComponent* GetStaticMesh() { return staticMesh; }
+
+	class UParticleSystem* GetAttackParticle() { return AttackParticle; }
 };

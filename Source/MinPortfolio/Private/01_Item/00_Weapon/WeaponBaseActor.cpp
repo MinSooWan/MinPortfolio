@@ -10,6 +10,8 @@
 #include "Components/ChildActorComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "01_Item/00_Weapon/BowBaseActor.h"
 
 void AWeaponBaseActor::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)
 {
@@ -22,11 +24,11 @@ void AWeaponBaseActor::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor*
 		TArray<TEnumAsByte<EObjectTypeQuery>> objectType;
 		objectType.Emplace(ECC_GameTraceChannel2);
 
-		if (UKismetSystemLibrary::LineTraceSingleForObjects(this, GetActorLocation(), OtherActor->GetActorLocation(), objectType, false,
+		if (UKismetSystemLibrary::LineTraceSingleForObjects(OtherActor, GetActorLocation(), OtherActor->GetActorLocation(), objectType, false,
 			TArray<AActor*>(), EDrawDebugTrace::ForDuration, hit, true)) {
-			UGameplayStatics::SpawnEmitterAtLocation(this, GetItemInfo<FWeapon>()->AttackParticle, hit.Location, FRotator::ZeroRotator, true);
+			UE_LOG(LogTemp, Log, TEXT("11111111111111"));
+			UGameplayStatics::SpawnEmitterAtLocation(this, AttackParticle, hit.Location, FRotator::ZeroRotator, true);
 		}
-
 		
 	}
 }
@@ -67,14 +69,7 @@ void AWeaponBaseActor::UseItem(class ABaseCharacter* target)
 
 AWeaponBaseActor::AWeaponBaseActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
-
-	staticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("staticMesh"));
-
-	RootComponent = staticMesh;
-
-	staticMesh->SetGenerateOverlapEvents(true);
-	staticMesh->SetCollisionProfileName("NoCollision");
+	
 
 }
 
@@ -85,6 +80,8 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FWeapon* info)
 	auto weapon = player->GetWeaponChildActor()->GetChildActor();
 
 	if (weapon != nullptr) {
+		player->GetWeaponChildActor()->SetVisibility(true);
+
 		player->GetEquipmentComp()->GetWeaponActor()->Destroy();
 
 		AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
@@ -95,6 +92,10 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FWeapon* info)
 
 		player->GetMesh()->SetAnimInstanceClass(info->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 		AddStat(player, info->equipmentStat);
+
+		if (!Cast<AEquipmentActor>(player->GetBowChildActor()->GetChildActor())->GetItemInfo<FIteminfo>()->item_Code.IsEqual("item_Equipment_NoWeapon")) {
+			player->GetBowChildActor()->SetVisibility(false);
+		}
 	}
 }
 
@@ -105,7 +106,7 @@ void AWeaponBaseActor::ItemChange_Default(APlayerCharacter* player, const FWeapo
 	AActor* weapon = player->GetWeaponChildActor()->GetChildActor();
 
 	if (weapon != nullptr) {
-		if (player->GetEquipmentComp()->GetWeaponActor() != nullptr) { 
+		if (player->GetEquipmentComp()->GetWeaponActor() != nullptr) {
 			player->GetEquipmentComp()->GetWeaponActor()->Destroy();
 		}
 
