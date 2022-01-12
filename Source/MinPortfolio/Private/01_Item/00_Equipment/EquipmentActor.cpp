@@ -25,12 +25,12 @@ void AEquipmentActor::RemoveStat(ABaseCharacter* target, const FCharacterStat& s
 	target->GetStatusComponent()->RemoveStat(statToRemove);
 }
 
-void AEquipmentActor::ItemChange(APlayerCharacter* player, const FWeapon* info)
+void AEquipmentActor::ItemChange(APlayerCharacter* player, const FWeapon* info, AItemActor* item)
 {
 	
 }
 
-void AEquipmentActor::ItemChange_Default(APlayerCharacter* player, const FWeapon* info)
+void AEquipmentActor::ItemChange_Default(APlayerCharacter* player, const FWeapon* info, AItemActor* item)
 {
 	
 }

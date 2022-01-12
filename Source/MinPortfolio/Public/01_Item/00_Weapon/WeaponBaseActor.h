@@ -25,13 +25,16 @@ protected:
 
 	virtual void UseItem(class ABaseCharacter* target) override;
 
-	virtual void ItemChange(class APlayerCharacter* player, const FWeapon* info) override;
-	virtual void ItemChange_Default(class APlayerCharacter* player, const FWeapon* info) override;
+	virtual void ItemChange(class APlayerCharacter* player, const FWeapon* info, AItemActor* item) override;
+	virtual void ItemChange_Default(class APlayerCharacter* player, const FWeapon* info, AItemActor* item) override;
 
+	UPROPERTY(EditAnywhere)
+		FName SocketName;
 public:
 	AWeaponBaseActor();
 
 	TArray<class AActor*> GetHitArray() { return hitArray; }
 
 	void ClearHitArray() { hitArray.Empty(); }
+
 };

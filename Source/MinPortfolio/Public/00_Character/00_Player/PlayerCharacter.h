@@ -63,9 +63,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 		class UChildActorComponent* WeaponChild;
-
 	UPROPERTY(VisibleAnywhere)
 		class UChildActorComponent* BowChild;
+	UPROPERTY(VisibleAnywhere)
+		class UChildActorComponent* TwoHandChild;
 
 	virtual void BeginPlay() override;
 
@@ -87,6 +88,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 		int32 speedValue;
 
+	UPROPERTY()
+		bool bWeaponEquipped = false;
+
 public:
 
 	/** Returns CameraBoom subobject **/
@@ -102,9 +106,13 @@ public:
 
 	class UChildActorComponent* GetWeaponChildActor() { return WeaponChild; }
 	class UChildActorComponent* GetBowChildActor() { return BowChild; }
+	class UChildActorComponent* GetTwoHandChildActor() { return TwoHandChild; }
 
 	class UInventoryComponent* GetInventoryComp() { return inventoryComp; }
 
+	bool GetWeaponEquipped() { return bWeaponEquipped; }
+
+	void SetWeaponEquipped(bool value) { bWeaponEquipped = value; }
 protected:
 
 	virtual void PostInitializeComponents() override;

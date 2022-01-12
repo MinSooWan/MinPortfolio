@@ -16,7 +16,7 @@ void UAttackNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequ
 		owner = MeshComp->GetOwner<APlayerCharacter>();
 
 		if (owner != nullptr) {
-			Cast<AWeaponBaseActor>(owner->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("Weapon"));
+			Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetWeaponActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("Weapon"));
 		}
 	}
 }
@@ -24,7 +24,7 @@ void UAttackNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequ
 void UAttackNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
 	if (owner != nullptr) {
-		Cast<AWeaponBaseActor>(owner->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("NoCollision"));
-		Cast<AWeaponBaseActor>(owner->GetWeaponChildActor()->GetChildActor())->ClearHitArray();
+		Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetWeaponActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+		Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetWeaponActor())->ClearHitArray();
 	}
 }

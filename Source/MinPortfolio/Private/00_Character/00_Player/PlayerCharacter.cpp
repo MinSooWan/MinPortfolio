@@ -17,7 +17,6 @@
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "01_Item/ItemType.h"
 #include "00_Character/99_Component/InventoryComponent.h"
-#include "01_Item/00_Weapon/BowBaseActor.h"
 
 #define ORIGINAL_WALK_SPPED 600;
 
@@ -66,6 +65,8 @@ APlayerCharacter::APlayerCharacter()
 	BowChild = CreateDefaultSubobject<UChildActorComponent>(TEXT("Bow"));
 	BowChild->SetupAttachment(GetMesh(), "hand_l_Bow");
 
+	TwoHandChild = CreateDefaultSubobject<UChildActorComponent>(TEXT("TwoHand"));
+	TwoHandChild->SetupAttachment(GetMesh(), "hand_r_TwoHand");
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -219,7 +220,7 @@ void APlayerCharacter::PresedRoll()
 
 void APlayerCharacter::PresedAttack()
 {
-	if (!Cast<AWeaponBaseActor>(GetWeaponChildActor()->GetChildActor())->GetItemCode().IsEqual("item_Equipment_NoWeapon")) {
-		GetMesh()->GetAnimInstance()->Montage_Play(Cast<AWeaponBaseActor>(GetWeaponChildActor()->GetChildActor())->GetItemInfo<FWeapon>()->attackMontage);
+	if (!GetEquipmentComp()->GetWeaponActor()->GetItemCode().IsEqual("item_Equipment_NoWeapon")) {
+		GetMesh()->GetAnimInstance()->Montage_Play(Cast<AWeaponBaseActor>(GetEquipmentComp()->GetWeaponActor())->GetItemInfo<FWeapon>()->attackMontage);
 	}
 }
