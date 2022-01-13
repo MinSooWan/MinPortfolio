@@ -17,6 +17,9 @@
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "01_Item/ItemType.h"
 #include "00_Character/99_Component/InventoryComponent.h"
+#include "01_Item/01_Material/MaterialBaseActor.h"
+#include "Components/WidgetComponent.h"
+#include "00_Character/99_Component/ToolComponent.h"
 
 #define ORIGINAL_WALK_SPPED 600;
 
@@ -62,11 +65,12 @@ APlayerCharacter::APlayerCharacter()
 
 	inventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("inventoryComp"));
 
-	BowChild = CreateDefaultSubobject<UChildActorComponent>(TEXT("Bow"));
-	BowChild->SetupAttachment(GetMesh(), "hand_l_Bow");
+	GetMesh()->SetCollisionProfileName(TEXT("Player"));
 
-	TwoHandChild = CreateDefaultSubobject<UChildActorComponent>(TEXT("TwoHand"));
-	TwoHandChild->SetupAttachment(GetMesh(), "hand_r_TwoHand");
+	toolComp = CreateDefaultSubobject<UToolComponent>(TEXT("toolComp"));
+
+	ToolChild = CreateDefaultSubobject< UChildActorComponent>(TEXT("tool"));
+	ToolChild->SetupAttachment(GetMesh(), "hand_r_weapon");
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -131,6 +135,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Roll", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedRoll);
 
 	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedAttack);
+
+	PlayerInputComponent->BindAction("PickUp", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedPickUp);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -199,6 +205,8 @@ void APlayerCharacter::SetActionState(const EActionState state)
 void APlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	OnActorBeginOverlap.AddDynamic(this, &APlayerCharacter::OnActorBeginOverlapEvent);
+	OnActorEndOverlap.AddDynamic(this, &APlayerCharacter::OnActorEndOverlapEvent);
 }
 
 void APlayerCharacter::PresedRunStart()
@@ -222,5 +230,33 @@ void APlayerCharacter::PresedAttack()
 {
 	if (!GetEquipmentComp()->GetWeaponActor()->GetItemCode().IsEqual("item_Equipment_NoWeapon")) {
 		GetMesh()->GetAnimInstance()->Montage_Play(Cast<AWeaponBaseActor>(GetEquipmentComp()->GetWeaponActor())->GetItemInfo<FWeapon>()->attackMontage);
+	}
+}
+
+void APlayerCharacter::PresedPickUp()
+{
+
+	if (overlapMaterial != nullptr) {
+		GetMesh()->GetAnimInstance()->Montage_Play(Cast<AMaterialBaseActor>(overlapMaterial)->GetPickUpMontage());
+		inventoryComp->AddItem(overlapMaterial);
+		overlapMaterial = nullptr;
+	}
+}
+
+void APlayerCharacter::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)
+{
+	if (OtherActor->IsA<AMaterialBaseActor>() && OtherActor->IsValidLowLevel()) {
+		Cast<AMaterialBaseActor>(OtherActor)->GetPickUpWidget()->SetVisibility(true);
+
+		overlapMaterial = OtherActor;
+	}
+}
+
+void APlayerCharacter::OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)
+{
+	if (overlapMaterial == OtherActor && OtherActor->IsValidLowLevel() && overlapMaterial->IsValidLowLevel()) {
+		Cast<AMaterialBaseActor>(OtherActor)->GetPickUpWidget()->SetVisibility(false);
+
+		overlapMaterial = nullptr;
 	}
 }

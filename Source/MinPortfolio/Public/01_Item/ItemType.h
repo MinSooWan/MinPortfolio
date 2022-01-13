@@ -154,10 +154,7 @@ public:
 		EMateriarType materiar_Type;
 
 	UPROPERTY(EditAnywhere)
-		class USkeletalMesh* mesh;
-
-	UPROPERTY(EditAnywhere)
-		class UParticleSystem* useParticle;
+		class UStaticMesh* mesh;
 
 	UPROPERTY(EditAnywhere)
 		TArray<EAddOptionsType_Material> addOption;	
@@ -260,6 +257,9 @@ public:
 
 	UPROPERTY()
 		bool bItemUsed = false;
+
+	UPROPERTY(EditAnywhere)
+		class UParticleSystem* useParticle;
 public:
 	FBattleItem() {
 		item_Type = EItemType::BATTLE_ITEM;
@@ -325,6 +325,15 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		EGatheringToolType toolType;
+
+	UPROPERTY(EditAnywhere)
+		class UAnimBlueprint* weaponAnimationBP;
+
+	UPROPERTY(EditAnywhere)
+		class UAnimMontage* attackMontage;
+
+	UPROPERTY(EditAnywhere)
+		class UAnimMontage* rollMontage;
 
 public:
 	FGatheringTool() {

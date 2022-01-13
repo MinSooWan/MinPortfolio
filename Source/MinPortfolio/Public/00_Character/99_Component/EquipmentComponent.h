@@ -23,16 +23,16 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AItemActor> defaultWeaponActorClass;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY()
 		class AItemActor* defaultWeaponActor;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AItemActor> defaultArmorActorClass;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY()
 		class AItemActor* defaultArmorActor;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		class AItemActor* weaponActor;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		class AItemActor* armorActor;
 
 public:	

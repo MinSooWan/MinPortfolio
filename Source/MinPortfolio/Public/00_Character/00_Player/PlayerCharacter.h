@@ -61,12 +61,13 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		class UEquipmentComponent* equipmentComp;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+		class UToolComponent* toolComp;
+
 	UPROPERTY(VisibleAnywhere)
 		class UChildActorComponent* WeaponChild;
 	UPROPERTY(VisibleAnywhere)
-		class UChildActorComponent* BowChild;
-	UPROPERTY(VisibleAnywhere)
-		class UChildActorComponent* TwoHandChild;
+		class UChildActorComponent* ToolChild;
 
 	virtual void BeginPlay() override;
 
@@ -74,7 +75,8 @@ protected:
 
 	virtual void Landed(const FHitResult& Hit) override;
 
-	FTimerHandle jumpTimerHandle;
+	UPROPERTY()
+		FTimerHandle jumpTimerHandle;
 
 	UPROPERTY(EditAnywhere)
 		float jumpingCool;
@@ -91,6 +93,12 @@ protected:
 	UPROPERTY()
 		bool bWeaponEquipped = false;
 
+	UPROPERTY()
+		bool bArmorEquipped = false;
+
+	UPROPERTY(VisibleAnywhere)
+		AActor* overlapMaterial;
+
 public:
 
 	/** Returns CameraBoom subobject **/
@@ -105,14 +113,17 @@ public:
 	class UEquipmentComponent* GetEquipmentComp() { return equipmentComp; }
 
 	class UChildActorComponent* GetWeaponChildActor() { return WeaponChild; }
-	class UChildActorComponent* GetBowChildActor() { return BowChild; }
-	class UChildActorComponent* GetTwoHandChildActor() { return TwoHandChild; }
+	class UChildActorComponent* GetToolChildActor() { return ToolChild; }
 
 	class UInventoryComponent* GetInventoryComp() { return inventoryComp; }
+
+	class UToolComponent* GetToolComp() { return toolComp; }
 
 	bool GetWeaponEquipped() { return bWeaponEquipped; }
 
 	void SetWeaponEquipped(bool value) { bWeaponEquipped = value; }
+	void SetArmorEquipped(bool value) { bArmorEquipped = value; }
+
 protected:
 
 	virtual void PostInitializeComponents() override;
@@ -123,4 +134,12 @@ protected:
 	void PresedRoll();
 
 	void PresedAttack();
+
+	void PresedPickUp();
+
+	UFUNCTION()
+		void OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION()
+		void OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);
 };

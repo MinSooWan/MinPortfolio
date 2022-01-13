@@ -20,8 +20,8 @@ protected:
 	virtual void AddStat(class ABaseCharacter* target, const FCharacterStat& statToAdd);
 	virtual void RemoveStat(class ABaseCharacter* target, const FCharacterStat& statToRemove);	
 
-	virtual void ItemChange(class APlayerCharacter* player, const FWeapon* info, AItemActor* item);
-	virtual void ItemChange_Default(class APlayerCharacter* player, const FWeapon* info, AItemActor* item);
+	virtual void ItemChange(class APlayerCharacter* player, const FEquipment* info, AItemActor* item);
+	virtual void ItemChange_Default(class APlayerCharacter* player, const FEquipment* info, AItemActor* item);
 
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* staticMesh;

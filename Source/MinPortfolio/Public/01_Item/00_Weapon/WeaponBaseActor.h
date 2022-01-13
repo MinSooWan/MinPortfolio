@@ -25,8 +25,8 @@ protected:
 
 	virtual void UseItem(class ABaseCharacter* target) override;
 
-	virtual void ItemChange(class APlayerCharacter* player, const FWeapon* info, AItemActor* item) override;
-	virtual void ItemChange_Default(class APlayerCharacter* player, const FWeapon* info, AItemActor* item) override;
+	virtual void ItemChange(class APlayerCharacter* player, const FEquipment* info, AItemActor* item) override;
+	virtual void ItemChange_Default(class APlayerCharacter* player, const FEquipment* info, AItemActor* item) override;
 
 	UPROPERTY(EditAnywhere)
 		FName SocketName;

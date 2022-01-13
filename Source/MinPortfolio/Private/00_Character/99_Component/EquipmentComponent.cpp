@@ -24,15 +24,26 @@ void UEquipmentComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	AItemActor* temp = GetWorld()->SpawnActor<AItemActor>(defaultWeaponActorClass);
-	if (temp != nullptr) {
-		defaultWeaponActor = temp;
+	AItemActor* spawnWeapon = GetWorld()->SpawnActor<AItemActor>(defaultWeaponActorClass);
+	AItemActor* spawnArmor = GetWorld()->SpawnActor<AItemActor>(defaultArmorActorClass);
+
+	if (spawnWeapon != nullptr && spawnArmor != nullptr) {
+		defaultWeaponActor = spawnWeapon;
+		defaultArmorActor = spawnArmor;
 
 		weaponActor = defaultWeaponActor;
+		armorActor = defaultArmorActor;
 
 		if (weaponActor != nullptr) {
 			weaponActor->SetEquipped(true);
 		}
+
+		if (armorActor != nullptr) {
+			armorActor->SetEquipped(true);
+		}
+
+		spawnWeapon->Destroy();
+		spawnArmor->Destroy();
 	}
 }
 
@@ -56,6 +67,7 @@ void UEquipmentComponent::SetWeaponActor(const FIteminfo& itemInfo, AItemActor* 
 void UEquipmentComponent::SetArmorActor(const FIteminfo& itemInfo, AItemActor* item)
 {
 	if (item != nullptr) {
+		item->SetEquipped(true);
 		armorActor = item;
 	}
 }

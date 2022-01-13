@@ -51,10 +51,12 @@ void UInventoryComponent::AddItem(AActor* item)
 
 void UInventoryComponent::UseItem(FName itemCode)
 {
-	for (auto item : itemArray) {
-		if (Cast<AItemActor>(item)->GetItemInfo<FIteminfo>()->item_Code.IsEqual(itemCode)) {
-			Cast<AItemActor>(item)->UseItem(GetOwner<APlayerCharacter>());
-			break;
+	if (itemCode != "") {
+		for (auto item : itemArray) {
+			if (Cast<AItemActor>(item)->GetItemInfo<FIteminfo>()->item_Code.IsEqual(itemCode)) {
+				Cast<AItemActor>(item)->UseItem(GetOwner<APlayerCharacter>());
+				break;
+			}
 		}
 	}
 }
