@@ -34,7 +34,9 @@ protected:
 public:
 
 	AMaterialBaseActor();
-	
+
+	class USphereComponent* GetSphereComp() { return sphereComp; }
 	class UWidgetComponent* GetPickUpWidget() { return pickUpWidgetComp; }
 	class UAnimMontage* GetPickUpMontage() { return pickUpMontage; }
+	virtual void HiddenMesh() override;
 };

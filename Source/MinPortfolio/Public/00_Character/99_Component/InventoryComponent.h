@@ -29,7 +29,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void AddItem(AActor* item);
-
 	UFUNCTION(BlueprintCallable)
 		void UseItem(FName itemCode);
 };

@@ -27,5 +27,7 @@ protected:
 	void ToolChange(class APlayerCharacter* player, AItemActor* item);
 
 public:
+	AToolBaseActor();
+
 	class UStaticMeshComponent* GetStaticMesh() { return staticMesh; }
 };

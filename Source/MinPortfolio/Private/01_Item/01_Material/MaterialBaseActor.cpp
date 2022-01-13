@@ -26,3 +26,8 @@ AMaterialBaseActor::AMaterialBaseActor()
 	materialMesh->SetCollisionProfileName(TEXT("NoCollision"));
 
 }
+
+void AMaterialBaseActor::HiddenMesh()
+{
+	materialMesh->SetVisibility(false);
+}

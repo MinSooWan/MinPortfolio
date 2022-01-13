@@ -20,6 +20,9 @@
 #include "01_Item/01_Material/MaterialBaseActor.h"
 #include "Components/WidgetComponent.h"
 #include "00_Character/99_Component/ToolComponent.h"
+#include "01_Item/01_Material/MaterialBaseActor.h"
+#include "01_Item/02_Tool/ToolBaseActor.h"
+#include "Components/SphereComponent.h"
 
 #define ORIGINAL_WALK_SPPED 600;
 
@@ -193,7 +196,7 @@ void APlayerCharacter::SetActionState(const EActionState state)
 	case EActionState::ATTACK:
 		break;
 	case EActionState::ROLL:
-		GetMesh()->GetAnimInstance()->Montage_Play(GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->rollMontage);
+		GetMesh()->GetAnimInstance()->Montage_Play(GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->rollMontage);
 		break;
 	case EActionState::JUMP:
 		break;
@@ -228,8 +231,8 @@ void APlayerCharacter::PresedRoll()
 
 void APlayerCharacter::PresedAttack()
 {
-	if (!GetEquipmentComp()->GetWeaponActor()->GetItemCode().IsEqual("item_Equipment_NoWeapon")) {
-		GetMesh()->GetAnimInstance()->Montage_Play(Cast<AWeaponBaseActor>(GetEquipmentComp()->GetWeaponActor())->GetItemInfo<FWeapon>()->attackMontage);
+	if (!GetToolComp()->GetToolActor()->GetItemCode().IsEqual("item_Tool_NoTool")) {
+		GetMesh()->GetAnimInstance()->Montage_Play(Cast<AToolBaseActor>(GetToolComp()->GetToolActor())->GetItemInfo<FGatheringTool>()->useToolAnim);
 	}
 }
 
@@ -237,9 +240,15 @@ void APlayerCharacter::PresedPickUp()
 {
 
 	if (overlapMaterial != nullptr) {
-		GetMesh()->GetAnimInstance()->Montage_Play(Cast<AMaterialBaseActor>(overlapMaterial)->GetPickUpMontage());
-		inventoryComp->AddItem(overlapMaterial);
-		overlapMaterial = nullptr;
+		if (Cast<AMaterialBaseActor>(overlapMaterial)->GetItemInfo<FItemMaterial>()->needTool ==
+			GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->toolType) {
+
+			auto temp = overlapMaterial;
+			Cast<AMaterialBaseActor>(overlapMaterial)->GetSphereComp()->SetCollisionProfileName(TEXT("NoCollision"));
+			GetMesh()->GetAnimInstance()->Montage_Play(GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->useToolAnim);
+			inventoryComp->AddItem(temp);
+			overlapMaterial = nullptr;
+		}
 	}
 }
 

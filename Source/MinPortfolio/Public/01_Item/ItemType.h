@@ -159,6 +159,8 @@ public:
 	UPROPERTY(EditAnywhere)
 		TArray<EAddOptionsType_Material> addOption;	
 
+	UPROPERTY(EditAnywhere)
+		EGatheringToolType needTool;
 public:
 
 	FItemMaterial() {
@@ -328,9 +330,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		class UAnimBlueprint* weaponAnimationBP;
-
-	UPROPERTY(EditAnywhere)
-		class UAnimMontage* attackMontage;
 
 	UPROPERTY(EditAnywhere)
 		class UAnimMontage* rollMontage;

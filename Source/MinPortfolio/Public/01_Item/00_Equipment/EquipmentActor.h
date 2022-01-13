@@ -25,7 +25,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* staticMesh;
-
 	UPROPERTY(EditAnywhere)
 		class UParticleSystem* AttackParticle;
 

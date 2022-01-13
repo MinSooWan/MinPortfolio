@@ -36,17 +36,18 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UInventoryComponent::AddItem(AActor* item)
 {
+
 	for (auto iter : itemArray) {
 		if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Code.IsEqual(Cast<AItemActor>(item)->GetItemInfo<FIteminfo>()->item_Code)) {
 			Cast<AItemActor>(iter)->AddItemCount(1);
-			item->Destroy();
+			item->SetActorHiddenInGame(true);
+			//Cast<AItemActor>(item)->HiddenMesh();
 			return;
 		}
 	}	
 
 	itemArray.Emplace(item);
-
-	item->Destroy();
+	item->SetActorHiddenInGame(true);
 }
 
 void UInventoryComponent::UseItem(FName itemCode)

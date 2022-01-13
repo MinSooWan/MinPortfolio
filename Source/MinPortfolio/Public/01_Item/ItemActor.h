@@ -35,6 +35,7 @@ protected:
 
 	UPROPERTY()
 		int32 itemCount = 1;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -55,6 +56,8 @@ public:
 
 	int32 GetItemCount() { return itemCount; }
 	void AddItemCount(int32 value) { itemCount += value; }
+
+	virtual void HiddenMesh(){ }
 };
 
 template <typename T>

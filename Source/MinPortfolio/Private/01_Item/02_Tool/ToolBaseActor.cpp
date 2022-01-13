@@ -33,6 +33,14 @@ void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
 			Cast<AToolBaseActor>(player->GetToolChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(staticMesh->GetStaticMesh());
 
 			player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FGatheringTool>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
+
+			item->Destroy();
 		}
 	}
+}
+
+AToolBaseActor::AToolBaseActor()
+{
+	staticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("staticMesh"));
+	RootComponent = staticMesh;
 }
