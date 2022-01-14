@@ -23,6 +23,7 @@
 #include "01_Item/01_Material/MaterialBaseActor.h"
 #include "01_Item/02_Tool/ToolBaseActor.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 #define ORIGINAL_WALK_SPPED 600;
 
@@ -150,7 +151,10 @@ void APlayerCharacter::BeginPlay()
 
 void APlayerCharacter::Jump()
 {
-	if ((actionState == EActionState::NORMAL || actionState == EActionState::RUN) && bJumping == false) {
+	
+	if ((actionState == EActionState::NORMAL || actionState == EActionState::RUN) && bJumping == false && actionState != EActionState::ROLL &&
+		actionState != EActionState::ATTACK) {
+		TempAction = actionState;
 		Super::Jump();
 		SetActionState(EActionState::JUMP);
 		bJumping = true;
@@ -161,7 +165,6 @@ void APlayerCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
 
-	
 	GetCharacterMovement()->MaxWalkSpeed = speedValue;
 	FTimerDelegate endTimeDel = FTimerDelegate::CreateUObject(this, &APlayerCharacter::LandingEvent);
 
@@ -171,7 +174,7 @@ void APlayerCharacter::Landed(const FHitResult& Hit)
 void APlayerCharacter::LandingEvent()
 {
 	bJumping = false;
-	SetActionState(EActionState::NORMAL);
+	SetActionState(TempAction);
 }
 
 float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -183,20 +186,54 @@ float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 
 void APlayerCharacter::SetActionState(const EActionState state)
 {
-	actionState = state;
+	actionState = state;	
 
 	switch (actionState)
 	{
 	case EActionState::NORMAL:
 		GetCharacterMovement()->MaxWalkSpeed = ORIGINAL_WALK_SPPED;
+
 		break;
 	case EActionState::RUN:
 		GetCharacterMovement()->MaxWalkSpeed = 800;
+
 		break;
 	case EActionState::ATTACK:
+		if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying()) {
+			if (overlapMaterial != nullptr) {
+				if (Cast<AMaterialBaseActor>(overlapMaterial)->GetItemInfo<FItemMaterial>()->needTool ==
+					GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->toolType) {
+
+					UGameplayStatics::SpawnEmitterAtLocation(this, Cast<AMaterialBaseActor>(overlapMaterial)->GetPickUpParticle(),
+						overlapMaterial->GetActorLocation(), FRotator::ZeroRotator, true);
+
+					auto temp = overlapMaterial;
+					Cast<AMaterialBaseActor>(overlapMaterial)->GetSphereComp()->SetCollisionProfileName(TEXT("NoCollision"));
+
+					FTimerDelegate timeDel;
+					timeDel.BindUFunction(this, FName("OnEndAnimation"), temp, TempAction);
+
+					GetWorld()->GetTimerManager().SetTimer(pickUpAnimEndTimerHandle, timeDel,
+						GetMesh()->GetAnimInstance()->Montage_Play(GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->useToolAnim),
+						false);
+
+					return;
+				}
+			}
+
+			if (!GetToolComp()->GetToolActor()->GetItemInfo<FIteminfo>()->item_Code.IsEqual("item_Tool_NoTool")) {
+				FTimerDelegate timeDel;
+				timeDel.BindUFunction(this, FName("OnNormalEndAnimation"), TempAction);
+
+				GetWorld()->GetTimerManager().SetTimer(pickUpAnimEndTimerHandle, timeDel,
+					GetMesh()->GetAnimInstance()->Montage_Play(GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->useToolAnim),
+					false);
+			}
+		}
 		break;
 	case EActionState::ROLL:
 		GetMesh()->GetAnimInstance()->Montage_Play(GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->rollMontage);
+
 		break;
 	case EActionState::JUMP:
 		break;
@@ -224,21 +261,23 @@ void APlayerCharacter::PresedRunStop()
 
 void APlayerCharacter::PresedRoll()
 {
-	if (actionState != EActionState::ROLL && actionState != EActionState::JUMP) {
+	if (actionState != EActionState::ROLL && actionState != EActionState::JUMP && actionState != EActionState::ATTACK && 
+		!GetMovementComponent()->IsFalling()) {
+		TempAction = actionState;
 		SetActionState(EActionState::ROLL);
 	}
 }
 
 void APlayerCharacter::PresedAttack()
 {
-	if (!GetToolComp()->GetToolActor()->GetItemCode().IsEqual("item_Tool_NoTool")) {
-		GetMesh()->GetAnimInstance()->Montage_Play(Cast<AToolBaseActor>(GetToolComp()->GetToolActor())->GetItemInfo<FGatheringTool>()->useToolAnim);
+	if (actionState != EActionState::ROLL && actionState != EActionState::JUMP && !GetMovementComponent()->IsFalling()) {
+		TempAction = actionState;
+		SetActionState(EActionState::ATTACK);
 	}
 }
 
 void APlayerCharacter::PresedPickUp()
 {
-
 	if (overlapMaterial != nullptr) {
 		if (Cast<AMaterialBaseActor>(overlapMaterial)->GetItemInfo<FItemMaterial>()->needTool ==
 			GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->toolType) {
@@ -268,4 +307,16 @@ void APlayerCharacter::OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* O
 
 		overlapMaterial = nullptr;
 	}
+}
+
+void APlayerCharacter::OnEndAnimation(AActor* temp, EActionState action)
+{
+	inventoryComp->AddItem(temp);
+	overlapMaterial = nullptr;
+	SetActionState(action);
+}
+
+void APlayerCharacter::OnNormalEndAnimation(EActionState action)
+{	
+	SetActionState(action);
 }

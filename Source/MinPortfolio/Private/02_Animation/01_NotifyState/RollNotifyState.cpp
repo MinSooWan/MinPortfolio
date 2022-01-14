@@ -14,7 +14,7 @@ void URollNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequence
 {
 	if (player != nullptr) {
 
-		player->SetActionState(EActionState::NORMAL);
+		player->SetActionState(player->GetTempAction());
 
 	}
 }

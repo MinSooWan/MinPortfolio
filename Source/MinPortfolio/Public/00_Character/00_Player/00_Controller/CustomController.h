@@ -14,8 +14,13 @@ class MINPORTFOLIO_API ACustomController : public APlayerController
 {
 	GENERATED_BODY()
 	
-
 protected:
 	virtual void OnPossess(APawn* aPawn) override;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UMainWidget> mainWidgetClass;
+
+	UPROPERTY(BlueprintReadOnly)
+		class UMainWidget* mainWidget;
 
 };

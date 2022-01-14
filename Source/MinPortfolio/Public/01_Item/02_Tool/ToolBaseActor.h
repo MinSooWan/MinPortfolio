@@ -21,13 +21,20 @@ protected:
 	UPROPERTY(EditAnywhere)
 		FName SocketName;
 
-	UPROPERTY(EditAnywhere)
-		class UParticleSystem* AttackParticle;
-
 	void ToolChange(class APlayerCharacter* player, AItemActor* item);
+
+	virtual void UseItem(class ABaseCharacter* target) override;
+
+	UPROPERTY()
+		TArray<AActor*> hitArray;
+
+	UFUNCTION()
+		void OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);
 
 public:
 	AToolBaseActor();
 
 	class UStaticMeshComponent* GetStaticMesh() { return staticMesh; }
+
+	void ClearHitArray() { hitArray.Empty(); }
 };

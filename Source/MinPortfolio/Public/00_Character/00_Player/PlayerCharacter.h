@@ -77,6 +77,8 @@ protected:
 
 	UPROPERTY()
 		FTimerHandle jumpTimerHandle;
+	UPROPERTY()
+		FTimerHandle pickUpAnimEndTimerHandle;
 
 	UPROPERTY(EditAnywhere)
 		float jumpingCool;
@@ -99,6 +101,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		AActor* overlapMaterial;
 
+	UPROPERTY()
+		EActionState TempAction;
 public:
 
 	/** Returns CameraBoom subobject **/
@@ -124,6 +128,9 @@ public:
 	void SetWeaponEquipped(bool value) { bWeaponEquipped = value; }
 	void SetArmorEquipped(bool value) { bArmorEquipped = value; }
 
+	void SetOverlapmaterial(AActor* value) { overlapMaterial = value; }
+
+	EActionState GetTempAction() { return TempAction; }
 protected:
 
 	virtual void PostInitializeComponents() override;
@@ -142,4 +149,10 @@ protected:
 
 	UFUNCTION()
 		void OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION()
+		void OnEndAnimation(AActor* temp, EActionState action);
+
+	UFUNCTION()
+		void OnNormalEndAnimation(EActionState action);
 };

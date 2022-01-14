@@ -5,11 +5,10 @@
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/99_Component/ToolComponent.h"
 #include "01_Item/ItemType.h"
-#include "01_Item/ItemActor.h"
 #include "Components/ChildActorComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "01_Item/01_Material/MaterialBaseActor.h"
 
 void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
 {
@@ -34,7 +33,38 @@ void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
 
 			player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FGatheringTool>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 
-			item->Destroy();
+		}
+	}
+}
+
+void AToolBaseActor::UseItem(ABaseCharacter* target)
+{
+	if (target != nullptr) {
+		APlayerCharacter* player = Cast<APlayerCharacter>(target);
+		const FGatheringTool* info = GetItemInfo<FGatheringTool>();
+
+		if (info != nullptr) {
+			AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
+
+			if (!player->GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->item_Code.IsEqual(info->item_Code)) {
+				ToolChange(player, spawnItem);
+			}			
+			spawnItem->Destroy();
+		}
+	}
+}
+
+void AToolBaseActor::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)
+{
+	if (OtherActor != nullptr && hitArray.Contains(OtherActor) == false) {
+		hitArray.Emplace(OtherActor);
+
+		if (OtherActor->IsA<AItemActor>()) {
+			
+
+		}
+		else {
+			UE_LOG(LogTemp, Log, TEXT("111111111111111111"));
 		}
 	}
 }
@@ -42,5 +72,8 @@ void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
 AToolBaseActor::AToolBaseActor()
 {
 	staticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("staticMesh"));
+	staticMesh->SetCollisionProfileName("NoCollision");
+	OnActorBeginOverlap.AddDynamic(this, &AToolBaseActor::OnActorBeginOverlapEvent);
+
 	RootComponent = staticMesh;
 }

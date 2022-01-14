@@ -31,6 +31,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 		class UStaticMeshComponent* materialMesh;
 
+	UPROPERTY(EditAnywhere)
+		class UParticleSystem* pickUpParticle;
 public:
 
 	AMaterialBaseActor();
@@ -39,4 +41,6 @@ public:
 	class UWidgetComponent* GetPickUpWidget() { return pickUpWidgetComp; }
 	class UAnimMontage* GetPickUpMontage() { return pickUpMontage; }
 	virtual void HiddenMesh() override;
+
+	class UParticleSystem* GetPickUpParticle() { return pickUpParticle; }
 };
