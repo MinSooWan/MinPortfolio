@@ -22,13 +22,7 @@ void UToolComponent::BeginPlay()
 
 	// ...
 	
-	auto toolItem = GetWorld()->SpawnActor<AItemActor>(defaultToolActorClass);
-
-	if (toolItem != nullptr) {
-		toolActor = toolItem;
-
-		toolItem->Destroy();
-	}
+	
 }
 
 
@@ -47,3 +41,13 @@ void UToolComponent::SetToolActor(AItemActor* item)
 	}
 }
 
+void UToolComponent::ToolCompInit()
+{
+	auto toolItem = GetWorld()->SpawnActor<AItemActor>(defaultToolActorClass);
+
+	if (toolItem != nullptr) {
+		toolActor = toolItem;
+
+		toolItem->Destroy();
+	}
+}

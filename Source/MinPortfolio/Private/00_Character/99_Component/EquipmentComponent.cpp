@@ -24,6 +24,20 @@ void UEquipmentComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	
+}
+
+
+// Called every frame
+void UEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// ...
+}
+
+void UEquipmentComponent::EquipmentCompInit()
+{
 	AItemActor* spawnWeapon = GetWorld()->SpawnActor<AItemActor>(defaultWeaponActorClass);
 	AItemActor* spawnArmor = GetWorld()->SpawnActor<AItemActor>(defaultArmorActorClass);
 
@@ -45,15 +59,6 @@ void UEquipmentComponent::BeginPlay()
 		spawnWeapon->Destroy();
 		spawnArmor->Destroy();
 	}
-}
-
-
-// Called every frame
-void UEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 void UEquipmentComponent::SetWeaponActor(const FIteminfo& itemInfo, AItemActor* item)

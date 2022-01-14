@@ -22,5 +22,4 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 		class UMainWidget* mainWidget;
-
 };

@@ -32,4 +32,7 @@ public:
 	class AItemActor* GetToolActor() { return toolActor; }
 
 	void SetToolActor(class AItemActor* item);
+
+	void ToolCompInit();
+
 };

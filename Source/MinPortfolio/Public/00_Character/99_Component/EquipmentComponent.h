@@ -39,6 +39,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	void EquipmentCompInit();
+
 	class AItemActor* GetWeaponActor() { return weaponActor; }
 	class AItemActor* GetArmorActor() { return armorActor; }
 
