@@ -36,6 +36,9 @@ protected:
 	UPROPERTY()
 		int32 itemCount = 1;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+		FIteminfo tempinfo;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

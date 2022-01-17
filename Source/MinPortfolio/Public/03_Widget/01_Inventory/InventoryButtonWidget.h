@@ -26,7 +26,7 @@ protected:
 	UPROPERTY()
 		class UImage* Image_button;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		FName item_code = NAME_None;
 	UPROPERTY()
 		FIteminfo item_info;

@@ -27,7 +27,7 @@ void UInventoryWidget::NativeConstruct()
 	typeButtons.Emplace(Button_Tool);
 	typeButtons.Emplace(Button_BattleItem);
 
-	SetVisibility(ESlateVisibility::Visible);
+	SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UInventoryWidget::ShowAllEvent()
@@ -376,6 +376,23 @@ void UInventoryWidget::PressedPreviousButton_Item()
 			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
 			nowItemButton->SetFocus();
 			break;
+		}
+	}
+}
+
+void UInventoryWidget::OnInventoryWidget()
+{
+	SetVisibility(ESlateVisibility::Visible);
+	ShowAllEvent();
+	previousTypeButton = Button_BattleItem;
+	nextTypeButton = Button_Equipment;
+	nowTypeButton = Button_All;
+
+	if (UMG_InvnetoryPanel->GetButtons().Num() != 0) {
+		nowItemButton = UMG_InvnetoryPanel->GetButtons()[0];
+		previousItemButton = UMG_InvnetoryPanel->GetButtons().Last();
+		if (UMG_InvnetoryPanel->GetButtons().Num() >= 2) {
+			nextItemButton = UMG_InvnetoryPanel->GetButtons()[1];
 		}
 	}
 }

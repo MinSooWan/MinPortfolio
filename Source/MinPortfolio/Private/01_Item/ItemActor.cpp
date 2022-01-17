@@ -15,7 +15,7 @@ AItemActor::AItemActor()
 void AItemActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	tempinfo = *GetItemInfo<FIteminfo>();
 }
 
 // Called every frame

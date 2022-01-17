@@ -44,7 +44,8 @@ void UMenuWidget::NativeConstruct()
 
 void UMenuWidget::InventoryClick()
 {
-	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->SetVisibility(ESlateVisibility::Visible);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->OnInventoryWidget();
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->SetFocus();
 }
 
 void UMenuWidget::SkillClick()

@@ -88,5 +88,8 @@ protected:
 
 	void PressedNextButton_Item();
 	void PressedPreviousButton_Item();
+
+public:
+	void OnInventoryWidget();
 };
 

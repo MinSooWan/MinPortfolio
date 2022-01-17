@@ -11,7 +11,9 @@ void UInventoryButtonWidget::SetUpButton(const FIteminfo* info)
 	
 	item_info = *info;
 	item_code = info->item_Code;
-	Image_Item->SetBrushFromTexture(info->item_Image);
+	if (info->item_Image != nullptr) {
+		Image_Item->SetBrushFromTexture(info->item_Image);
+	}
 	
 }
 

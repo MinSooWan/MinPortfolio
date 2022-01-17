@@ -16,6 +16,10 @@ class MINPORTFOLIO_API UInventoryPanelWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UInventoryButtonWidget> buttonWidgetClass;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UInvnetoryPanelPartsWidget> horizontalBoxClass;
 	UPROPERTY()
 		class UVerticalBox* Vertical_Inventory;
 	UPROPERTY()

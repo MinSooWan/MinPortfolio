@@ -2,6 +2,8 @@
 
 
 #include "03_Widget/01_Inventory/InventoryPanelWidget.h"
+
+#include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/99_Component/InventoryComponent.h"
 #include "01_Item/ItemActor.h"
 #include "Components/HorizontalBox.h"
@@ -9,6 +11,7 @@
 #include "03_Widget/01_Inventory/InventoryButtonWidget.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "01_Item/ItemType.h"
+#include "03_Widget/01_Inventory/InvnetoryPanelPartsWidget.h"
 
 void UInventoryPanelWidget::NativeConstruct()
 {
@@ -30,24 +33,24 @@ void UInventoryPanelWidget::ShowAll(UInventoryComponent* inventoryComp)
 
 	int32 index = 0;
 
-	UHorizontalBox* horizontalBox = nullptr;
+	UInvnetoryPanelPartsWidget* horizontalBox = nullptr;
 	for(auto iter : inven)
 	{
 		if(index % 6 == 0)
 		{
-			horizontalBox = NewObject<UHorizontalBox>();
+			horizontalBox = CreateWidget<UInvnetoryPanelPartsWidget>(GetOwningPlayer(), horizontalBoxClass);
 			Vertical_Inventory->AddChild(horizontalBox);
 		}
-		auto button = NewObject<UInventoryButtonWidget>();
+		auto button = CreateWidget<UInventoryButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
 		const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
 		button->SetUpButton(info);
 		button->SetPadding(30);
 
-		horizontalBox->AddChild(button);
-		Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
+		horizontalBox->GetHorizontar()->AddChild(button);
+		//Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
 
-		buttons.Add(button);
+		buttons.Emplace(button);
 
 		index++;
 
