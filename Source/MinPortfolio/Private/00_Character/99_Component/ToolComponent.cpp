@@ -48,6 +48,6 @@ void UToolComponent::ToolCompInit()
 	if (toolItem != nullptr) {
 		toolActor = toolItem;
 
-		toolItem->Destroy();
+		toolItem->SetActorHiddenInGame(true);
 	}
 }

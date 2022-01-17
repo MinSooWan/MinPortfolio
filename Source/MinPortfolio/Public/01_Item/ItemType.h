@@ -60,8 +60,8 @@ enum class EAddOptionsType_Material : uint8
 	ADD_HP, //최대 체력을 증가시킨다.
 	ADD_ITEM, //재료를 추가로 획득할 수 있다.
 	ADD_EXP, //경험치를 추가로 획득할 수 있다.
-	RECOVERY_HP, //사용시 체력이 회복된다.
-	GIVE_DAMAGE, //적에게 대미지를 준다.
+	RECOVERY_HP, //사용시 추가로 체력이 회복된다.
+	GIVE_DAMAGE, //적에게 추가대미지를 준다.
 	GIVE_BURN, //적에게 화상을 입힌다.(일정시간 동안 초마다 데미지를 입는다.)
 	GIVE_FROZEN, //적에게 동상효과를 입힌다.(일정시간 동안 행동을 못 한다.)
 	GIVE_SHOCK, //적에게 감전을 입힌다.(일정시간 동안 행동시 데미지를 입는다.)
@@ -88,7 +88,6 @@ enum class EAddOptionsType_Equipment : uint8
 UENUM(BlueprintType)
 enum class EAddOptionsType_BattleItem : uint8
 {
-	RECOVERY_HP,
 	GIVE_DAMAGE,
 	GIVE_BURN,
 	GIVE_FROZEN,
@@ -116,6 +115,8 @@ struct FIteminfo : public FTableRowBase
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere)
+		FName item_Name;
 
 	UPROPERTY(EditAnywhere)
 		FName item_Code;
@@ -161,6 +162,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		EGatheringToolType needTool;
+
+	UPROPERTY(EditAnywhere)
+		FCharacterStat materialStat;
 public:
 
 	FItemMaterial() {
@@ -349,5 +353,5 @@ UCLASS()
 class MINPORTFOLIO_API UItemType : public UObject
 {
 	GENERATED_BODY()
-	
+
 };

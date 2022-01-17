@@ -22,4 +22,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 		class UMainWidget* mainWidget;
+
+public:
+	class UMainWidget* GetMainWidget() { return mainWidget; }
+
 };

@@ -13,13 +13,12 @@ void ACustomController::OnPossess(APawn* aPawn)
 	Super::OnPossess(aPawn);
 
 	APlayerCharacter* player = Cast<APlayerCharacter>(aPawn);
-	UE_LOG(LogTemp, Log, TEXT("000"));
+
 	if (player != nullptr) {
 
-		UE_LOG(LogTemp, Log, TEXT("111"));
 		mainWidget = CreateWidget<UMainWidget>(this, mainWidgetClass);
 		if (mainWidget != nullptr) {
-			UE_LOG(LogTemp, Log, TEXT("222"));
+
 			player->GetToolComp()->ToolCompInit();
 			player->GetEquipmentComp()->EquipmentCompInit();
 

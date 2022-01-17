@@ -56,8 +56,8 @@ void UEquipmentComponent::EquipmentCompInit()
 			armorActor->SetEquipped(true);
 		}
 
-		spawnWeapon->Destroy();
-		spawnArmor->Destroy();
+		spawnWeapon->SetActorHiddenInGame(true);
+		spawnArmor->SetActorHiddenInGame(true);
 	}
 }
 

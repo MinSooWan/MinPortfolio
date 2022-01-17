@@ -22,6 +22,7 @@
 #include "00_Character/99_Component/ToolComponent.h"
 #include "01_Item/01_Material/MaterialBaseActor.h"
 #include "01_Item/02_Tool/ToolBaseActor.h"
+#include "03_Widget/MainWidget.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -140,7 +141,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedAttack);
 
-	PlayerInputComponent->BindAction("PickUp", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedPickUp);
+	PlayerInputComponent->BindAction("OnMenu", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedOnMenu);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -152,7 +153,7 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Jump()
 {
 	
-	if ((actionState == EActionState::NORMAL || actionState == EActionState::RUN) && bJumping == false && actionState != EActionState::ROLL &&
+	if (bJumping == false && actionState != EActionState::ROLL &&
 		actionState != EActionState::ATTACK) {
 		TempAction = actionState;
 		Super::Jump();
@@ -229,6 +230,10 @@ void APlayerCharacter::SetActionState(const EActionState state)
 					GetMesh()->GetAnimInstance()->Montage_Play(GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->useToolAnim),
 					false);
 			}
+			else
+			{
+				SetActionState(EActionState::NORMAL);
+			}
 		}
 		break;
 	case EActionState::ROLL:
@@ -251,12 +256,16 @@ void APlayerCharacter::PostInitializeComponents()
 
 void APlayerCharacter::PresedRunStart()
 {
-	SetActionState(EActionState::RUN);
+	if (actionState != EActionState::ATTACK && actionState != EActionState::JUMP && actionState != EActionState::ROLL) {
+		SetActionState(EActionState::RUN);
+	}
 }
 
 void APlayerCharacter::PresedRunStop()
 {
-	SetActionState(EActionState::NORMAL);
+	if (actionState != EActionState::ATTACK && actionState != EActionState::JUMP && actionState != EActionState::ROLL) {
+		SetActionState(EActionState::NORMAL);
+	}
 }
 
 void APlayerCharacter::PresedRoll()
@@ -276,19 +285,9 @@ void APlayerCharacter::PresedAttack()
 	}
 }
 
-void APlayerCharacter::PresedPickUp()
+void APlayerCharacter::PresedOnMenu()
 {
-	if (overlapMaterial != nullptr) {
-		if (Cast<AMaterialBaseActor>(overlapMaterial)->GetItemInfo<FItemMaterial>()->needTool ==
-			GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->toolType) {
-
-			auto temp = overlapMaterial;
-			Cast<AMaterialBaseActor>(overlapMaterial)->GetSphereComp()->SetCollisionProfileName(TEXT("NoCollision"));
-			GetMesh()->GetAnimInstance()->Montage_Play(GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->useToolAnim);
-			inventoryComp->AddItem(temp);
-			overlapMaterial = nullptr;
-		}
-	}
+	GetController<ACustomController>()->GetMainWidget()->OnMenuWidget.Broadcast();
 }
 
 void APlayerCharacter::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)

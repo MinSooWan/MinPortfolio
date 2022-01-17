@@ -31,4 +31,6 @@ public:
 		void AddItem(AActor* item);
 	UFUNCTION(BlueprintCallable)
 		void UseItem(FName itemCode);
+
+	const TArray<AActor*> GetItemArray() { return itemArray; }
 };

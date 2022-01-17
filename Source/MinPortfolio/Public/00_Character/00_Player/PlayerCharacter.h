@@ -142,7 +142,7 @@ protected:
 
 	void PresedAttack();
 
-	void PresedPickUp();
+	void PresedOnMenu();
 
 	UFUNCTION()
 		void OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);
