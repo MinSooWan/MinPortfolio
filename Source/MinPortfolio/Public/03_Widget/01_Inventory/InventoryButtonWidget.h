@@ -29,7 +29,7 @@ protected:
 	UPROPERTY()
 		FName item_code = NAME_None;
 	UPROPERTY()
-		FIteminfo& item_info;
+		FIteminfo item_info;
 	
 public:
 
@@ -37,7 +37,7 @@ public:
 	class UTexture2D* GetHoveredImage() { return hoveredImage; };
 	class UTexture2D* GetDefaultImage() { return defaultImage; }
 
-	void SetUpButton(const FIteminfo& info);
+	void SetUpButton(const struct FIteminfo* info);
 
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

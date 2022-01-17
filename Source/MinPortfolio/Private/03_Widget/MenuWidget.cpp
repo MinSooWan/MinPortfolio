@@ -2,6 +2,10 @@
 
 
 #include "03_Widget/MenuWidget.h"
+#include "00_Character/00_Player/PlayerCharacter.h"
+#include "00_Character/00_Player/00_Controller/CustomController.h"
+#include "03_Widget/MainWidget.h"
+#include "03_Widget/01_Inventory/InventoryWidget.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 
@@ -18,44 +22,41 @@ void UMenuWidget::NativeConstruct()
 	next_button = Button_Skill;
 	now_button = Button_Inventory;
 
-	//Pressed
-	Button_Inventory->OnPressed.AddDynamic(this, &UMenuWidget::InventoryPressed);
-	Button_Skill->OnPressed.AddDynamic(this, &UMenuWidget::SkillPressed);
-	Button_Equipment->OnPressed.AddDynamic(this, &UMenuWidget::EquipmentPressed);
-	Button_Quest->OnPressed.AddDynamic(this, &UMenuWidget::QuestPressed);
+	//Click
+	Button_Inventory->OnClicked.AddDynamic(this, &UMenuWidget::InventoryClick);
+	Button_Skill->OnClicked.AddDynamic(this, &UMenuWidget::SkillClick);
+	Button_Equipment->OnClicked.AddDynamic(this, &UMenuWidget::EquipmentClick);
+	Button_Quest->OnClicked.AddDynamic(this, &UMenuWidget::QuestClick);
 
 	//Hovered
-	Button_Inventory->OnHovered.AddDynamic(this, &UMenuWidget::UMenuWidget::InventoryHovered);
-	Button_Skill->OnHovered.AddDynamic(this, &UMenuWidget::UMenuWidget::SkillHovered);
-	Button_Equipment->OnHovered.AddDynamic(this, &UMenuWidget::UMenuWidget::EquipmentHovered);
-	Button_Quest->OnHovered.AddDynamic(this, &UMenuWidget::UMenuWidget::QuestHovered);
+	Button_Inventory->OnHovered.AddDynamic(this, &UMenuWidget::InventoryHovered);
+	Button_Skill->OnHovered.AddDynamic(this, &UMenuWidget::SkillHovered);
+	Button_Equipment->OnHovered.AddDynamic(this, &UMenuWidget::EquipmentHovered);
+	Button_Quest->OnHovered.AddDynamic(this, &UMenuWidget::QuestHovered);
 
 	//Unhovered
-	Button_Inventory->OnUnhovered.AddDynamic(this, &UMenuWidget::UMenuWidget::UMenuWidget::InventoryUnhovered);
-	Button_Skill->OnUnhovered.AddDynamic(this, &UMenuWidget::UMenuWidget::SkillUnhovered);
-	Button_Equipment->OnUnhovered.AddDynamic(this, &UMenuWidget::UMenuWidget::EquipmentUnhovered);
-	Button_Quest->OnUnhovered.AddDynamic(this, &UMenuWidget::UMenuWidget::QuestUnhovered);
+	Button_Inventory->OnUnhovered.AddDynamic(this, &UMenuWidget::InventoryUnhovered);
+	Button_Skill->OnUnhovered.AddDynamic(this, &UMenuWidget::SkillUnhovered);
+	Button_Equipment->OnUnhovered.AddDynamic(this, &UMenuWidget::EquipmentUnhovered);
+	Button_Quest->OnUnhovered.AddDynamic(this, &UMenuWidget::QuestUnhovered);
 }
 
-//Pressed
-void UMenuWidget::InventoryPressed()
+
+void UMenuWidget::InventoryClick()
 {
-	SetImage(Image_Inventory, pressedImage);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UMenuWidget::SkillPressed()
+void UMenuWidget::SkillClick()
 {
-	SetImage(Image_Skill, pressedImage);
 }
 
-void UMenuWidget::EquipmentPressed()
+void UMenuWidget::EquipmentClick()
 {
-	SetImage(Image_Equipment, pressedImage);
 }
 
-void UMenuWidget::QuestPressed()
+void UMenuWidget::QuestClick()
 {
-	SetImage(Image_Quest, pressedImage);
 }
 
 //Hovered
@@ -171,7 +172,7 @@ FReply UMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 	else if (InKeyEvent.GetKey() == FKey("Gamepad_LeftShoulder"))
 	{
 		pressedPrevious();
-		return FReply::Handled();
+		return FReply::Handled();;
 	}
 	else if(InKeyEvent.GetKey() == FKey("E"))
 	{

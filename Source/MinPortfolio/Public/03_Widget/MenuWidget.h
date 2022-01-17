@@ -51,13 +51,13 @@ protected:
 		class UImage* Image_Quest;
 
 	UFUNCTION()
-		void InventoryPressed();
+		void InventoryClick();
 	UFUNCTION()
-		void SkillPressed();
+		void SkillClick();
 	UFUNCTION()
-		void EquipmentPressed();
+		void EquipmentClick();
 	UFUNCTION()
-		void QuestPressed();
+		void QuestClick();
 	UFUNCTION()
 		void InventoryHovered();
 	UFUNCTION()

@@ -8,6 +8,7 @@
 #include "Components/VerticalBox.h"
 #include "03_Widget/01_Inventory/InventoryButtonWidget.h"
 #include "Components/HorizontalBoxSlot.h"
+#include "01_Item/ItemType.h"
 
 void UInventoryPanelWidget::NativeConstruct()
 {
@@ -29,7 +30,7 @@ void UInventoryPanelWidget::ShowAll(UInventoryComponent* inventoryComp)
 
 	int32 index = 0;
 
-	UHorizontalBox* horizontalBox;
+	UHorizontalBox* horizontalBox = nullptr;
 	for(auto iter : inven)
 	{
 		if(index % 6 == 0)
@@ -40,7 +41,7 @@ void UInventoryPanelWidget::ShowAll(UInventoryComponent* inventoryComp)
 		auto button = NewObject<UInventoryButtonWidget>();
 
 		const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-		button->SetUpButton(*info);
+		button->SetUpButton(info);
 		button->SetPadding(30);
 
 		horizontalBox->AddChild(button);
@@ -61,7 +62,7 @@ void UInventoryPanelWidget::ShowEquipment(UInventoryComponent* inventoryComp)
 
 	int32 index = 0;
 
-	UHorizontalBox* horizontalBox;
+	UHorizontalBox* horizontalBox = nullptr;
 	for (auto iter : inven)
 	{
 		if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Type == EItemType::EQUIPMENT) {
@@ -73,7 +74,7 @@ void UInventoryPanelWidget::ShowEquipment(UInventoryComponent* inventoryComp)
 			auto button = NewObject<UInventoryButtonWidget>();
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-			button->SetUpButton(*info);
+			button->SetUpButton(info);
 			button->SetPadding(30);
 
 			horizontalBox->AddChild(button);
@@ -95,7 +96,7 @@ void UInventoryPanelWidget::ShowMaterial(UInventoryComponent* inventoryComp)
 
 	int32 index = 0;
 
-	UHorizontalBox* horizontalBox;
+	UHorizontalBox* horizontalBox = nullptr;
 	for (auto iter : inven)
 	{
 		if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Type == EItemType::MATERIAL) {
@@ -107,7 +108,7 @@ void UInventoryPanelWidget::ShowMaterial(UInventoryComponent* inventoryComp)
 			auto button = NewObject<UInventoryButtonWidget>();
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-			button->SetUpButton(*info);
+			button->SetUpButton(info);
 			button->SetPadding(30);
 
 			horizontalBox->AddChild(button);
@@ -129,7 +130,7 @@ void UInventoryPanelWidget::ShowTool(UInventoryComponent* inventoryComp)
 
 	int32 index = 0;
 
-	UHorizontalBox* horizontalBox;
+	UHorizontalBox* horizontalBox = nullptr;
 	for (auto iter : inven)
 	{
 		if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Type == EItemType::GATHERING_TOOL) {
@@ -141,7 +142,7 @@ void UInventoryPanelWidget::ShowTool(UInventoryComponent* inventoryComp)
 			auto button = NewObject<UInventoryButtonWidget>();
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-			button->SetUpButton(*info);
+			button->SetUpButton(info);
 			button->SetPadding(30);
 
 			horizontalBox->AddChild(button);
@@ -163,7 +164,7 @@ void UInventoryPanelWidget::ShowBattleItem(UInventoryComponent* inventoryComp)
 
 	int32 index = 0;
 
-	UHorizontalBox* horizontalBox;
+	UHorizontalBox* horizontalBox = nullptr;
 	for (auto iter : inven)
 	{
 		if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Type == EItemType::BATTLE_ITEM) {
@@ -175,7 +176,7 @@ void UInventoryPanelWidget::ShowBattleItem(UInventoryComponent* inventoryComp)
 			auto button = NewObject<UInventoryButtonWidget>();
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-			button->SetUpButton(*info);
+			button->SetUpButton(info);
 			button->SetPadding(30);
 
 			horizontalBox->AddChild(button);

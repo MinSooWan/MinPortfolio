@@ -76,7 +76,7 @@ protected:
 
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
-	void SetItemInfo(const FIteminfo& info);
+	void SetItemInfo(FIteminfo* info);
 
 	FString GetAddOptionDescription_Equipment(EAddOptionsType_Equipment option);
 	FString GetAddOptionDescription_Material(EAddOptionsType_Material option);

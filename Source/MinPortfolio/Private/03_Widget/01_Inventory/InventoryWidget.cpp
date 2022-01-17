@@ -1,10 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "03_Widget/01_Inventory/InventoryWidget.h"
-
 #include <string>
-
 #include "03_Widget/01_Inventory/InventoryPanelWidget.h"
 #include "Components/Button.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
@@ -28,6 +26,8 @@ void UInventoryWidget::NativeConstruct()
 	typeButtons.Emplace(Button_Material);
 	typeButtons.Emplace(Button_Tool);
 	typeButtons.Emplace(Button_BattleItem);
+
+	SetVisibility(ESlateVisibility::Visible);
 }
 
 void UInventoryWidget::ShowAllEvent()
@@ -72,58 +72,59 @@ FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKey
 	return FReply::Handled();
 }
 
-void UInventoryWidget::SetItemInfo(const FIteminfo& info)
+void UInventoryWidget::SetItemInfo(FIteminfo* info)
 {
-	TextBlock_ItemName->SetText(FText::FromName(info.item_Name));
+	
+	TextBlock_ItemName->SetText(FText::FromName(info->item_Name));
 
 	FString str = "";
-	switch (info.item_Type)
+	switch (info->item_Type)
 	{
 	case EItemType::EQUIPMENT:
-		if (Cast<FEquipment>(&info)->equipment_Type == EEquipmentType::WEAPON) {
-			str = "Ã¼·Â : " + FString::FromInt(Cast<FEquipment>(&info)->equipmentStat.HP) + "\n" +
-				"°ø°Ý·Â : " + FString::FromInt(Cast<FEquipment>(&info)->equipmentStat.ATC) + "\n" +
-				"¹ÎÃ¸¼º : " + FString::FromInt(Cast<FEquipment>(&info)->equipmentStat.DEX);
+		if (((FEquipment*)(info))->equipment_Type == EEquipmentType::WEAPON) {
+			str = "ì²´ë ¥ : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.HP) + "\n" +
+				"ê³µê²©ë ¥ : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.ATC) + "\n" +
+				"ë¯¼ì²©ì„± : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEX);
 		}
 		else {
-			str = "Ã¼·Â : " + FString::FromInt(Cast<FEquipment>(&info)->equipmentStat.HP) + "\n" +
-				"¹æ¾î·Â : " + FString::FromInt(Cast<FEquipment>(&info)->equipmentStat.DEF) + "\n" +
-				"¹ÎÃ¸¼º : " + FString::FromInt(Cast<FEquipment>(&info)->equipmentStat.DEX);
+			str = "ì²´ë ¥ : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.HP) + "\n" +
+				"ë°©ì–´ë ¥ : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEF) + "\n" +
+				"ë¯¼ì²©ì„± : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEX);
 		}
 		break;
 	case EItemType::MATERIAL:
 
-		str = "Ã¼·Â : " + FString::FromInt(Cast<FItemMaterial>(&info)->materialStat.HP) + "\n" +
-			"°ø°Ý·Â : " + FString::FromInt(Cast<FItemMaterial>(&info)->materialStat.ATC) + "\n" +
-			"¹æ¾î·Â : " + FString::FromInt(Cast<FItemMaterial>(&info)->materialStat.DEF) + "\n" +
-			"¹ÎÃ¸¼º : " + FString::FromInt(Cast<FItemMaterial>(&info)->materialStat.DEX);
+		str = "ì²´ë ¥ : " + FString::FromInt(((FItemMaterial*)(info))->materialStat.HP) + "\n" +
+			"ê³µê²©ë ¥ : " + FString::FromInt(((FItemMaterial*)(info))->materialStat.ATC) + "\n" +
+			"ë°©ì–´ë ¥ : " + FString::FromInt(((FItemMaterial*)(info))->materialStat.DEF) + "\n" +
+			"ë¯¼ì²©ì„± : " + FString::FromInt(((FItemMaterial*)(info))->materialStat.DEX);
 		break;
 	}
 	TextBlock_ItemStat->SetText(FText::FromString(str));
 
-	TextBlock_Description->SetText(FText::FromString(info.item_Description));
+	TextBlock_Description->SetText(FText::FromString(info->item_Description));
 
 	str = "";
-	switch (info.item_Type)
+	switch (info->item_Type)
 	{
 	case EItemType::EQUIPMENT:
 		
-		for(auto iter : Cast<FEquipment>(&info)->addOption)
+		for(auto iter : ((FEquipment*)(info))->addOption)
 		{
 			str += GetAddOptionDescription_Equipment(iter) + "\n";
 		}
 		break;
 
 	case EItemType::BATTLE_ITEM:
-		if (Cast<FBattleItem>(&info)->battleItemType == EBattleItemType::BATTLE_CONSUME) {
-			for (auto iter : Cast<FBattle_Consume>(&info)->addOption)
+		if (((FBattleItem*)(info))->battleItemType == EBattleItemType::BATTLE_CONSUME) {
+			for (auto iter : ((FBattle_Consume*)(info))->addOption)
 			{
 				str += GetAddOptionDescription_BattleItem(iter) + "\n";
 			}
 		}
 		else
 		{
-			for (auto iter : Cast<FRecovery_Consume>(&info)->addOption)
+			for (auto iter : ((FRecovery_Consume*)(info))->addOption)
 			{
 				str += GetAddOptionDescription_RecoveryItem(iter) + "\n";
 			}
@@ -132,13 +133,14 @@ void UInventoryWidget::SetItemInfo(const FIteminfo& info)
 
 	case EItemType::MATERIAL:
 
-		for (auto iter : Cast<FItemMaterial>(&info)->addOption)
+		for (auto iter : ((FItemMaterial*)(info))->addOption)
 		{
 			str += GetAddOptionDescription_Material(iter) + "\n";
 		}
 		break;
 	}
 	TextBlock_AddOption->SetText(FText::FromString(str));
+	
 }
 
 FString UInventoryWidget::GetAddOptionDescription_Equipment(EAddOptionsType_Equipment option)
@@ -147,24 +149,24 @@ FString UInventoryWidget::GetAddOptionDescription_Equipment(EAddOptionsType_Equi
 	switch (option)
 	{
 	case EAddOptionsType_Equipment::ADD_ATC:
-		str = "°ø°Ý·Â °­È­";
+		str = "ê³µê²©ë ¥ ê°•í™”";
 		return str;
 	case EAddOptionsType_Equipment::ADD_DEX:
-		str = "¹ÎÃ¸¼º °­È­";
+		str = "ë¯¼ì²©ì„± ê°•í™”";
 		return str;
 	case EAddOptionsType_Equipment::ADD_HP:
-		str = "Ã¼·Â °­È­";
+		str = "ì²´ë ¥ ê°•í™”";
 		return str;
 	case EAddOptionsType_Equipment::ADD_DEF:
-		str = "¹æ¾î·Â °­È­";
+		str = "ë°©ì–´ë ¥ ê°•í™”";
 		return str;
 	case EAddOptionsType_Equipment::ADD_EXP:
-		str = "ºü¸¥ ¼ºÀå";
+		str = "ë¹ ë¥¸ ì„±ìž¥";
 		return str;
 	case EAddOptionsType_Equipment::ADD_ITEM:
-		str = "´õ ¸¹ÀÌ!";
+		str = "ë” ë§Žì´!";
 		return str;
-	}
+	}return str;
 }
 
 FString UInventoryWidget::GetAddOptionDescription_Material(EAddOptionsType_Material option)
@@ -173,48 +175,48 @@ FString UInventoryWidget::GetAddOptionDescription_Material(EAddOptionsType_Mater
 	switch (option)
 	{
 	case EAddOptionsType_Material::ADD_ATC:
-		str = "°ø°Ý·Â °­È­";
+		str = "ê³µê²©ë ¥ ê°•í™”";
 		return str;
 	case EAddOptionsType_Material::ADD_DEF:
-		str = "¹æ¾î·Â °­È­";
+		str = "ë°©ì–´ë ¥ ê°•í™”";
 		return str;
 	case EAddOptionsType_Material::ADD_DEX:
-		str = "¹ÎÃ¸¼º °­È­";
+		str = "ë¯¼ì²©ì„± ê°•í™”";
 		return str;
 	case EAddOptionsType_Material::ADD_EXP:
-		str = "ºü¸¥ ¼ºÀå";
+		str = "ë¹ ë¥¸ ì„±ìž¥";
 		return str;
 	case EAddOptionsType_Material::ADD_HP:
-		str = "Ã¼·Â °­È­";
+		str = "ì²´ë ¥ ê°•í™”";
 		return str;
 	case EAddOptionsType_Material::ADD_ITEM:
-		str = "´õ ¸¹ÀÌ!";
+		str = "ë” ë§Žì´!";
 		return str;
 	case EAddOptionsType_Material::GIVE_ATC_DOWN:
-		str = "¹«·ÂÀÇ ÀúÁÖ";
+		str = "ë¬´ë ¥ì˜ ì €ì£¼";
 		return str;
 	case EAddOptionsType_Material::GIVE_BURN:
-		str = "±¤¿­ÀÇ ¿¬±â";
+		str = "ê´‘ì—´ì˜ ì—°ê¸°";
 		return str;
 	case EAddOptionsType_Material::GIVE_DAMAGE:
-		str = "°­·ÂÇÑ ÆÄ±«·Â";
+		str = "ê°•ë ¥í•œ íŒŒê´´ë ¥";
 		return str;
 	case EAddOptionsType_Material::GIVE_DEF_DOWN:
-		str = "¹æ¾îÀÇ ÀúÁÖ";
+		str = "ë°©ì–´ì˜ ì €ì£¼";
 		return str;
 	case EAddOptionsType_Material::GIVE_FROZEN:
-		str = "ºù±«ÀÇ ¹ÝÇâ";
+		str = "ë¹™ê´´ì˜ ë°˜í–¥";
 		return str;
 	case EAddOptionsType_Material::GIVE_SHOCK:
-		str = "ºÀ·ÚÀÇ ¸¶Âû";
+		str = "ë´‰ë¢°ì˜ ë§ˆì°°";
 		return str;
 	case EAddOptionsType_Material::GIVE_SLOW:
-		str = "¼ÓµµÀÇ ÀúÁÖ";
+		str = "ì†ë„ì˜ ì €ì£¼";
 		return str;
 	case EAddOptionsType_Material::RECOVERY_HP:
-		str = "°­·ÂÇÑ È¸º¹·Â";
+		str = "ê°•ë ¥í•œ íšŒë³µë ¥";
 		return str;
-	}
+	}return str;
 }
 
 FString UInventoryWidget::GetAddOptionDescription_BattleItem(EAddOptionsType_BattleItem option)
@@ -223,27 +225,27 @@ FString UInventoryWidget::GetAddOptionDescription_BattleItem(EAddOptionsType_Bat
 	switch (option)
 	{
 	case EAddOptionsType_BattleItem::GIVE_ATC_DOWN:
-		str = "¹«·ÂÀÇ ÀúÁÖ";
+		str = "ë¬´ë ¥ì˜ ì €ì£¼";
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_BURN:
-		str = "±¤¿­ÀÇ ¿¬±â";
+		str = "ê´‘ì—´ì˜ ì—°ê¸°";
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_DAMAGE:
-		str = "°­·ÂÇÑ ÆÄ±«·Â";
+		str = "ê°•ë ¥í•œ íŒŒê´´ë ¥";
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_DEF_DOWN:
-		str = "¹æ¾îÀÇ ÀúÁÖ";
+		str = "ë°©ì–´ì˜ ì €ì£¼";
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_FROZEN:
-		str = "ºù±«ÀÇ ¹ÝÇâ";
+		str = "ë¹™ê´´ì˜ ë°˜í–¥";
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_SHOCK:
-		str = "ºÀ·ÚÀÇ ¸¶Âû";
+		str = "ë´‰ë¢°ì˜ ë§ˆì°°";
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_SLOW:
-		str = "¼ÓµµÀÇ ÀúÁÖ";
+		str = "ì†ë„ì˜ ì €ì£¼";
 		return str;
-	}
+	}return str;
 }
 
 FString UInventoryWidget::GetAddOptionDescription_RecoveryItem(EAddOptionsType_RecoveryItem option)
@@ -252,21 +254,22 @@ FString UInventoryWidget::GetAddOptionDescription_RecoveryItem(EAddOptionsType_R
 	switch (option)
 	{
 	case EAddOptionsType_RecoveryItem::ADD_ATC_TIME:
-		str = "ÈûÀÇ Ãàº¹";
+		str = "íž˜ì˜ ì¶•ë³µ";
 		return str;
 	case EAddOptionsType_RecoveryItem::RECOVERY_HP:
-		str = "°­·ÂÇÑ È¸º¹·Â";
+		str = "ê°•ë ¥í•œ íšŒë³µë ¥";
 		return str;
 	case EAddOptionsType_RecoveryItem::ADD_DEF_TIME:
-		str = "¼öÈ£ÀÇ Ãàº¹";
+		str = "ìˆ˜í˜¸ì˜ ì¶•ë³µ";
 		return str;
 	case EAddOptionsType_RecoveryItem::ADD_DEX_TIME:
-		str = "ÁúÇ³ÀÇ Ãàº¹";
+		str = "ì§ˆí’ì˜ ì¶•ë³µ";
 		return str;
 	case EAddOptionsType_RecoveryItem::ADD_HP_TIME:
-		str = "»ý¸íÀÇ Ãàº¹";
+		str = "ìƒëª…ì˜ ì¶•ë³µ";
 		return str;
 	}
+	return str;
 }
 
 void UInventoryWidget::PressedNextButton_Type()
@@ -290,6 +293,7 @@ void UInventoryWidget::PressedNextButton_Type()
 				nextTypeButton = typeButtons[i + 1];
 			}
 			nowTypeButton->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+			nowTypeButton->OnClicked.Broadcast();
 			break;
 		}
 	}
@@ -316,6 +320,7 @@ void UInventoryWidget::PressedPreviousButton_Type()
 				previousTypeButton = typeButtons[i - 1];
 			}
 			nowTypeButton->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+			nowTypeButton->OnClicked.Broadcast();
 			break;
 		}
 	}

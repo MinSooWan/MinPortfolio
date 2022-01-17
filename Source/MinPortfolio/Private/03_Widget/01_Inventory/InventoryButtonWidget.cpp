@@ -6,11 +6,13 @@
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/99_Component/InventoryComponent.h"
 
-void UInventoryButtonWidget::SetUpButton(const FIteminfo& info)
+void UInventoryButtonWidget::SetUpButton(const FIteminfo* info)
 {
-	item_info = info;
-	item_code = info.item_Code;
-	Image_Item->SetBrushFromTexture(info.item_Image);
+	
+	item_info = *info;
+	item_code = info->item_Code;
+	Image_Item->SetBrushFromTexture(info->item_Image);
+	
 }
 
 FReply UInventoryButtonWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)

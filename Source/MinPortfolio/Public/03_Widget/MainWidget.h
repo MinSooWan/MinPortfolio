@@ -22,6 +22,8 @@ protected:
 
 	UPROPERTY()
 		class UMenuWidget* UMG_MenuWidget;
+	UPROPERTY()
+		class UInventoryWidget* UMG_InventoryWidget;
 
 	virtual void NativeConstruct() override;
 
@@ -30,6 +32,7 @@ protected:
 
 public:
 	class UMenuWidget* GetMenuWidget() { return UMG_MenuWidget; }
+	class UInventoryWidget* GetInventoryWidget() { return UMG_InventoryWidget; }
 	
 	FOnMenuWidget OnMenuWidget;
 };
