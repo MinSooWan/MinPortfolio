@@ -47,7 +47,6 @@ void UMenuWidget::NativeConstruct()
 void UMenuWidget::InventoryClick()
 {
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->OnInventoryWidget();
-	GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeUIOnly());
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->SetFocus();
 }
 
@@ -187,6 +186,11 @@ FReply UMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 	{
 		pressedPrevious();
 		return FReply::Handled();
+	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Right))
+	{
+		GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeGameOnly());
+		SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	return FReply::Handled();

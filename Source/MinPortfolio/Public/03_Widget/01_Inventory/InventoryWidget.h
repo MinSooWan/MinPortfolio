@@ -46,6 +46,10 @@ protected:
 		class UTextBlock* TextBlock_Description;
 	UPROPERTY()
 		class UTextBlock* TextBlock_AddOption;
+	UPROPERTY()
+		class UImage* Item_Image;
+	UPROPERTY()
+		class UImage* Item_Type;
 
 	UPROPERTY()
 		class UButton* Button_All;
@@ -57,6 +61,9 @@ protected:
 		class UButton* Button_Tool;
 	UPROPERTY()
 		class UButton* Button_BattleItem;
+
+	UPROPERTY(EditAnywhere)
+		TMap<EItemType, class UTexture2D*> typeImage;
 
 	UPROPERTY()
 		class UInventoryPanelWidget* UMG_InvnetoryPanel;
@@ -77,7 +84,7 @@ protected:
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 	virtual FReply NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
-	void SetItemInfo(const FIteminfo* info);
+	void SetItemInfo(FIteminfo* info);
 
 	FString GetAddOptionDescription_Equipment(EAddOptionsType_Equipment option);
 	FString GetAddOptionDescription_Material(EAddOptionsType_Material option);
@@ -91,6 +98,8 @@ protected:
 	void PressedPreviousButton_Item();
 	void PressedUpButton_Item();
 	void PressedDownButton_Item();
+
+	class UTexture2D* SetItemTypeImage(EItemType type);
 
 public:
 	void OnInventoryWidget();

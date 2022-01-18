@@ -6,7 +6,10 @@
 #include "03_Widget/01_Inventory/InventoryPanelWidget.h"
 #include "Components/Button.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "00_Character/99_Component/InventoryComponent.h"
+#include "03_Widget/MainWidget.h"
+#include "03_Widget/MenuWidget.h"
 #include "03_Widget/01_Inventory/InventoryButtonWidget.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -87,46 +90,58 @@ FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKey
 	{
 		PressedDownButton_Item();
 	}
+	
 	return FReply::Handled();
 }
 
 FReply UInventoryWidget::NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	Super::NativeOnKeyUp(InGeometry, InKeyEvent);
-
-	if(InKeyEvent.GetKey() == FKey("Gamepad_FaceButton_Bottom"))
+	//EKeys::Daydream_Right_Trackpad_Y
+	if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Bottom))
 	{
 		nowItemButton->GetButton_item()->OnReleased.Broadcast();
 	}
-
+	else if (InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Right))
+	{
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetFocus();
+		SetVisibility(ESlateVisibility::Hidden);
+	}
 	return FReply::Handled();
 }
 
-void UInventoryWidget::SetItemInfo(const FIteminfo* info)
+void UInventoryWidget::SetItemInfo(FIteminfo* info)
 {
 	TextBlock_ItemName->SetText(FText::FromName(info->item_Name));
+	Item_Image->SetBrushTintColor(FSlateColor(FLinearColor(0, 0, 0, 1)));
+	Item_Type->SetBrushTintColor(FSlateColor(FLinearColor(0, 0, 0, 1)));
+
+	Item_Image->SetBrushFromTexture(info->item_Image);
+	Item_Type->SetBrushFromTexture(SetItemTypeImage(info->item_Type));
 
 	FString str = "";
 	switch (info->item_Type)
 	{
 	case EItemType::EQUIPMENT:
 		if (((FEquipment*)(info))->equipment_Type == EEquipmentType::WEAPON) {
-			str = "체력 : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.HP) + "\n" +
-				"공격력 : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.ATC) + "\n" +
-				"민첩성 : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEX);
+			str = TEXT("체력 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.HP) + "\n" +
+				TEXT("공격력 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.ATC) + "\n" +
+				TEXT("민첩성 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEX);
 		}
 		else {
-			str = "체력 : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.HP) + "\n" +
-				"방어력 : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEF) + "\n" +
-				"민첩성 : " + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEX);
+			str = TEXT("체력 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.HP) + "\n" +
+				TEXT("방어력 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEF) + "\n" +
+				TEXT("민첩성 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEX);
 		}
 		break;
 	case EItemType::MATERIAL:
-
-		str = "체력 : " + FString::FromInt(((FItemMaterial*)(info))->materialStat.HP) + "\n" +
-			"공격력 : " + FString::FromInt(((FItemMaterial*)(info))->materialStat.ATC) + "\n" +
-			"방어력 : " + FString::FromInt(((FItemMaterial*)(info))->materialStat.DEF) + "\n" +
-			"민첩성 : " + FString::FromInt(((FItemMaterial*)(info))->materialStat.DEX);
+	
+		str = TEXT("체력 : ") + FString::SanitizeFloat(((FItemMaterial*)(info))->materialStat.HP) + "\n" +
+			TEXT("공격력 : ") + FString::SanitizeFloat(((FItemMaterial*)(info))->materialStat.ATC) + "\n" +
+			TEXT("방어력 : ") + FString::SanitizeFloat(((FItemMaterial*)(info))->materialStat.DEF) + "\n" +
+			TEXT("민첩성 : ") + FString::SanitizeFloat(((FItemMaterial*)(info))->materialStat.DEX);
+			
+		
 		break;
 	}
 	TextBlock_ItemStat->SetText(FText::FromString(str));
@@ -167,13 +182,14 @@ void UInventoryWidget::SetItemInfo(const FIteminfo* info)
 		break;
 
 	case EItemType::MATERIAL:
-
+		
 		if (((FItemMaterial*)(info))->addOption.Num() != 0) {
 			for (auto iter : ((FItemMaterial*)(info))->addOption)
 			{
 				str += GetAddOptionDescription_Material(iter) + "\n";
 			}
 		}
+		
 		break;
 	}
 	TextBlock_AddOption->SetText(FText::FromString(str));
@@ -343,8 +359,8 @@ void UInventoryWidget::PressedNextButton_Type()
 		if (UMG_InvnetoryPanel->GetButtons().Num() >= 2) {
 			nextItemButton = UMG_InvnetoryPanel->GetButtons()[1];
 		}
-		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
-		//SetItemInfo(temp);
+		
+		SetItemInfo(nowItemButton->item_info);
 	}
 	else
 	{
@@ -352,6 +368,8 @@ void UInventoryWidget::PressedNextButton_Type()
 		TextBlock_ItemStat->SetText(FText::FromString(""));
 		TextBlock_Description->SetText(FText::FromString(""));
 		TextBlock_AddOption->SetText(FText::FromString(""));
+		Item_Image->SetBrushTintColor(FSlateColor(FLinearColor(0, 0, 0, 0)));
+		Item_Type->SetBrushTintColor(FSlateColor(FLinearColor(0, 0, 0, 0)));
 	}
 }
 
@@ -389,8 +407,7 @@ void UInventoryWidget::PressedPreviousButton_Type()
 		if (UMG_InvnetoryPanel->GetButtons().Num() >= 2) {
 			nextItemButton = UMG_InvnetoryPanel->GetButtons()[1];
 		}
-		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
-		//SetItemInfo(temp);
+		SetItemInfo(nowItemButton->item_info);
 	}
 	else
 	{
@@ -398,6 +415,8 @@ void UInventoryWidget::PressedPreviousButton_Type()
 		TextBlock_ItemStat->SetText(FText::FromString(""));
 		TextBlock_Description->SetText(FText::FromString(""));
 		TextBlock_AddOption->SetText(FText::FromString(""));
+		Item_Image->SetBrushTintColor(FSlateColor(FLinearColor(0, 0, 0, 0)));
+		Item_Type->SetBrushTintColor(FSlateColor(FLinearColor(0, 0, 0, 0)));
 	}
 }
 
@@ -419,8 +438,7 @@ void UInventoryWidget::PressedNextButton_Item()
 		}
 
 		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
-		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
-		//SetItemInfo(temp);
+		SetItemInfo(nowItemButton->item_info);
 	}
 }
 
@@ -442,8 +460,7 @@ void UInventoryWidget::PressedPreviousButton_Item()
 		}
 
 		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
-		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
-		//SetItemInfo(temp);
+		SetItemInfo(nowItemButton->item_info);
 	}
 }
 
@@ -494,8 +511,7 @@ void UInventoryWidget::PressedUpButton_Item()
 		}
 
 		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
-		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
-		//SetItemInfo(temp);
+		SetItemInfo(nowItemButton->item_info);
 	}
 }
 
@@ -545,9 +561,13 @@ void UInventoryWidget::PressedDownButton_Item()
 		}
 
 		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
-		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
-		//SetItemInfo(temp);
+		SetItemInfo(nowItemButton->item_info);
 	}
+}
+
+class UTexture2D* UInventoryWidget::SetItemTypeImage(EItemType type)
+{
+	return typeImage[type];
 }
 
 void UInventoryWidget::OnInventoryWidget()
@@ -568,6 +588,15 @@ void UInventoryWidget::OnInventoryWidget()
 			nextItemButton = UMG_InvnetoryPanel->GetButtons()[1];
 		}
 		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
-		//SetItemInfo(temp);
+		SetItemInfo(nowItemButton->item_info);
+	}
+	else
+	{
+		TextBlock_ItemName->SetText(FText::FromString(""));
+		TextBlock_ItemStat->SetText(FText::FromString(""));
+		TextBlock_Description->SetText(FText::FromString(""));
+		TextBlock_AddOption->SetText(FText::FromString(""));
+		Item_Image->SetBrushTintColor(FSlateColor(FLinearColor(0, 0, 0, 0)));
+		Item_Type->SetBrushTintColor(FSlateColor(FLinearColor(0, 0, 0, 0)));
 	}
 }

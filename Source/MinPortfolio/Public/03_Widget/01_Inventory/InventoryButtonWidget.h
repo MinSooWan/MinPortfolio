@@ -30,10 +30,10 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		FName item_code = NAME_None;
-	UPROPERTY()
-		FIteminfo item_info;
 
 public:
+	FIteminfo* item_info;
+
 	UFUNCTION()
 		void OnPressedEvnet();
 	UFUNCTION()
@@ -43,7 +43,7 @@ public:
 	UFUNCTION()
 		void OnUnhoveredEvent();
 
-	FIteminfo GetButtonItemInfo() { return item_info; }
+	//FIteminfo* GetButtonItemInfo() { return *item_info; }
 	class UButton* GetButton_item() { return Button_item; }
 	class UImage* GetImage_button() { return Image_button; };
 	class UTexture2D* GetHoveredImage() { return hoveredImage; };
@@ -52,4 +52,5 @@ public:
 	void SetUpButton(const struct FIteminfo* info);
 
 	virtual void NativeConstruct() override;
+
 };

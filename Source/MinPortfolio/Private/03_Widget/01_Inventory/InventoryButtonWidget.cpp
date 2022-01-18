@@ -4,7 +4,10 @@
 #include "03_Widget/01_Inventory/InventoryButtonWidget.h"
 #include "Components/Image.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "00_Character/99_Component/InventoryComponent.h"
+#include "03_Widget/MainWidget.h"
+#include "03_Widget/01_Inventory/UseItemCheckWidget.h"
 #include "Components/Button.h"
 
 void UInventoryButtonWidget::OnPressedEvnet()
@@ -15,8 +18,9 @@ void UInventoryButtonWidget::OnPressedEvnet()
 void UInventoryButtonWidget::OnReleasedEvnet()
 {
 	//Image_button->SetBrushFromTexture(defaultImage);
-	UE_LOG(LogTemp, Log, TEXT("111111111111111"));
-	GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp()->UseItem(item_code);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetCheckWidget()->SetItemCode(item_code);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetCheckWidget()->SetVisibility(ESlateVisibility::Visible);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetCheckWidget()->SetFocus();
 }
 
 void UInventoryButtonWidget::OnHoveredEvnet()
@@ -31,8 +35,8 @@ void UInventoryButtonWidget::OnUnhoveredEvent()
 
 void UInventoryButtonWidget::SetUpButton(const FIteminfo* info)
 {
-	auto temp = info;
-	item_info = *info;
+	//auto temp = info;
+	item_info = const_cast<FIteminfo*>(info);
 	item_code = info->item_Code;
 	if (info->item_Image != nullptr) {
 		Image_Item->SetBrushFromTexture(info->item_Image);
