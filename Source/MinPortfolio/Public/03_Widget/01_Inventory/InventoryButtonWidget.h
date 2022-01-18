@@ -22,6 +22,8 @@ protected:
 		class UTexture2D* hoveredImage;
 
 	UPROPERTY()
+		class UButton* Button_item;
+	UPROPERTY()
 		class UImage* Image_Item;
 	UPROPERTY()
 		class UImage* Image_button;
@@ -30,17 +32,24 @@ protected:
 		FName item_code = NAME_None;
 	UPROPERTY()
 		FIteminfo item_info;
-	
-public:
 
+public:
+	UFUNCTION()
+		void OnPressedEvnet();
+	UFUNCTION()
+		void OnReleasedEvnet();
+	UFUNCTION()
+		void OnHoveredEvnet();
+	UFUNCTION()
+		void OnUnhoveredEvent();
+
+	FIteminfo GetButtonItemInfo() { return item_info; }
+	class UButton* GetButton_item() { return Button_item; }
 	class UImage* GetImage_button() { return Image_button; };
 	class UTexture2D* GetHoveredImage() { return hoveredImage; };
 	class UTexture2D* GetDefaultImage() { return defaultImage; }
 
 	void SetUpButton(const struct FIteminfo* info);
-
-	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	virtual void NativeConstruct() override;
 };

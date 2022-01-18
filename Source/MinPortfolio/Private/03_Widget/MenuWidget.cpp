@@ -5,6 +5,8 @@
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "03_Widget/MainWidget.h"
+#include "03_Widget/01_Inventory/InventoryButtonWidget.h"
+#include "03_Widget/01_Inventory/InventoryPanelWidget.h"
 #include "03_Widget/01_Inventory/InventoryWidget.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
@@ -45,6 +47,7 @@ void UMenuWidget::NativeConstruct()
 void UMenuWidget::InventoryClick()
 {
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->OnInventoryWidget();
+	GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeUIOnly());
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->SetFocus();
 }
 

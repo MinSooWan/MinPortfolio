@@ -75,8 +75,9 @@ protected:
 		void ShowBattleItemEvent();
 
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+	virtual FReply NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
-	void SetItemInfo(FIteminfo* info);
+	void SetItemInfo(const FIteminfo* info);
 
 	FString GetAddOptionDescription_Equipment(EAddOptionsType_Equipment option);
 	FString GetAddOptionDescription_Material(EAddOptionsType_Material option);
@@ -88,8 +89,12 @@ protected:
 
 	void PressedNextButton_Item();
 	void PressedPreviousButton_Item();
+	void PressedUpButton_Item();
+	void PressedDownButton_Item();
 
 public:
 	void OnInventoryWidget();
+
+	class UInventoryPanelWidget* GetInvnetoryPanel() { return UMG_InvnetoryPanel; };
 };
 

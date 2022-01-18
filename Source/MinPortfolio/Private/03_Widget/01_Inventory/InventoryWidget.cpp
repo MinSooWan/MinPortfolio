@@ -59,22 +59,51 @@ FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKey
 {
 	Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 
-	if(InKeyEvent.GetKey() == FKey("Gamepad_RightShoulder"))
+	if (InKeyEvent.GetKey() == FKey("Gamepad_RightShoulder"))
 	{
 		PressedNextButton_Type();
 		return FReply::Handled();
 	}
-	else if(InKeyEvent.GetKey() == FKey("Gamepad_LeftShoulder"))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_LeftShoulder"))
 	{
 		PressedPreviousButton_Type();
 		return FReply::Handled();
 	}
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Right"))
+	{
+		PressedNextButton_Item();
+		return FReply::Handled();
+	}
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Left"))
+	{
+		PressedPreviousButton_Item();
+		return FReply::Handled();
+	}
+	else if(InKeyEvent.GetKey() == FKey("Gamepad_DPad_Up"))
+	{
+		PressedUpButton_Item();
+	}
+	else if(InKeyEvent.GetKey() == FKey("Gamepad_DPad_Down"))
+	{
+		PressedDownButton_Item();
+	}
 	return FReply::Handled();
 }
 
-void UInventoryWidget::SetItemInfo(FIteminfo* info)
+FReply UInventoryWidget::NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
-	
+	Super::NativeOnKeyUp(InGeometry, InKeyEvent);
+
+	if(InKeyEvent.GetKey() == FKey("Gamepad_FaceButton_Bottom"))
+	{
+		nowItemButton->GetButton_item()->OnReleased.Broadcast();
+	}
+
+	return FReply::Handled();
+}
+
+void UInventoryWidget::SetItemInfo(const FIteminfo* info)
+{
 	TextBlock_ItemName->SetText(FText::FromName(info->item_Name));
 
 	FString str = "";
@@ -108,34 +137,42 @@ void UInventoryWidget::SetItemInfo(FIteminfo* info)
 	switch (info->item_Type)
 	{
 	case EItemType::EQUIPMENT:
-		
-		for(auto iter : ((FEquipment*)(info))->addOption)
-		{
-			str += GetAddOptionDescription_Equipment(iter) + "\n";
+
+		if (((FEquipment*)(info))->addOption.Num() != 0) {
+			for (auto iter : ((FEquipment*)(info))->addOption)
+			{
+				str += GetAddOptionDescription_Equipment(iter) + "\n";
+			}
 		}
 		break;
 
 	case EItemType::BATTLE_ITEM:
 		if (((FBattleItem*)(info))->battleItemType == EBattleItemType::BATTLE_CONSUME) {
-			for (auto iter : ((FBattle_Consume*)(info))->addOption)
-			{
-				str += GetAddOptionDescription_BattleItem(iter) + "\n";
+			if (((FBattle_Consume*)(info))->addOption.Num() != 0) {
+				for (auto iter : ((FBattle_Consume*)(info))->addOption)
+				{
+					str += GetAddOptionDescription_BattleItem(iter) + "\n";
+				}
 			}
 		}
 		else
 		{
-			for (auto iter : ((FRecovery_Consume*)(info))->addOption)
-			{
-				str += GetAddOptionDescription_RecoveryItem(iter) + "\n";
+			if (((FRecovery_Consume*)(info))->addOption.Num() != 0) {
+				for (auto iter : ((FRecovery_Consume*)(info))->addOption)
+				{
+					str += GetAddOptionDescription_RecoveryItem(iter) + "\n";
+				}
 			}
 		}
 		break;
 
 	case EItemType::MATERIAL:
 
-		for (auto iter : ((FItemMaterial*)(info))->addOption)
-		{
-			str += GetAddOptionDescription_Material(iter) + "\n";
+		if (((FItemMaterial*)(info))->addOption.Num() != 0) {
+			for (auto iter : ((FItemMaterial*)(info))->addOption)
+			{
+				str += GetAddOptionDescription_Material(iter) + "\n";
+			}
 		}
 		break;
 	}
@@ -297,6 +334,25 @@ void UInventoryWidget::PressedNextButton_Type()
 			break;
 		}
 	}
+
+	if (UMG_InvnetoryPanel->GetButtons().Num() != 0) {
+		nowItemButton = UMG_InvnetoryPanel->GetButtons()[0];
+		previousItemButton = UMG_InvnetoryPanel->GetButtons().Last();
+		nowItemButton->GetButton_item()->OnHovered.Broadcast();
+
+		if (UMG_InvnetoryPanel->GetButtons().Num() >= 2) {
+			nextItemButton = UMG_InvnetoryPanel->GetButtons()[1];
+		}
+		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
+		//SetItemInfo(temp);
+	}
+	else
+	{
+		TextBlock_ItemName->SetText(FText::FromString(""));
+		TextBlock_ItemStat->SetText(FText::FromString(""));
+		TextBlock_Description->SetText(FText::FromString(""));
+		TextBlock_AddOption->SetText(FText::FromString(""));
+	}
 }
 
 void UInventoryWidget::PressedPreviousButton_Type()
@@ -324,59 +380,173 @@ void UInventoryWidget::PressedPreviousButton_Type()
 			break;
 		}
 	}
+
+	if (UMG_InvnetoryPanel->GetButtons().Num() != 0) {
+		nowItemButton = UMG_InvnetoryPanel->GetButtons()[0];
+		previousItemButton = UMG_InvnetoryPanel->GetButtons().Last();
+		nowItemButton->GetButton_item()->OnHovered.Broadcast();
+
+		if (UMG_InvnetoryPanel->GetButtons().Num() >= 2) {
+			nextItemButton = UMG_InvnetoryPanel->GetButtons()[1];
+		}
+		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
+		//SetItemInfo(temp);
+	}
+	else
+	{
+		TextBlock_ItemName->SetText(FText::FromString(""));
+		TextBlock_ItemStat->SetText(FText::FromString(""));
+		TextBlock_Description->SetText(FText::FromString(""));
+		TextBlock_AddOption->SetText(FText::FromString(""));
+	}
 }
 
 void UInventoryWidget::PressedNextButton_Item()
 {
-	nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
-	previousItemButton = nowItemButton;
-	nowItemButton = nextItemButton;
+	if (UMG_InvnetoryPanel->GetButtons().Num() >= 1) {
+		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		previousItemButton = nowItemButton;
+		nowItemButton = nextItemButton;
 
-	for (int i = 0; i < UMG_InvnetoryPanel->GetButtons().Num(); i++)
-	{
-		auto iter = UMG_InvnetoryPanel->GetButtons()[i];
-
-		if (iter == nowItemButton)
+		int32 index = UMG_InvnetoryPanel->GetButtons().Find(nowItemButton);
+		if(index != UMG_InvnetoryPanel->GetButtons().Find(GetInvnetoryPanel()->GetButtons().Last()))
 		{
-			if (i == UMG_InvnetoryPanel->GetButtons().Num() - 1)
-			{
-				nextItemButton = UMG_InvnetoryPanel->GetButtons()[0];
-			}
-			else
-			{
-				nextItemButton = UMG_InvnetoryPanel->GetButtons()[i + 1];
-			}
-			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
-			nowItemButton->SetFocus();
-			break;
+			nextItemButton = UMG_InvnetoryPanel->GetButtons()[index + 1];
 		}
+		else
+		{
+			nextItemButton = UMG_InvnetoryPanel->GetButtons()[0];
+		}
+
+		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
+		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
+		//SetItemInfo(temp);
 	}
 }
 
 void UInventoryWidget::PressedPreviousButton_Item()
 {
-	nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
-	nextItemButton = nowItemButton;
-	nowItemButton = previousItemButton;
+	if (UMG_InvnetoryPanel->GetButtons().Num() >= 1) {
+		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		nextItemButton = nowItemButton;
+		nowItemButton = previousItemButton;
 
-	for (int i = 0; i < UMG_InvnetoryPanel->GetButtons().Num(); i++)
-	{
-		auto iter = UMG_InvnetoryPanel->GetButtons()[i];
-
-		if (iter == nowItemButton)
+		int32 index = UMG_InvnetoryPanel->GetButtons().Find(nowItemButton);
+		if(index != 0)
 		{
-			if (i == 0)
+			previousItemButton = UMG_InvnetoryPanel->GetButtons()[index - 1];
+		}
+		else
+		{
+			previousItemButton = UMG_InvnetoryPanel->GetButtons().Last();
+		}
+
+		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
+		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
+		//SetItemInfo(temp);
+	}
+}
+
+void UInventoryWidget::PressedUpButton_Item()
+{
+	if (UMG_InvnetoryPanel->GetButtons().Num() >= 7) {
+		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+
+		//현재 아이템 버튼을 설정
+		if(UMG_InvnetoryPanel->GetButtons().Find(nowItemButton) >= 6)
+		{
+			auto tempButton = UMG_InvnetoryPanel->GetButtons()[UMG_InvnetoryPanel->GetButtons().Find(nowItemButton) - 6];
+			nowItemButton = tempButton;
+		}
+		else
+		{
+			int32 index = (UMG_InvnetoryPanel->GetButtons().Find(UMG_InvnetoryPanel->GetButtons().Last()) / 6) * 6 + UMG_InvnetoryPanel->GetButtons().Find(nowItemButton);
+
+			if(index > UMG_InvnetoryPanel->GetButtons().Find(UMG_InvnetoryPanel->GetButtons().Last()))
 			{
-				previousItemButton = UMG_InvnetoryPanel->GetButtons()[UMG_InvnetoryPanel->GetButtons().Num() - 1];
+				nowItemButton = UMG_InvnetoryPanel->GetButtons().Last();
 			}
 			else
 			{
-				previousItemButton = UMG_InvnetoryPanel->GetButtons()[i - 1];
+				nowItemButton = UMG_InvnetoryPanel->GetButtons()[index];
 			}
-			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
-			nowItemButton->SetFocus();
-			break;
 		}
+
+		//이전 아이템 버튼을 설정
+		int32 index = UMG_InvnetoryPanel->GetButtons().Find(nowItemButton);
+		if(index != 0)
+		{
+			previousItemButton = UMG_InvnetoryPanel->GetButtons()[index - 1];
+		}
+		else
+		{
+			previousItemButton = UMG_InvnetoryPanel->GetButtons()[UMG_InvnetoryPanel->GetButtons().Find(UMG_InvnetoryPanel->GetButtons().Last())];
+		}
+
+		//다음 아이템 버튼을 설정
+		if(index != UMG_InvnetoryPanel->GetButtons().Find(UMG_InvnetoryPanel->GetButtons().Last()))
+		{
+			nextItemButton = UMG_InvnetoryPanel->GetButtons()[index + 1];
+		}
+		else
+		{
+			nextItemButton = UMG_InvnetoryPanel->GetButtons()[0];
+		}
+
+		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
+		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
+		//SetItemInfo(temp);
+	}
+}
+
+void UInventoryWidget::PressedDownButton_Item()
+{
+	if (UMG_InvnetoryPanel->GetButtons().Num() >= 7) {
+		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+
+		int32 index = UMG_InvnetoryPanel->GetButtons().Find(nowItemButton);
+		int32 lastIndex = UMG_InvnetoryPanel->GetButtons().Find(UMG_InvnetoryPanel->GetButtons().Last());
+		//현재 아이템 버튼을 설정
+		if(index < lastIndex - (lastIndex % 6))
+		{
+			if(index + 6 <= lastIndex)
+			{
+				nowItemButton = UMG_InvnetoryPanel->GetButtons()[index + 6];
+			}
+			else
+			{
+				nowItemButton = UMG_InvnetoryPanel->GetButtons().Last();
+			}
+		}
+		else
+		{
+			nowItemButton = UMG_InvnetoryPanel->GetButtons()[index - (lastIndex / 6) * 6];
+		}
+
+		//이전 아이템 버튼을 설정
+		index = UMG_InvnetoryPanel->GetButtons().Find(nowItemButton);
+		if (index != 0)
+		{
+			previousItemButton = UMG_InvnetoryPanel->GetButtons()[index - 1];
+		}
+		else
+		{
+			previousItemButton = UMG_InvnetoryPanel->GetButtons()[lastIndex];
+		}
+
+		//다음 아이템 버튼을 설정
+		if (index != lastIndex)
+		{
+			nextItemButton = UMG_InvnetoryPanel->GetButtons()[index + 1];
+		}
+		else
+		{
+			nextItemButton = UMG_InvnetoryPanel->GetButtons()[0];
+		}
+
+		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
+		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
+		//SetItemInfo(temp);
 	}
 }
 
@@ -387,12 +557,17 @@ void UInventoryWidget::OnInventoryWidget()
 	previousTypeButton = Button_BattleItem;
 	nextTypeButton = Button_Equipment;
 	nowTypeButton = Button_All;
+	nowTypeButton->WidgetStyle.Normal.SetResourceObject(hoveredImage);
 
 	if (UMG_InvnetoryPanel->GetButtons().Num() != 0) {
 		nowItemButton = UMG_InvnetoryPanel->GetButtons()[0];
 		previousItemButton = UMG_InvnetoryPanel->GetButtons().Last();
+		nowItemButton->GetButton_item()->OnHovered.Broadcast();
+
 		if (UMG_InvnetoryPanel->GetButtons().Num() >= 2) {
 			nextItemButton = UMG_InvnetoryPanel->GetButtons()[1];
 		}
+		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
+		//SetItemInfo(temp);
 	}
 }

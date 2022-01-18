@@ -46,6 +46,7 @@ void UInventoryPanelWidget::ShowAll(UInventoryComponent* inventoryComp)
 		const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
 		button->SetUpButton(info);
 		button->SetPadding(30);
+		button->bIsFocusable = true;
 
 		horizontalBox->GetHorizontar()->AddChild(button);
 		//Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
@@ -65,23 +66,24 @@ void UInventoryPanelWidget::ShowEquipment(UInventoryComponent* inventoryComp)
 
 	int32 index = 0;
 
-	UHorizontalBox* horizontalBox = nullptr;
+	UInvnetoryPanelPartsWidget* horizontalBox = nullptr;
 	for (auto iter : inven)
 	{
 		if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Type == EItemType::EQUIPMENT) {
 			if (index % 6 == 0)
 			{
-				horizontalBox = NewObject<UHorizontalBox>();
+				horizontalBox = CreateWidget<UInvnetoryPanelPartsWidget>(GetOwningPlayer(), horizontalBoxClass);
 				Vertical_Inventory->AddChild(horizontalBox);
 			}
-			auto button = NewObject<UInventoryButtonWidget>();
+			auto button = CreateWidget<UInventoryButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
 			button->SetUpButton(info);
 			button->SetPadding(30);
+			button->bIsFocusable = true;
 
-			horizontalBox->AddChild(button);
-			Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
+			horizontalBox->GetHorizontar()->AddChild(button);
+			//Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
 
 			buttons.Add(button);
 
@@ -99,23 +101,24 @@ void UInventoryPanelWidget::ShowMaterial(UInventoryComponent* inventoryComp)
 
 	int32 index = 0;
 
-	UHorizontalBox* horizontalBox = nullptr;
+	UInvnetoryPanelPartsWidget* horizontalBox = nullptr;
 	for (auto iter : inven)
 	{
 		if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Type == EItemType::MATERIAL) {
 			if (index % 6 == 0)
 			{
-				horizontalBox = NewObject<UHorizontalBox>();
+				horizontalBox = CreateWidget<UInvnetoryPanelPartsWidget>(GetOwningPlayer(), horizontalBoxClass);
 				Vertical_Inventory->AddChild(horizontalBox);
 			}
-			auto button = NewObject<UInventoryButtonWidget>();
+			auto button = CreateWidget<UInventoryButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
 			button->SetUpButton(info);
 			button->SetPadding(30);
+			button->bIsFocusable = true;
 
-			horizontalBox->AddChild(button);
-			Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
+			horizontalBox->GetHorizontar()->AddChild(button);
+			//Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
 
 			buttons.Add(button);
 
@@ -133,23 +136,24 @@ void UInventoryPanelWidget::ShowTool(UInventoryComponent* inventoryComp)
 
 	int32 index = 0;
 
-	UHorizontalBox* horizontalBox = nullptr;
+	UInvnetoryPanelPartsWidget* horizontalBox = nullptr;
 	for (auto iter : inven)
 	{
 		if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Type == EItemType::GATHERING_TOOL) {
 			if (index % 6 == 0)
 			{
-				horizontalBox = NewObject<UHorizontalBox>();
+				horizontalBox = CreateWidget<UInvnetoryPanelPartsWidget>(GetOwningPlayer(), horizontalBoxClass);
 				Vertical_Inventory->AddChild(horizontalBox);
 			}
-			auto button = NewObject<UInventoryButtonWidget>();
+			auto button = CreateWidget<UInventoryButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
 			button->SetUpButton(info);
 			button->SetPadding(30);
+			button->bIsFocusable = true;
 
-			horizontalBox->AddChild(button);
-			Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
+			horizontalBox->GetHorizontar()->AddChild(button);
+			//Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
 
 			buttons.Add(button);
 
@@ -167,23 +171,24 @@ void UInventoryPanelWidget::ShowBattleItem(UInventoryComponent* inventoryComp)
 
 	int32 index = 0;
 
-	UHorizontalBox* horizontalBox = nullptr;
+	UInvnetoryPanelPartsWidget* horizontalBox = nullptr;
 	for (auto iter : inven)
 	{
 		if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Type == EItemType::BATTLE_ITEM) {
 			if (index % 6 == 0)
 			{
-				horizontalBox = NewObject<UHorizontalBox>();
+				horizontalBox = CreateWidget<UInvnetoryPanelPartsWidget>(GetOwningPlayer(), horizontalBoxClass);
 				Vertical_Inventory->AddChild(horizontalBox);
 			}
-			auto button = NewObject<UInventoryButtonWidget>();
+			auto button = CreateWidget<UInventoryButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
 			button->SetUpButton(info);
 			button->SetPadding(30);
+			button->bIsFocusable = true;
 
-			horizontalBox->AddChild(button);
-			Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
+			horizontalBox->GetHorizontar()->AddChild(button);
+			//Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
 
 			buttons.Add(button);
 
