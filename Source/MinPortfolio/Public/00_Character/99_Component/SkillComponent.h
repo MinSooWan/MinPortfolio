@@ -3,25 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "04_Skill/SkillInfomation.h"
 #include "Components/ActorComponent.h"
 #include "SkillComponent.generated.h"
-
-USTRUCT()
-struct FSkill
-{
-	GENERATED_BODY()
-
-public:
-	TArray<FSkill*> child_skills;
-
-	UPROPERTY()
-		FName skill_Name = NAME_None;
-
-	UPROPERTY()
-		int32 needPoint = 0;
-
-
-};
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -37,9 +21,12 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+		TArray<FSkill> skills;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+	TArray<FSkill> GetSkills() { return skills; }
 };
