@@ -5,6 +5,8 @@
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "03_Widget/MenuWidget.h"
 #include "Components/Button.h"
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
 
 void UMainWidget::NativeConstruct()
 {
@@ -16,7 +18,7 @@ void UMainWidget::NativeConstruct()
 void UMainWidget::OnMenuWidgetEvent()
 {
 	GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeUIOnly());
-	UMG_MenuWidget->SetVisibility(ESlateVisibility::Visible);
-	UMG_MenuWidget->GetInventoryButton()->OnHovered.Broadcast();
-	UMG_MenuWidget->GetInventoryButton()->SetFocus();
+	UMG_MenuWidget->OnMenuWidget();
+	UMG_MenuWidget->GetTextBlock_MenuName()->SetText(FText::FromString(TEXT("Menu")));
+	Image_BackGround->SetVisibility(ESlateVisibility::Visible);
 }

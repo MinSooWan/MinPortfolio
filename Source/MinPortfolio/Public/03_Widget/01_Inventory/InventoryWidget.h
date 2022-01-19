@@ -81,6 +81,29 @@ protected:
 	UFUNCTION()
 		void ShowBattleItemEvent();
 
+	UFUNCTION()
+		void AllHovered();
+	UFUNCTION()
+		void EquipmentHovered();
+	UFUNCTION()
+		void MaterialHovered();
+	UFUNCTION()
+		void ToolHovered();
+	UFUNCTION()
+		void BattleItemHovered();
+
+	UFUNCTION()
+		void AllUnhovered();
+	UFUNCTION()
+		void EquipmentUnhovered();
+	UFUNCTION()
+		void MaterialUnhovered();
+	UFUNCTION()
+		void ToolUnhovered();
+	UFUNCTION()
+		void BattleItemUnhovered();
+
+
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 	virtual FReply NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
@@ -105,5 +128,6 @@ public:
 	void OnInventoryWidget();
 
 	class UInventoryPanelWidget* GetInvnetoryPanel() { return UMG_InvnetoryPanel; };
+
 };
 

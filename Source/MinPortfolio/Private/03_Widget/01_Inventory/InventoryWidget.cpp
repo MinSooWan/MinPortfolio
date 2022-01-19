@@ -11,6 +11,7 @@
 #include "03_Widget/MainWidget.h"
 #include "03_Widget/MenuWidget.h"
 #include "03_Widget/01_Inventory/InventoryButtonWidget.h"
+#include "Components/BackgroundBlur.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
@@ -24,6 +25,18 @@ void UInventoryWidget::NativeConstruct()
 	Button_Tool->OnClicked.AddDynamic(this, &UInventoryWidget::ShowToolEvent);
 	Button_BattleItem->OnClicked.AddDynamic(this, &UInventoryWidget::ShowBattleItemEvent);
 
+	Button_All->OnHovered.AddDynamic(this, &UInventoryWidget::AllHovered);
+	Button_Equipment->OnHovered.AddDynamic(this, &UInventoryWidget::EquipmentHovered);
+	Button_Material->OnHovered.AddDynamic(this, &UInventoryWidget::MaterialHovered);
+	Button_Tool->OnHovered.AddDynamic(this, &UInventoryWidget::ToolHovered);
+	Button_BattleItem->OnHovered.AddDynamic(this, &UInventoryWidget::BattleItemHovered);
+
+	Button_All->OnUnhovered.AddDynamic(this, &UInventoryWidget::AllUnhovered);
+	Button_Equipment->OnUnhovered.AddDynamic(this, &UInventoryWidget::EquipmentUnhovered);
+	Button_Material->OnUnhovered.AddDynamic(this, &UInventoryWidget::MaterialUnhovered);
+	Button_Tool->OnUnhovered.AddDynamic(this, &UInventoryWidget::ToolUnhovered);
+	Button_BattleItem->OnUnhovered.AddDynamic(this, &UInventoryWidget::BattleItemUnhovered);
+
 	typeButtons.Emplace(Button_All);
 	typeButtons.Emplace(Button_Equipment);
 	typeButtons.Emplace(Button_Material);
@@ -35,27 +48,144 @@ void UInventoryWidget::NativeConstruct()
 
 void UInventoryWidget::ShowAllEvent()
 {
+	for (auto iter : typeButtons)
+	{
+		iter->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
 	UMG_InvnetoryPanel->ShowAll(GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp());
+	Button_All->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+
+	previousTypeButton = Button_BattleItem;
+	nextTypeButton = Button_Equipment;
+	nowTypeButton = Button_All;
+
+	SetFocus();
 }
 
 void UInventoryWidget::ShowEquipmentEvent()
 {
+	for (auto iter : typeButtons)
+	{
+		iter->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
 	UMG_InvnetoryPanel->ShowEquipment(GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp());
+	Button_Equipment->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+
+	previousTypeButton = Button_All;
+	nextTypeButton = Button_Material;
+	nowTypeButton = Button_Equipment;
+
+	SetFocus();
 }
 
 void UInventoryWidget::ShowMaterialEvent()
 {
+	for (auto iter : typeButtons)
+	{
+		iter->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
 	UMG_InvnetoryPanel->ShowMaterial(GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp());
+	Button_Material->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+
+	previousTypeButton = Button_Equipment;
+	nextTypeButton = Button_Tool;
+	nowTypeButton = Button_Material;
+
+	SetFocus();
 }
 
 void UInventoryWidget::ShowToolEvent()
 {
+	for (auto iter : typeButtons)
+	{
+		iter->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
 	UMG_InvnetoryPanel->ShowTool(GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp());
+	Button_Tool->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+
+	previousTypeButton = Button_Material;
+	nextTypeButton = Button_BattleItem;
+	nowTypeButton = Button_Tool;
+
+	SetFocus();
 }
 
 void UInventoryWidget::ShowBattleItemEvent()
 {
+	for (auto iter : typeButtons)
+	{
+		iter->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
 	UMG_InvnetoryPanel->ShowBattleItem(GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp());
+	Button_BattleItem->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+
+	previousTypeButton = Button_Tool;
+	nextTypeButton = Button_All;
+	nowTypeButton = Button_BattleItem;
+
+	SetFocus();
+}
+
+//Hovered
+void UInventoryWidget::AllHovered()
+{
+	Button_All->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+}
+
+void UInventoryWidget::EquipmentHovered()
+{
+	Button_Equipment->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+}
+
+void UInventoryWidget::MaterialHovered()
+{
+	Button_Material->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+}
+
+void UInventoryWidget::ToolHovered()
+{
+	Button_Tool->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+}
+
+void UInventoryWidget::BattleItemHovered()
+{
+	Button_BattleItem->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+}
+
+//UnHovered
+void UInventoryWidget::AllUnhovered()
+{
+	if (nowTypeButton != Button_All) {
+		Button_All->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
+}
+
+void UInventoryWidget::EquipmentUnhovered()
+{
+	if (nowTypeButton != Button_Equipment) {
+		Button_Equipment->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
+}
+
+void UInventoryWidget::MaterialUnhovered()
+{
+	if (nowTypeButton != Button_Material) {
+		Button_Material->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
+}
+
+void UInventoryWidget::ToolUnhovered()
+{
+	if (nowTypeButton != Button_Tool) {
+		Button_Tool->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
+}
+
+void UInventoryWidget::BattleItemUnhovered()
+{
+	if (nowTypeButton != Button_BattleItem) {
+		Button_BattleItem->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
 }
 
 FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
@@ -100,11 +230,28 @@ FReply UInventoryWidget::NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEv
 	//EKeys::Daydream_Right_Trackpad_Y
 	if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Bottom))
 	{
-		nowItemButton->GetButton_item()->OnReleased.Broadcast();
+		if (nowItemButton != nullptr) {
+			if(nowItemButton->item_info->item_Type != EItemType::MATERIAL)
+			{
+				if (nowItemButton->item_info->item_Type != EItemType::BATTLE_ITEM) {
+					nowItemButton->GetButton_item()->OnReleased.Broadcast();
+				}
+				else
+				{
+					if(((FBattleItem*)(nowItemButton->item_info))->battleItemType == EBattleItemType::RECOVERY_CONSUME)
+					{
+						nowItemButton->GetButton_item()->OnReleased.Broadcast();
+					}
+				}
+			}
+		}
 	}
 	else if (InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Right))
 	{
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetFocus();
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackgroundBlur_Image()->SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetVisibility(ESlateVisibility::Visible);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetTextBlock_MenuName()->SetText(FText::FromString(TEXT("Menu")));
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetInventoryButton()->SetFocus();
 		SetVisibility(ESlateVisibility::Hidden);
 	}
 	return FReply::Handled();
@@ -572,12 +719,10 @@ class UTexture2D* UInventoryWidget::SetItemTypeImage(EItemType type)
 
 void UInventoryWidget::OnInventoryWidget()
 {
+	
 	SetVisibility(ESlateVisibility::Visible);
 	ShowAllEvent();
-	previousTypeButton = Button_BattleItem;
-	nextTypeButton = Button_Equipment;
-	nowTypeButton = Button_All;
-	nowTypeButton->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+
 
 	if (UMG_InvnetoryPanel->GetButtons().Num() != 0) {
 		nowItemButton = UMG_InvnetoryPanel->GetButtons()[0];

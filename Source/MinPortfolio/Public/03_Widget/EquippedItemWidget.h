@@ -23,5 +23,6 @@ protected:
 
 	virtual void NativeConstruct() override;
 
+public:
 	void InitImage();
 };

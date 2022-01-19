@@ -37,6 +37,7 @@ public:
 
 	AMaterialBaseActor();
 
+	class UStaticMeshComponent* GetStaticMesh() { return materialMesh; };
 	class USphereComponent* GetSphereComp() { return sphereComp; }
 	class UWidgetComponent* GetPickUpWidget() { return pickUpWidgetComp; }
 	class UAnimMontage* GetPickUpMontage() { return pickUpMontage; }

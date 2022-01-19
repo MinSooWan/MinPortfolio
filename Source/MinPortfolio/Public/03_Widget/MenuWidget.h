@@ -50,6 +50,9 @@ protected:
 	UPROPERTY()
 		class UImage* Image_Quest;
 
+	UPROPERTY()
+		class UTextBlock* TextBlock_MenuName;
+
 	UFUNCTION()
 		void InventoryClick();
 	UFUNCTION()
@@ -82,7 +85,13 @@ protected:
 	void pressedPrevious();
 
 public:
+	void OnMenuWidget();
+
+	class UButton* GetSkillButton() { return Button_Skill; }
+	class UButton* GetEquipmentButton() { return Button_Equipment; }
+	class UButton* GetQuestButton() { return Button_Quest; }
 	class UButton* GetInventoryButton() { return Button_Inventory; }
+	class UTextBlock* GetTextBlock_MenuName() { return TextBlock_MenuName; };
 
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 };

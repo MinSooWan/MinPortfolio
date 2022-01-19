@@ -92,22 +92,24 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* in
 
 	if (weapon != nullptr) {
 
-		player->GetWeaponChildActor()->SetVisibility(true);
+		//player->GetWeaponChildActor()->SetVisibility(true);
 
 		player->GetEquipmentComp()->GetWeaponActor()->Destroy();
 
 		player->GetEquipmentComp()->SetWeaponActor(*info, item);
 		
-
+		
 		player->GetWeaponChildActor()->AttachToComponent(player->GetMesh(),
 			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true),
 			SocketName);
-
+		
 		player->GetWeaponChildActor()->SetChildActorClass(info->itemActorClass);
 		player->GetEquipmentComp()->SetWeaponActor(*info, Cast<AItemActor>(player->GetWeaponChildActor()->GetChildActor()));
 		Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);
 
-		player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
+		player->GetWeaponChildActor()->SetVisibility(false);
+
+		//player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 		AddStat(player, info->equipmentStat);
 
 		player->SetWeaponEquipped(true);
@@ -128,9 +130,9 @@ void AWeaponBaseActor::ItemChange_Default(APlayerCharacter* player, const FEquip
 		player->GetEquipmentComp()->SetWeaponActor(*info, player->GetEquipmentComp()->GetDefaultWeaponActor());
 
 		player->GetWeaponChildActor()->SetChildActorClass(info->itemActorClass);
-		Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);
+		//Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);
 
-		player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
+		//player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 
 		player->SetWeaponEquipped(false);
 	}

@@ -29,15 +29,25 @@ protected:
 	UPROPERTY()
 		class UUseItemCheckWidget* UMG_UseItemCheck;
 
+	UPROPERTY()
+		class UImage* Image_BackGround;
+
+	UPROPERTY()
+		class UBackgroundBlur* BackgroundBlur_Image;
+
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
 		void OnMenuWidgetEvent();
 
 public:
+	class UEquippedItemWidget* GetEquippedItemWidget() { return UMG_EquippedItem; };
+	class UBackgroundBlur* GetBackgroundBlur_Image() { return BackgroundBlur_Image; };
+	class UImage* GetBackGroundImage() { return Image_BackGround; };
 	class UUseItemCheckWidget* GetCheckWidget() { return UMG_UseItemCheck; }
 	class UMenuWidget* GetMenuWidget() { return UMG_MenuWidget; }
 	class UInventoryWidget* GetInventoryWidget() { return UMG_InventoryWidget; }
+
 	
 	FOnMenuWidget OnMenuWidget;
 };

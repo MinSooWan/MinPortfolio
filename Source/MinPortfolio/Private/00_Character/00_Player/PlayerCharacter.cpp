@@ -210,6 +210,7 @@ void APlayerCharacter::SetActionState(const EActionState state)
 
 					auto temp = overlapMaterial;
 					Cast<AMaterialBaseActor>(overlapMaterial)->GetSphereComp()->SetCollisionProfileName(TEXT("NoCollision"));
+					
 
 					FTimerDelegate timeDel;
 					timeDel.BindUFunction(this, FName("OnEndAnimation"), temp, TempAction);
@@ -256,6 +257,7 @@ void APlayerCharacter::PostInitializeComponents()
 
 void APlayerCharacter::PresedRunStart()
 {
+	TempAction = EActionState::RUN;
 	if (actionState != EActionState::ATTACK && actionState != EActionState::JUMP && actionState != EActionState::ROLL) {
 		SetActionState(EActionState::RUN);
 	}
@@ -263,6 +265,7 @@ void APlayerCharacter::PresedRunStart()
 
 void APlayerCharacter::PresedRunStop()
 {
+	TempAction = EActionState::NORMAL;
 	if (actionState != EActionState::ATTACK && actionState != EActionState::JUMP && actionState != EActionState::ROLL) {
 		SetActionState(EActionState::NORMAL);
 	}
@@ -310,6 +313,10 @@ void APlayerCharacter::OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* O
 
 void APlayerCharacter::OnEndAnimation(AActor* temp, EActionState action)
 {
+	if(Cast<AMaterialBaseActor>(temp)->GetStaticMesh() != nullptr)
+	{
+		Cast<AMaterialBaseActor>(temp)->GetStaticMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+	}
 	inventoryComp->AddItem(temp);
 	overlapMaterial = nullptr;
 	SetActionState(action);

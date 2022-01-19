@@ -8,8 +8,10 @@
 #include "03_Widget/01_Inventory/InventoryButtonWidget.h"
 #include "03_Widget/01_Inventory/InventoryPanelWidget.h"
 #include "03_Widget/01_Inventory/InventoryWidget.h"
+#include "Components/BackgroundBlur.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 
 void UMenuWidget::NativeConstruct()
 {
@@ -46,6 +48,9 @@ void UMenuWidget::NativeConstruct()
 
 void UMenuWidget::InventoryClick()
 {
+	TextBlock_MenuName->SetText(FText::FromString(TEXT("Inventory")));
+	SetVisibility(ESlateVisibility::Hidden);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackgroundBlur_Image()->SetVisibility(ESlateVisibility::Visible);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->OnInventoryWidget();
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->SetFocus();
 }
@@ -163,6 +168,19 @@ void UMenuWidget::pressedPrevious()
 	}
 }
 
+void UMenuWidget::OnMenuWidget()
+{
+	previous_button = Button_Quest;
+	next_button = Button_Skill;
+	now_button = Button_Inventory;
+	Button_Equipment->OnUnhovered.Broadcast();
+	Button_Quest->OnUnhovered.Broadcast();
+	Button_Skill->OnUnhovered.Broadcast();
+	SetVisibility(ESlateVisibility::Visible);
+	Button_Inventory->OnHovered.Broadcast();
+	Button_Inventory->SetFocus();
+}
+
 FReply UMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	Super::NativeOnKeyDown(InGeometry, InKeyEvent);
@@ -191,6 +209,7 @@ FReply UMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 	{
 		GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeGameOnly());
 		SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackGroundImage()->SetVisibility(ESlateVisibility::Hidden);
 	}
 
 	return FReply::Handled();
