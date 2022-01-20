@@ -126,6 +126,8 @@ public:
 
 	class UToolComponent* GetToolComp() { return toolComp; }
 
+	class USkillComponent* GetSkillComp() { return skillComp; }
+
 	bool GetWeaponEquipped() { return bWeaponEquipped; }
 
 	void SetWeaponEquipped(bool value) { bWeaponEquipped = value; }

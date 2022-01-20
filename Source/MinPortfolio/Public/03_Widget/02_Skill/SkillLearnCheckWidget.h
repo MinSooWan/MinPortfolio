@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "04_Skill/SkillInfomation.h"
 #include "Blueprint/UserWidget.h"
-#include "SkillButtonWidget.generated.h"
+#include "SkillLearnCheckWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MINPORTFOLIO_API USkillButtonWidget : public UUserWidget
+class MINPORTFOLIO_API USkillLearnCheckWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
@@ -22,22 +22,25 @@ protected:
 		class UTexture2D* hoveredImage;
 
 	UPROPERTY()
-		class UButton* Button_Skill;
+		class UButton* nowButton;
 	UPROPERTY()
-		class UImage* Image_Skill;
+		class UButton* Button_Yes;
 	UPROPERTY()
-		FName skill_code;
-
-	const FSkill* skillInfo;
-
+		class UButton* Button_No;
+	
 public:
-	void SetSkillButton(const FSkill* skill_info);
+
+	const FSkill* skill_info;
+	virtual void NativeConstruct() override;
+
+	void ChangeNowButton();
 
 	UFUNCTION()
-		void SkillButtonUp();
+		void OnClickButton_Yes();
+	UFUNCTION()
+		void OnClickButton_No();
 
-	virtual void NativeConstruct() override;
 	virtual FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
-	virtual void NativeOnFocusLost(const FFocusEvent& InFocusEvent);
-};
 
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+};

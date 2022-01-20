@@ -35,6 +35,12 @@ protected:
 	UPROPERTY()
 		class UBackgroundBlur* BackgroundBlur_Image;
 
+	UPROPERTY()
+		class USkillLearnCheckWidget* UMG_SkillLearnCheck;
+
+	UPROPERTY()
+		class USkillMainWidget* UMG_skill;
+
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
@@ -47,7 +53,8 @@ public:
 	class UUseItemCheckWidget* GetCheckWidget() { return UMG_UseItemCheck; }
 	class UMenuWidget* GetMenuWidget() { return UMG_MenuWidget; }
 	class UInventoryWidget* GetInventoryWidget() { return UMG_InventoryWidget; }
-
+	class USkillLearnCheckWidget* GetSkillLearnCheck() { return UMG_SkillLearnCheck; }
+	class USkillMainWidget* GetSkillMainWidget() { return UMG_skill; }
 	
 	FOnMenuWidget OnMenuWidget;
 };

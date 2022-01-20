@@ -20,7 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class UDataTable* itemTable;
+		class UDataTable* SkillTable;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FName SkillCode;
@@ -46,8 +46,8 @@ public:
 template <typename T>
 inline const T* ASkillBaseActor::GetSkillInfo()
 {
-	if (itemTable != nullptr) {
-		return itemTable->FindRow<T>(SkillCode, "");
+	if (SkillTable != nullptr) {
+		return SkillTable->FindRow<T>(SkillCode, "");
 	}
 	return nullptr;
 }
