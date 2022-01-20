@@ -2,6 +2,9 @@
 
 
 #include "00_Character/99_Component/SkillComponent.h"
+#include "00_Character/00_Player/BaseCharacter.h"
+#include "00_Character/00_Player/PlayerCharacter.h"
+#include "04_Skill/SkillBaseActor.h"
 
 // Sets default values for this component's properties
 USkillComponent::USkillComponent()
@@ -30,5 +33,26 @@ void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void USkillComponent::AddSkill(AActor* skill)
+{
+	skills.Emplace(skill);
+	skill->SetActorHiddenInGame(true);
+}
+
+void USkillComponent::UseSkill(FName skillName)
+{
+	if(skillName != "")
+	{
+		for(auto iter : skills)
+		{
+			if(Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skill_Name.IsEqual(skillName))
+			{
+				Cast<ASkillBaseActor>(iter)->UseSkill(GetOwner<APlayerCharacter>());
+				break;
+			}
+		}
+	}
 }
 

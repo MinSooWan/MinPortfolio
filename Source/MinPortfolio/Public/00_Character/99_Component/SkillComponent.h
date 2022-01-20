@@ -22,11 +22,17 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY()
-		TArray<FSkill> skills;
+		TArray<AActor*> skills;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	TArray<FSkill> GetSkills() { return skills; }
+	TArray<AActor*> GetSkills() { return skills; }
+
+	UFUNCTION(BlueprintCallable)
+		void AddSkill(AActor* skill);
+
+	UFUNCTION(BlueprintCallable)
+		void UseSkill(FName skillName);
 };

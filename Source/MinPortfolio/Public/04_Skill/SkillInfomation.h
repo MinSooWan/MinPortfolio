@@ -13,7 +13,8 @@ enum class ESkillType : uint8
 {
 	ATTACK,
 	EFFECT,
-	HEAL
+	HEAL,
+	PASSIVE
 };
 
 UENUM(BlueprintType)
@@ -60,10 +61,16 @@ public:
 		TArray<FName> needSkills;
 
 	UPROPERTY(EditAnywhere)
-		EWeaponType needWeapon;
+		TArray<EWeaponType> needWeapon;
 
 	UPROPERTY(EditAnywhere)
 		ESkillType skillType;
+
+	UPROPERTY(EditAnywhere)
+		FString skill_description;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ASkillBaseActor> skillActorClass;
 };
 
 USTRUCT(BlueprintType)

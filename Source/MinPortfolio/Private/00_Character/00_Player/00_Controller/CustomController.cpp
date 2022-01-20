@@ -15,7 +15,6 @@ void ACustomController::OnPossess(APawn* aPawn)
 	APlayerCharacter* player = Cast<APlayerCharacter>(aPawn);
 
 	if (player != nullptr) {
-
 		mainWidget = CreateWidget<UMainWidget>(this, mainWidgetClass);
 		if (mainWidget != nullptr) {
 
@@ -23,6 +22,6 @@ void ACustomController::OnPossess(APawn* aPawn)
 			player->GetEquipmentComp()->EquipmentCompInit();
 
 			mainWidget->AddToViewport();
-		}
+		} 
 	}
 }

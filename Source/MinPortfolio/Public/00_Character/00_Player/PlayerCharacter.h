@@ -64,6 +64,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		class UToolComponent* toolComp;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+		class USkillComponent* skillComp;
+
 	UPROPERTY(VisibleAnywhere)
 		class UChildActorComponent* WeaponChild;
 	UPROPERTY(VisibleAnywhere)

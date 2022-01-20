@@ -17,6 +17,7 @@
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "01_Item/ItemType.h"
 #include "00_Character/99_Component/InventoryComponent.h"
+#include "00_Character/99_Component/SkillComponent.h"
 #include "01_Item/01_Material/MaterialBaseActor.h"
 #include "Components/WidgetComponent.h"
 #include "00_Character/99_Component/ToolComponent.h"
@@ -76,6 +77,8 @@ APlayerCharacter::APlayerCharacter()
 
 	ToolChild = CreateDefaultSubobject< UChildActorComponent>(TEXT("tool"));
 	ToolChild->SetupAttachment(GetMesh(), "hand_r_weapon");
+
+	skillComp = CreateDefaultSubobject<USkillComponent>(TEXT("skillComp"));
 }
 
 void APlayerCharacter::MoveForward(float Value)
