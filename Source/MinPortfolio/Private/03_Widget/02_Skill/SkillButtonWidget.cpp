@@ -7,6 +7,7 @@
 #include "00_Character/99_Component/SkillComponent.h"
 #include "03_Widget/MainWidget.h"
 #include "03_Widget/MenuWidget.h"
+#include "03_Widget/02_Skill/NeedSkillFalseWidget.h"
 #include "03_Widget/02_Skill/SkillInfoWidget.h"
 #include "03_Widget/02_Skill/SkillLearnCheckWidget.h"
 #include "03_Widget/02_Skill/SkillMainWidget.h"
@@ -30,8 +31,10 @@ void USkillButtonWidget::SkillButtonUp()
 		if(skillInfo->needSkills.Num() != 0)
 		{
 			bool bLearn = false;
+			FName needSkillName = NAME_None;
 			for(auto iter : skillInfo->needSkills)
 			{
+				needSkillName = iter;
 				for(auto info : GetOwningPlayerPawn<APlayerCharacter>()->GetSkillComp()->GetSkills())
 				{
 					if(Cast<ASkillBaseActor>(info)->GetSkillInfo<FSkill>()->skill_code.IsEqual(iter))
@@ -49,16 +52,23 @@ void USkillButtonWidget::SkillButtonUp()
 
 			if(bLearn == true)
 			{
+				UE_LOG(LogTemp, Log, TEXT("true Skill Learn"));
 				GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->skill_info = skillInfo;
 				GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetVisibility(ESlateVisibility::Visible);
 				GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetFocus();
+				return;
 			}
 			else
 			{
-				UE_LOG(LogTemp, Log, TEXT("False Skill Learn"));
+				GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSkillFalse()->OnNeedSkillFalse(needSkillName);
+				return;
 			}
 
 		}
+
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->skill_info = skillInfo;
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetVisibility(ESlateVisibility::Visible);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetFocus();
 	}
 }
 

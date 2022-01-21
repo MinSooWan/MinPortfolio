@@ -41,6 +41,9 @@ protected:
 	UPROPERTY()
 		class USkillMainWidget* UMG_skill;
 
+	UPROPERTY()
+		class UNeedSkillFalseWidget* UMG_NeedSkillFalse;
+
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
@@ -55,6 +58,7 @@ public:
 	class UInventoryWidget* GetInventoryWidget() { return UMG_InventoryWidget; }
 	class USkillLearnCheckWidget* GetSkillLearnCheck() { return UMG_SkillLearnCheck; }
 	class USkillMainWidget* GetSkillMainWidget() { return UMG_skill; }
-	
+	class UNeedSkillFalseWidget* GetNeedSkillFalse() { return UMG_NeedSkillFalse; }
+
 	FOnMenuWidget OnMenuWidget;
 };
