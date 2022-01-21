@@ -8,6 +8,7 @@
 #include "04_Skill/SkillBaseActor.h"
 #include "00_Character/99_Component/SkillComponent.h"
 #include "03_Widget/MainWidget.h"
+#include "03_Widget/02_Skill/SkillButtonWidget.h"
 #include "03_Widget/02_Skill/SkillMainWidget.h"
 #include "03_Widget/02_Skill/SkillTreeWidget.h"
 
@@ -36,20 +37,23 @@ void USkillLearnCheckWidget::ChangeNowButton()
 
 void USkillLearnCheckWidget::OnClickButton_Yes()
 {
+	SetVisibility(ESlateVisibility::Hidden);
 	auto spawnskill = GetWorld()->SpawnActor<ASkillBaseActor>(skill_info->skillActorClass);
 	GetOwningPlayerPawn<APlayerCharacter>()->GetSkillComp()->AddSkill(spawnskill);
-	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->SetVisibility(ESlateVisibility::Hidden);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->SetFocus();
 }
 
 void USkillLearnCheckWidget::OnClickButton_No()
 {
 	SetVisibility(ESlateVisibility::Hidden);
-	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetRootButton();
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->SetFocus();
 }
 
 FReply USkillLearnCheckWidget::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
 {
 	Super::NativeOnFocusReceived(InGeometry, InFocusEvent);
+	Button_Yes->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	Button_No->WidgetStyle.Normal.SetResourceObject(defaultImage);
 
 	nowButton = Button_Yes;
 	nowButton->WidgetStyle.Normal.SetResourceObject(hoveredImage);
@@ -72,6 +76,11 @@ FReply USkillLearnCheckWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Bottom))
 	{
 		nowButton->OnClicked.Broadcast();
+	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Right))
+	{
+		SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->SetFocus();
 	}
 
 	return FReply::Handled();

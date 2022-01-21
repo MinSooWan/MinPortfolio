@@ -33,13 +33,13 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-		void GetSkillInfo_Attack(FName skill_name, class USkillButtonWidget* widget);
+		void GetSkillInfo_Attack(FName skill_code, class USkillButtonWidget* widget);
 	UFUNCTION(BlueprintCallable)
-		void GetSkillInfo_Effect(FName skill_name, class USkillButtonWidget* widget);
+		void GetSkillInfo_Effect(FName skill_code, class USkillButtonWidget* widget);
 	UFUNCTION(BlueprintCallable)
-		void GetSkillInfo_Heal(FName skill_name, class USkillButtonWidget* widget);
+		void GetSkillInfo_Heal(FName skill_code, class USkillButtonWidget* widget);
 	UFUNCTION(BlueprintCallable)
-		void GetSkillInfo_Passive(FName skill_name, class USkillButtonWidget* widget);
+		void GetSkillInfo_Passive(FName skill_code, class USkillButtonWidget* widget);
 
 	class USkillButtonWidget* GetRootButton() { return UMG_Root; }
 

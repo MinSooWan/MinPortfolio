@@ -40,6 +40,9 @@ struct FSkill : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere)
+		FName skill_code = NAME_None;
+
+	UPROPERTY(EditAnywhere)
 		class UTexture2D* skill_icon;
 
 	UPROPERTY(EditAnywhere)
@@ -117,6 +120,19 @@ public:
 	FSkill_Heal()
 	{
 		skillType = ESkillType::HEAL;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FSkill_Passive : public FSkill
+{
+	GENERATED_BODY()
+
+public:
+
+	FSkill_Passive()
+	{
+		skillType = ESkillType::PASSIVE;
 	}
 };
 

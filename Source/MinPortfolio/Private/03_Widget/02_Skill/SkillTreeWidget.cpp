@@ -5,11 +5,11 @@
 
 #include "03_Widget/02_Skill/SkillButtonWidget.h"
 
-void USkillTreeWidget::GetSkillInfo_Attack(FName skill_name, USkillButtonWidget* widget)
+void USkillTreeWidget::GetSkillInfo_Attack(FName skill_code, USkillButtonWidget* widget)
 {
 	if(SkillAttackTable != nullptr)
 	{
-		auto info = SkillAttackTable->FindRow<FSkill>(skill_name,"");
+		auto info = SkillAttackTable->FindRow<FSkill>(skill_code,"");
 		if(info != nullptr)
 		{
 			widget->SetSkillButton(info);
@@ -18,11 +18,11 @@ void USkillTreeWidget::GetSkillInfo_Attack(FName skill_name, USkillButtonWidget*
 	
 }
 
-void USkillTreeWidget::GetSkillInfo_Effect(FName skill_name, USkillButtonWidget* widget)
+void USkillTreeWidget::GetSkillInfo_Effect(FName skill_code, USkillButtonWidget* widget)
 {
-	if (SkillAttackTable != nullptr)
+	if (SkillEffectTable != nullptr)
 	{
-		auto info = SkillAttackTable->FindRow<FSkill>(skill_name, "");
+		auto info = SkillEffectTable->FindRow<FSkill>(skill_code, "");
 		if (info != nullptr)
 		{
 			widget->SetSkillButton(info);
@@ -30,11 +30,11 @@ void USkillTreeWidget::GetSkillInfo_Effect(FName skill_name, USkillButtonWidget*
 	}
 }
 
-void USkillTreeWidget::GetSkillInfo_Heal(FName skill_name, USkillButtonWidget* widget)
+void USkillTreeWidget::GetSkillInfo_Heal(FName skill_code, USkillButtonWidget* widget)
 {
-	if (SkillAttackTable != nullptr)
+	if (SkillHealTable != nullptr)
 	{
-		auto info = SkillAttackTable->FindRow<FSkill>(skill_name, "");
+		auto info = SkillHealTable->FindRow<FSkill>(skill_code, "");
 		if (info != nullptr)
 		{
 			widget->SetSkillButton(info);
@@ -42,11 +42,11 @@ void USkillTreeWidget::GetSkillInfo_Heal(FName skill_name, USkillButtonWidget* w
 	}
 }
 
-void USkillTreeWidget::GetSkillInfo_Passive(FName skill_name, USkillButtonWidget* widget)
+void USkillTreeWidget::GetSkillInfo_Passive(FName skill_code, USkillButtonWidget* widget)
 {
-	if(SkillAttackTable != nullptr)
+	if(SkillPassiveTable != nullptr)
 	{
-		auto info = SkillAttackTable->FindRow<FSkill>(skill_name,"");
+		auto info = SkillPassiveTable->FindRow<FSkill>(skill_code,"");
 		if(info != nullptr)
 		{
 			widget->SetSkillButton(info);

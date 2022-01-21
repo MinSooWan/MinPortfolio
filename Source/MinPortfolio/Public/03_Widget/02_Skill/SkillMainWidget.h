@@ -22,6 +22,7 @@ protected:
 		class USkillTreeWidget* UMG_SkillTree;
 
 public:
+	virtual void NativeConstruct() override;
 
 	class USkillInfoWidget* GetSkillInfoWidget() { return UMG_SkillInfo; }
 	class USkillTreeWidget* GetSkillTreeWidget() { return UMG_SkillTree; }

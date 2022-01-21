@@ -41,13 +41,13 @@ void USkillComponent::AddSkill(AActor* skill)
 	skill->SetActorHiddenInGame(true);
 }
 
-void USkillComponent::UseSkill(FName skillName)
+void USkillComponent::UseSkill(FName skillCode)
 {
-	if(skillName != "")
+	if(skillCode != "")
 	{
 		for(auto iter : skills)
 		{
-			if(Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skill_Name.IsEqual(skillName))
+			if(Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skill_code.IsEqual(skillCode))
 			{
 				Cast<ASkillBaseActor>(iter)->UseSkill(GetOwner<APlayerCharacter>());
 				break;

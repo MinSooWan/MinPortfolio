@@ -8,10 +8,13 @@
 #include "03_Widget/01_Inventory/InventoryButtonWidget.h"
 #include "03_Widget/01_Inventory/InventoryPanelWidget.h"
 #include "03_Widget/01_Inventory/InventoryWidget.h"
+#include "03_Widget/02_Skill/SkillButtonWidget.h"
+#include "03_Widget/02_Skill/SkillMainWidget.h"
 #include "Components/BackgroundBlur.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "03_Widget/02_Skill/SkillTreeWidget.h"
 
 void UMenuWidget::NativeConstruct()
 {
@@ -57,6 +60,9 @@ void UMenuWidget::InventoryClick()
 
 void UMenuWidget::SkillClick()
 {
+	SetVisibility(ESlateVisibility::Hidden);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->SetVisibility(ESlateVisibility::Visible);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetRootButton()->SetFocus();
 }
 
 void UMenuWidget::EquipmentClick()

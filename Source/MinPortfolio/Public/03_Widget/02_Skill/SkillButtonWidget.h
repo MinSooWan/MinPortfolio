@@ -28,16 +28,24 @@ protected:
 	UPROPERTY()
 		FName skill_code;
 
+public:
 	const FSkill* skillInfo;
 
-public:
 	void SetSkillButton(const FSkill* skill_info);
+
+	class UButton* GetButton() { return Button_Skill; }
+	class UImage* GetImage_Skill() { return Image_Skill; }
 
 	UFUNCTION()
 		void SkillButtonUp();
+	UFUNCTION()
+		void SkillButtonHoveredEvent();
+	UFUNCTION()
+		void SkillButtonUnhoveredEvent();
 
 	virtual void NativeConstruct() override;
 	virtual FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
 	virtual void NativeOnFocusLost(const FFocusEvent& InFocusEvent);
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 };
 

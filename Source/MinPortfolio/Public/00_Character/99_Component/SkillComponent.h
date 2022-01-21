@@ -21,7 +21,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		TArray<AActor*> skills;
 
 public:	
@@ -34,5 +34,5 @@ public:
 		void AddSkill(AActor* skill);
 
 	UFUNCTION(BlueprintCallable)
-		void UseSkill(FName skillName);
+		void UseSkill(FName skillCode);
 };
