@@ -14,6 +14,15 @@ class MINPORTFOLIO_API ASkill_DoubleAttackActor : public ASkillAttackActor
 {
 	GENERATED_BODY()
 
+protected:
+
+	UPROPERTY(EditAnywhere)
+		class UAnimMontage* One_Hand_Montage;
+	UPROPERTY(EditAnywhere)
+		class UAnimMontage* Two_Hand_Montage;
+	UPROPERTY(EditAnywhere)
+		class UAnimMontage* Double_Sword_Montage;
+
 public:
 
 	virtual void UseSkill(class ABaseCharacter* target, class ABaseCharacter* owner) override;
