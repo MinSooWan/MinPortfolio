@@ -27,8 +27,16 @@ protected:
 		class UButton* Button_Yes;
 	UPROPERTY()
 		class UButton* Button_No;
-	
+
+	UPROPERTY()
+		class USkillButtonWidget* targetWidget;
+
+	UPROPERTY()
+		bool bOnLearnWidget = false;
 public:
+	bool GetOnLearnWidget() { return bOnLearnWidget; }
+
+	void SetTargetWidget(class USkillButtonWidget* target) { targetWidget = target; }
 
 	const FSkill* skill_info;
 	virtual void NativeConstruct() override;

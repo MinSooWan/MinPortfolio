@@ -3,7 +3,7 @@
 
 #include "04_Skill/03_Skill_Passive/SkillStatePossibilityUpActor.h"
 
-void ASkillStatePossibilityUpActor::UseSkill(ABaseCharacter* target)
+void ASkillStatePossibilityUpActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	Super::UseSkill(target);
+	Super::UseSkill(target, owner);
 }

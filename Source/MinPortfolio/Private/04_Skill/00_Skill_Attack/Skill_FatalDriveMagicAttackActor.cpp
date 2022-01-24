@@ -3,7 +3,7 @@
 
 #include "04_Skill/00_Skill_Attack/Skill_FatalDriveMagicAttackActor.h"
 
-void ASkill_FatalDriveMagicAttackActor::UseSkill(ABaseCharacter* target)
+void ASkill_FatalDriveMagicAttackActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	Super::UseSkill(target);
+	Super::UseSkill(target, owner);
 }

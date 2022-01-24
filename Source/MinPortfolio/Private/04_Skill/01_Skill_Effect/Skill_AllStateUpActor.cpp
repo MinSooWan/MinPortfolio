@@ -3,7 +3,7 @@
 
 #include "04_Skill/01_Skill_Effect/Skill_AllStateUpActor.h"
 
-void ASkill_AllStateUpActor::UseSkill(ABaseCharacter* target)
+void ASkill_AllStateUpActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	Super::UseSkill(target);
+	Super::UseSkill(target, owner);
 }

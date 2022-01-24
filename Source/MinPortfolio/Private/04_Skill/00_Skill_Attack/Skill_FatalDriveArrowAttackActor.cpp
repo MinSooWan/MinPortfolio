@@ -3,7 +3,12 @@
 
 #include "04_Skill/00_Skill_Attack/Skill_FatalDriveArrowAttackActor.h"
 
-void ASkill_FatalDriveArrowAttackActor::UseSkill(ABaseCharacter* target)
+#include "00_Character/00_Player/BaseCharacter.h"
+#include "04_Skill/SkillInfomation.h"
+
+void ASkill_FatalDriveArrowAttackActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	Super::UseSkill(target);
+	Super::UseSkill(target, owner);
+
+	owner->PlayAnimMontage(GetSkillInfo<FSkill>()->useSkillMontage);
 }

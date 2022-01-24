@@ -3,7 +3,7 @@
 
 #include "04_Skill/01_Skill_Effect/SkillEffectActor.h"
 
-void ASkillEffectActor::UseSkill(ABaseCharacter* target)
+void ASkillEffectActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	Super::UseSkill(target);
+	Super::UseSkill(target, owner);
 }

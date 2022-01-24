@@ -17,5 +17,5 @@ class MINPORTFOLIO_API ASkill_FatalDriveMagicAttackActor : public ASkillAttackAc
 
 public:
 
-	virtual void UseSkill(class ABaseCharacter* target) override;
+	virtual void UseSkill(class ABaseCharacter* target, ABaseCharacter* owner) override;
 };

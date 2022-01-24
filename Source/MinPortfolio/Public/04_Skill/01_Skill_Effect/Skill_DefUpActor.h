@@ -16,5 +16,5 @@ class MINPORTFOLIO_API ASkill_DefUpActor : public ASkillEffectActor
 
 public:
 
-	virtual void UseSkill(class ABaseCharacter* target) override;
+	virtual void UseSkill(class ABaseCharacter* target, class ABaseCharacter* owner) override;
 };

@@ -37,14 +37,17 @@ void USkillLearnCheckWidget::ChangeNowButton()
 
 void USkillLearnCheckWidget::OnClickButton_Yes()
 {
+	bOnLearnWidget = false;
 	SetVisibility(ESlateVisibility::Hidden);
 	auto spawnskill = GetWorld()->SpawnActor<ASkillBaseActor>(skill_info->skillActorClass);
 	GetOwningPlayerPawn<APlayerCharacter>()->GetSkillComp()->AddSkill(spawnskill);
+	targetWidget->AvailableSkill();
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->SetFocus();
 }
 
 void USkillLearnCheckWidget::OnClickButton_No()
 {
+	bOnLearnWidget = false;
 	SetVisibility(ESlateVisibility::Hidden);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->SetFocus();
 }
@@ -52,6 +55,8 @@ void USkillLearnCheckWidget::OnClickButton_No()
 FReply USkillLearnCheckWidget::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
 {
 	Super::NativeOnFocusReceived(InGeometry, InFocusEvent);
+
+	bOnLearnWidget = true;
 	Button_Yes->WidgetStyle.Normal.SetResourceObject(defaultImage);
 	Button_No->WidgetStyle.Normal.SetResourceObject(defaultImage);
 
@@ -80,6 +85,7 @@ FReply USkillLearnCheckWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Right))
 	{
 		SetVisibility(ESlateVisibility::Hidden);
+		bOnLearnWidget = false;
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->SetFocus();
 	}
 

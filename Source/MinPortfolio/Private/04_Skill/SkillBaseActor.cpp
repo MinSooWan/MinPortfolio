@@ -23,7 +23,7 @@ ASkillBaseActor::ASkillBaseActor()
 
 	ProjectilMovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComp"));
 
-	sphereComp->SetCollisionObjectType(ECC_GameTraceChannel6);
+	sphereComp->SetCollisionProfileName("Projectile");
 	sphereComp->SetNotifyRigidBodyCollision(true);
 
 	ProjectilMovementComp->ProjectileGravityScale = 0;
@@ -43,7 +43,7 @@ void ASkillBaseActor::Tick(float DeltaTime)
 
 }
 
-void ASkillBaseActor::UseSkill(ABaseCharacter* target)
+void ASkillBaseActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
 	
 }

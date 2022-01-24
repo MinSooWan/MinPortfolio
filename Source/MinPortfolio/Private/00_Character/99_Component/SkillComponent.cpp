@@ -38,6 +38,7 @@ void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 void USkillComponent::AddSkill(AActor* skill)
 {
 	skills.Emplace(skill);
+	skill_infos.Emplace(Cast<ASkillBaseActor>(skill)->GetSkillInfo<FSkill>()->skill_Name);
 	skill->SetActorHiddenInGame(true);
 }
 
@@ -45,12 +46,16 @@ void USkillComponent::UseSkill(FName skillCode)
 {
 	if(skillCode != "")
 	{
-		for(auto iter : skills)
-		{
-			if(Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skill_code.IsEqual(skillCode))
+		if (GetOwner<APlayerCharacter>()->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() == false) {
+			for (auto iter : skills)
 			{
-				Cast<ASkillBaseActor>(iter)->UseSkill(GetOwner<APlayerCharacter>());
-				break;
+				if (Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skill_code.IsEqual(skillCode))
+				{
+					if (GetOwner<APlayerCharacter>()->target != nullptr) {
+						Cast<ASkillBaseActor>(iter)->UseSkill(Cast<ABaseCharacter>(GetOwner<APlayerCharacter>()->target), GetOwner<APlayerCharacter>());
+						break;
+					}
+				}
 			}
 		}
 	}

@@ -3,7 +3,7 @@
 
 #include "04_Skill/03_Skill_Passive/Skill_ArmorDefUpActor.h"
 
-void ASkill_ArmorDefUpActor::UseSkill(ABaseCharacter* target)
+void ASkill_ArmorDefUpActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	Super::UseSkill(target);
+	Super::UseSkill(target, owner);
 }

@@ -130,7 +130,7 @@ void AWeaponBaseActor::ItemChange_Default(APlayerCharacter* player, const FEquip
 		player->GetEquipmentComp()->SetWeaponActor(*info, player->GetEquipmentComp()->GetDefaultWeaponActor());
 
 		player->GetWeaponChildActor()->SetChildActorClass(info->itemActorClass);
-		//Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);
+		Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);
 
 		//player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 

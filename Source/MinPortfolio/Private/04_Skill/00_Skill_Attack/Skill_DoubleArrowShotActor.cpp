@@ -3,8 +3,11 @@
 
 #include "04_Skill/00_Skill_Attack/Skill_DoubleArrowShotActor.h"
 
-void ASkill_DoubleArrowShotActor::UseSkill(ABaseCharacter* target)
-{
-	Super::UseSkill(target);
+#include "00_Character/00_Player/BaseCharacter.h"
+#include "04_Skill/SkillInfomation.h"
 
+void ASkill_DoubleArrowShotActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
+{
+	Super::UseSkill(target, owner);
+	owner->PlayAnimMontage(GetSkillInfo<FSkill>()->useSkillMontage);
 }

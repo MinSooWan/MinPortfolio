@@ -8,6 +8,7 @@
 #include "03_Widget/MainWidget.h"
 #include "03_Widget/MenuWidget.h"
 #include "03_Widget/02_Skill/NeedSkillFalseWidget.h"
+#include "03_Widget/02_Skill/NeedSpLackWidget.h"
 #include "03_Widget/02_Skill/SkillInfoWidget.h"
 #include "03_Widget/02_Skill/SkillLearnCheckWidget.h"
 #include "03_Widget/02_Skill/SkillMainWidget.h"
@@ -28,63 +29,40 @@ void USkillButtonWidget::SetSkillButton(const FSkill* skill_info)
 void USkillButtonWidget::SkillButtonUp()
 {
 	if (skillInfo != nullptr) {
-		if(skillInfo->needSkills.Num() != 0)
-		{
-			bool bLearn = false;
-			FName needSkillName = NAME_None;
-			for(auto iter : skillInfo->needSkills)
-			{
-				needSkillName = iter;
-				for(auto info : GetOwningPlayerPawn<APlayerCharacter>()->GetSkillComp()->GetSkills())
-				{
-					if(Cast<ASkillBaseActor>(info)->GetSkillInfo<FSkill>()->skill_code.IsEqual(iter))
-					{
-						bLearn = true;
-						break;
-					}
-					bLearn = false;
-				}
-				if(bLearn == false)
-				{
-					break;
-				}
+		if (Checking() == false) {
+			if (bAvailable == false) {
+				CheckLearnSkill();
 			}
-
-			if(bLearn == true)
-			{
-				UE_LOG(LogTemp, Log, TEXT("true Skill Learn"));
-				GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->skill_info = skillInfo;
-				GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetVisibility(ESlateVisibility::Visible);
-				GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetFocus();
-				return;
-			}
-			else
-			{
-				GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSkillFalse()->OnNeedSkillFalse(needSkillName);
-				return;
-			}
-
 		}
-
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->skill_info = skillInfo;
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetVisibility(ESlateVisibility::Visible);
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetFocus();
+		else
+		{
+			ReturnFoucs();
+		}
 	}
 }
 
 void USkillButtonWidget::SkillButtonHoveredEvent()
 {
-	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->GetButton()->
-		WidgetStyle.Normal.SetResourceObject(defaultImage);
-	//Button_Skill->WidgetStyle.Normal.SetResourceObject(hoveredImage);
-	SetFocus();
-	
+	if (Checking() == false) {
+		if (GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton() != this) {
+			if (GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->GetAvailable() == false) {
+				GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->GetButton()->
+					WidgetStyle.Normal.SetResourceObject(defaultImage);
+			}
+		}
+		//Button_Skill->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+		SetFocus();
+	}
 }
 
 void USkillButtonWidget::SkillButtonUnhoveredEvent()
 {
-	Button_Skill->WidgetStyle.Normal.SetResourceObject(defaultImage);
-	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->SetFocus();
+	if (Checking() == false) {
+		if (bAvailable == false) {
+			Button_Skill->WidgetStyle.Normal.SetResourceObject(defaultImage);
+		}
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetNowButton()->SetFocus();
+	}
 }
 
 void USkillButtonWidget::NativeConstruct()
@@ -100,17 +78,25 @@ FReply USkillButtonWidget::NativeOnFocusReceived(const FGeometry& InGeometry, co
 {
 	Super::NativeOnFocusReceived(InGeometry, InFocusEvent);
 
-	if (skillInfo != nullptr) {
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillInfoWidget()->SetSkillInfo(skillInfo);
+	if (Checking() == false) {
+		if (skillInfo != nullptr) {
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillInfoWidget()->SetSkillInfo(skillInfo);
+		}
+		else
+		{
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillInfoWidget()->defaultInfo();
+		}
+
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->SetNowButton(this);
+
+		if (bAvailable == false) {
+			Button_Skill->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+		}
 	}
 	else
 	{
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillInfoWidget()->defaultInfo();
+		ReturnFoucs();
 	}
-
-	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->SetNowButton(this);
-	Button_Skill->WidgetStyle.Normal.SetResourceObject(hoveredImage);
-	
 	return FReply::Handled();
 }
 
@@ -118,7 +104,9 @@ void USkillButtonWidget::NativeOnFocusLost(const FFocusEvent& InFocusEvent)
 {
 	Super::NativeOnFocusLost(InFocusEvent);
 
-	Button_Skill->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	if (bAvailable == false) {
+		Button_Skill->WidgetStyle.Normal.SetResourceObject(defaultImage);
+	}
 }
 
 FReply USkillButtonWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
@@ -161,4 +149,118 @@ FReply USkillButtonWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FK
 	}
 
 	return FReply::Handled();
+}
+
+void USkillButtonWidget::LearnSkill()
+{
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->skill_info = skillInfo;
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetTargetWidget(this);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetVisibility(ESlateVisibility::Visible);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetFocus();
+}
+
+void USkillButtonWidget::AvailableSkill()
+{
+	bAvailable = true;
+	Button_Skill->WidgetStyle.Normal.SetResourceObject(hoveredImage);
+	GetOwningPlayerPawn<APlayerCharacter>()->GetStatusComponent()->AddSP(skillInfo->needSPPoint * -1);
+}
+
+void USkillButtonWidget::CheckLearnSkill()
+{
+	if (skillInfo->needSkills.Num() != 0)
+	{
+		//필요한 스킬의 이름을 구함
+		bool bLearn = true;
+		FName needSkillName = NAME_None;
+		TArray<FName> needSkillNames = skillInfo->needSkills;
+		for (auto iter : skillInfo->needSkills)
+		{
+			if (GetOwningPlayerPawn<APlayerCharacter>()->GetSkillComp()->GetSkillInfos().Contains(iter))
+			{
+				needSkillNames.Remove(iter);
+			}
+			else
+			{
+				bLearn = false;
+			}
+		}
+
+		//필요한 스킬들을 전부 가지고 있는지
+		if (bLearn == true)
+		{
+			//스킬을 배울 때 소비하는 SP가 있는지
+			if (CheckNeedSp()) {
+				LearnSkill();
+				return;
+			}
+			else
+			{
+				GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSPLack()->OnNeedSPLack(skillInfo->needSPPoint);
+			}
+		}
+		else
+		{
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSkillFalse()->OnNeedSkillFalse(needSkillNames);
+			return;
+		}
+
+	}
+
+	if (CheckNeedSp()) {
+		LearnSkill();
+	}
+	else
+	{
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSPLack()->OnNeedSPLack(skillInfo->needSPPoint);
+	}
+}
+
+bool USkillButtonWidget::CheckNeedSp()
+{
+	if (skillInfo->needSPPoint <= GetOwningPlayerPawn<APlayerCharacter>()->GetStatusComponent()->GetCharacterStat().SkillPoint)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool USkillButtonWidget::Checking()
+{
+	if(GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->GetOnLearnWidget() != false)
+	{
+		return true;
+	}
+	if(GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSkillFalse()->GetOnNeedSkillWidget() != false)
+	{
+		return true;
+	}
+	if(GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSPLack()->GetOnSpLackWidget() != false)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void USkillButtonWidget::ReturnFoucs()
+{
+	if (GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->GetOnLearnWidget() != false)
+	{
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillLearnCheck()->SetFocus();
+		return;
+	}
+	if (GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSkillFalse()->GetOnNeedSkillWidget() != false)
+	{
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSkillFalse()->GetButton_Ok()->SetFocus();
+		return;
+	}
+	if (GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSPLack()->GetOnSpLackWidget() != false)
+	{
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSPLack()->GetButton_Ok()->SetFocus();
+		return;
+	}
 }

@@ -74,6 +74,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
+
 	virtual void Jump() override;
 
 	virtual void Landed(const FHitResult& Hit) override;
@@ -106,7 +107,12 @@ protected:
 
 	UPROPERTY()
 		EActionState TempAction;
+
+	
 public:
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+		AActor* target;
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

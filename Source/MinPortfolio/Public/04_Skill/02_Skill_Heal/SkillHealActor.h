@@ -16,5 +16,5 @@ class MINPORTFOLIO_API ASkillHealActor : public ASkillBaseActor
 
 public:
 
-	virtual void UseSkill(class ABaseCharacter* target) override;
+	virtual void UseSkill(class ABaseCharacter* target, class ABaseCharacter* owner) override;
 };

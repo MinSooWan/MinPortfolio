@@ -26,6 +26,12 @@ protected:
 	UPROPERTY()
 		class UTextBlock* TextBlock_skillDescription;
 
+	UPROPERTY()
+		class UTextBlock* TextBlock_needSkill;
+
+	UPROPERTY()
+		class UTextBlock* TextBlock_NeedSp;
+
 public:
 
 	void defaultInfo();

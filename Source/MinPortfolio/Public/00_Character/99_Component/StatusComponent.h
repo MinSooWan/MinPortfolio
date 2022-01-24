@@ -25,12 +25,16 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		float DEX;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		int32 SkillPoint;
+
 	FCharacterStat& operator+=(const FCharacterStat& Add) {
 		this->HP += Add.HP;
 		this->MaxHP += Add.MaxHP;
 		this->ATC += Add.ATC;
 		this->DEF += Add.DEF;
 		this->DEX += Add.DEX;
+		this->SkillPoint += Add.SkillPoint;
 		return *this;
 	}
 
@@ -40,6 +44,7 @@ public:
 		this->ATC += Add.ATC;
 		this->DEF += Add.DEF;
 		this->DEX += Add.DEX;
+		this->SkillPoint += Add.SkillPoint;
 		return *this;
 	}
 
@@ -49,6 +54,7 @@ public:
 		this->ATC -= Add.ATC;
 		this->DEF -= Add.DEF;
 		this->DEX -= Add.DEX;
+		this->SkillPoint -= Add.SkillPoint;
 		return *this;
 	}
 
@@ -58,6 +64,7 @@ public:
 		this->ATC -= Add.ATC;
 		this->DEF -= Add.DEF;
 		this->DEX -= Add.DEX;
+		this->SkillPoint -= Add.SkillPoint;
 		return *this;
 	}
 };
@@ -95,16 +102,19 @@ public:
 	float GetATC() { return characterStat.ATC; }
 	float GetDEF() { return characterStat.DEF; }
 	float GetDEX() { return characterStat.DEX; }
+	int32 GetSP() { return characterStat.SkillPoint; }
 
 	void AddHP(const float value);
 	void AddATC(const float value);
 	void AddDEF(const float value);
 	void AddDEX(const float value);
+	void AddSP(const int32 value);
 
 	void SetHP(const float value);
 	void SetATC(const float value);
 	void SetDEF(const float value);
 	void SetDEX(const float value);
+	void SetSP(const int32 value);
 
 	void AddStat(const FCharacterStat& statToAdd);
 	void RemoveStat(const FCharacterStat& statToRemove);

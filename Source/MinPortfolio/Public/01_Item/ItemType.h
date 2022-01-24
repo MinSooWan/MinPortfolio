@@ -35,7 +35,13 @@ enum class EEquipmentType : uint8
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
-	ONE_HAND, BOW, TWO_HAND, WAND, NO_WEAPON
+	SWORD, BOW, WAND, NO_WEAPON
+};
+
+UENUM(BlueprintType)
+enum class ESwordType : uint8
+{
+	ONE_HAND, TWO_HAND, DOUBLE_SWORD
 };
 
 UENUM(BlueprintType)
@@ -220,6 +226,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		EWeaponType weaponType;
+
+	UPROPERTY(EditAnywhere)
+		bool bIsSword = false;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIsSword"))
+		ESwordType swordType;
 
 public:
 	FWeapon() {

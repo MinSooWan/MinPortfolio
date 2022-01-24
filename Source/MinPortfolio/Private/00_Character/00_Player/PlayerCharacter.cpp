@@ -303,6 +303,10 @@ void APlayerCharacter::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor*
 
 		overlapMaterial = OtherActor;
 	}
+	else if(OtherActor->IsA<ABaseCharacter>())
+	{
+		target = OtherActor;
+	}
 }
 
 void APlayerCharacter::OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)

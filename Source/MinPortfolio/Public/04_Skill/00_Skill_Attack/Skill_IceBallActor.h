@@ -14,7 +14,25 @@ class MINPORTFOLIO_API ASkill_IceBallActor : public ASkillAttackActor
 {
 	GENERATED_BODY()
 
+protected:
+
+	virtual void PostInitializeComponents() override;
+
+	UPROPERTY(EditAnywhere)
+		class UParticleSystem* hitParticle;
+
+	UPROPERTY(EditAnywhere)
+		float lifeTiem;
+
+	UPROPERTY(EditAnywhere)
+		float speed;
+
+	UFUNCTION()
+		virtual void OnActorHitEvent(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
+
 public:
 
-	virtual void UseSkill(class ABaseCharacter* target) override;
+	class UParticleSystem* GetHitParticle() { return hitParticle; }
+
+	virtual void UseSkill(class ABaseCharacter* target, class ABaseCharacter* owner) override;
 };

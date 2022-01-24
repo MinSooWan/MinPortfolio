@@ -58,13 +58,10 @@ public:
 		class UAnimMontage* useSkillMontage;
 
 	UPROPERTY(EditAnywhere)
-		bool bCheckUse = false;
-
-	UPROPERTY(EditAnywhere)
 		TArray<FName> needSkills;
 
 	UPROPERTY(EditAnywhere)
-		TArray<EWeaponType> needWeapon;
+		EWeaponType needWeapon;
 
 	UPROPERTY(EditAnywhere)
 		ESkillType skillType;

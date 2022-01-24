@@ -24,11 +24,13 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		TArray<AActor*> skills;
 
+	TArray<FName> skill_infos;
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	TArray<AActor*> GetSkills() { return skills; }
+	TArray<FName> GetSkillInfos() { return skill_infos; }
 
 	UFUNCTION(BlueprintCallable)
 		void AddSkill(AActor* skill);

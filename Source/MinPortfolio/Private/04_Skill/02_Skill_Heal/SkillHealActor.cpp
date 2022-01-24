@@ -3,7 +3,7 @@
 
 #include "04_Skill/02_Skill_Heal/SkillHealActor.h"
 
-void ASkillHealActor::UseSkill(ABaseCharacter* target)
+void ASkillHealActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	Super::UseSkill(target);
+	Super::UseSkill(target, owner);
 }

@@ -39,8 +39,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void UseSkill(class ABaseCharacter* target);
+	virtual void UseSkill(class ABaseCharacter* target, class ABaseCharacter* owner);
 
+	class USphereComponent* GetSphereComp() { return sphereComp; }
+
+	class UProjectileMovementComponent* GetProjectilMovementComp() { return ProjectilMovementComp; }
 };
 
 template <typename T>

@@ -3,9 +3,9 @@
 
 #include "04_Skill/00_Skill_Attack/SkillAttackActor.h"
 
-void ASkillAttackActor::UseSkill(ABaseCharacter* target)
+void ASkillAttackActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	Super::UseSkill(target);
+	Super::UseSkill(target, owner);
 
 
 }

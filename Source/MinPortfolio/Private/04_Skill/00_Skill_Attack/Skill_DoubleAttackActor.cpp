@@ -3,7 +3,7 @@
 
 #include "04_Skill/00_Skill_Attack/Skill_DoubleAttackActor.h"
 
-void ASkill_DoubleAttackActor::UseSkill(ABaseCharacter* target)
+void ASkill_DoubleAttackActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	Super::UseSkill(target);
+	Super::UseSkill(target, owner);
 }

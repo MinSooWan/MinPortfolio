@@ -16,5 +16,5 @@ class MINPORTFOLIO_API ASkill_NeedUseItemAtDownActor : public ASkillPassiveActor
 
 public:
 
-	virtual void UseSkill(class ABaseCharacter* target) override;
+	virtual void UseSkill(class ABaseCharacter* target, class ABaseCharacter* owner) override;
 };

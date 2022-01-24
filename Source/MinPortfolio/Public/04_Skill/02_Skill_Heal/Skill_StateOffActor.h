@@ -16,5 +16,5 @@ class MINPORTFOLIO_API ASkill_StateOffActor : public ASkillHealActor
 
 public:
 
-	virtual void UseSkill(class ABaseCharacter* target) override;
+	virtual void UseSkill(class ABaseCharacter* target, class ABaseCharacter* owner) override;
 };

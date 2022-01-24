@@ -3,7 +3,7 @@
 
 #include "04_Skill/00_Skill_Attack/Skill_FireSwordAttackActor.h"
 
-void ASkill_FireSwordAttackActor::UseSkill(ABaseCharacter* target)
+void ASkill_FireSwordAttackActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	Super::UseSkill(target);
+	Super::UseSkill(target, owner);
 }

@@ -63,6 +63,11 @@ void UStatusComponent::AddDEX(const float value)
 	characterStat.DEX += value;
 }
 
+void UStatusComponent::AddSP(const int32 value)
+{
+	characterStat.SkillPoint += value;
+}
+
 void UStatusComponent::SetHP(const float value)
 {
 	characterStat.HP = value;
@@ -81,6 +86,11 @@ void UStatusComponent::SetDEF(const float value)
 void UStatusComponent::SetDEX(const float value)
 {
 	characterStat.DEX = value;
+}
+
+void UStatusComponent::SetSP(const int32 value)
+{
+	characterStat.SkillPoint = value;
 }
 
 void UStatusComponent::AddStat(const FCharacterStat& statToAdd)

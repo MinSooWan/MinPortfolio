@@ -21,11 +21,18 @@ protected:
 	UPROPERTY()
 		class UTextBlock* TextBlock_NeedSkill;
 
+	UPROPERTY()
+		bool bOnNeedSkillWidget = false;
+
 public:
+	class UButton* GetButton_Ok() { return Button_Ok; }
+
 	virtual void NativeConstruct() override;
 
-	void OnNeedSkillFalse(FName skill_Name);
+	void OnNeedSkillFalse(TArray<FName> skill_Names);
 
 	UFUNCTION()
 		void OnButton_OkClickEvent();
+
+	bool GetOnNeedSkillWidget() { return bOnNeedSkillWidget; }
 };
