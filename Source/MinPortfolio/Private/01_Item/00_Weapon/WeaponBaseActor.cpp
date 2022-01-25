@@ -19,17 +19,6 @@ void AWeaponBaseActor::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor*
 
 		FHitResult hit;
 
-		//TArray<TEnumAsByte<EObjectTypeQuery>> objectType;
-		//objectType.Emplace(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel2));
-		/*
-		UE_LOG(LogTemp, Log, TEXT("111111111"));
-		if (UKismetSystemLibrary::LineTraceSingleForObjects(OtherActor, GetActorLocation(), OtherActor->GetActorLocation(), objectType, false,
-			TArray<AActor*>(), EDrawDebugTrace::ForDuration, hit, true)) {
-			UE_LOG(LogTemp, Log, TEXT("2222222222"));
-			UGameplayStatics::SpawnEmitterAtLocation(this, AttackParticle, hit.Location, FRotator::ZeroRotator, true);
-		}
-		*/
-
 		TArray<TEnumAsByte<EObjectTypeQuery>> objectType;
 		objectType.Emplace(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel2));
 

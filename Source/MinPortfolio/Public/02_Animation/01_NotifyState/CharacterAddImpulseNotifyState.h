@@ -21,6 +21,13 @@ protected:
 	UPROPERTY(EditAnywhere)
 		FName animType;
 
+	UPROPERTY(EditAnywhere)
+		float X;
+	UPROPERTY(EditAnywhere)
+		float Y;
+	UPROPERTY(EditAnywhere)
+		float Z;
+
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration);
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation);
 	

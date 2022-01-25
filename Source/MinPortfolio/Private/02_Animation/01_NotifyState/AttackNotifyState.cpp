@@ -17,6 +17,13 @@ void UAttackNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequ
 
 		if (owner != nullptr) {
 			Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetWeaponActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("Weapon"));
+			if(owner->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->bIsSword == true)
+			{
+				if(owner->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->swordType == ESwordType::DOUBLE_SWORD)
+				{
+					Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetDefaultDoubleSwordActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("Weapon"));
+				}
+			}
 		}
 	}
 }
@@ -26,5 +33,13 @@ void UAttackNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequen
 	if (owner != nullptr) {
 		Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetWeaponActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 		Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetWeaponActor())->ClearHitArray();
+		if (owner->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->bIsSword == true)
+		{
+			if (owner->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->swordType == ESwordType::DOUBLE_SWORD)
+			{
+				Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetDefaultDoubleSwordActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+				Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetDefaultDoubleSwordActor())->ClearHitArray();
+			}
+		}
 	}
 }

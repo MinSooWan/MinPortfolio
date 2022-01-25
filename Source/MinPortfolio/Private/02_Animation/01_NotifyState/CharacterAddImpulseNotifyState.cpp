@@ -4,7 +4,7 @@
 #include "02_Animation/01_NotifyState/CharacterAddImpulseNotifyState.h"
 
 #include "00_Character/00_Player/PlayerCharacter.h"
-#include "GameFramework/PawnMovementComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UCharacterAddImpulseNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
@@ -13,7 +13,8 @@ void UCharacterAddImpulseNotifyState::NotifyBegin(USkeletalMeshComponent* MeshCo
 	player = MeshComp->GetOwner<APlayerCharacter>();
 	if(player != nullptr)
 	{
-		//player->GetCharacterMovement()->AddImpulse();
+		FVector pos = FVector(X, Y, Z);
+		player->GetCharacterMovement()->AddImpulse(pos, true);
 	}
 }
 
