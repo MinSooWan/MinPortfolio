@@ -79,6 +79,11 @@ APlayerCharacter::APlayerCharacter()
 	ToolChild->SetupAttachment(GetMesh(), "hand_r_weapon");
 
 	skillComp = CreateDefaultSubobject<USkillComponent>(TEXT("skillComp"));
+
+	DoubleSwordChild = CreateDefaultSubobject<UChildActorComponent>(TEXT("doubleSword"));
+	DoubleSwordChild->SetupAttachment(GetMesh(), "hand_l_double");
+
+	DoubleSwordChild->SetVisibility(false);
 }
 
 void APlayerCharacter::MoveForward(float Value)

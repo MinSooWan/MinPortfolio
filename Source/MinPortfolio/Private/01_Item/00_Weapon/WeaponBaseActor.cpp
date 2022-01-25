@@ -97,17 +97,25 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* in
 		player->GetEquipmentComp()->GetWeaponActor()->Destroy();
 
 		player->GetEquipmentComp()->SetWeaponActor(*info, item);
-		
-		
+
 		player->GetWeaponChildActor()->AttachToComponent(player->GetMesh(),
 			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true),
 			SocketName);
+
+		if (item->GetItemInfo<FWeapon>()->swordType == ESwordType::DOUBLE_SWORD)
+		{
+			player->GetDoubleSwordChild()->SetVisibility(true);
+		}
+		else
+		{
+			player->GetDoubleSwordChild()->SetVisibility(false);
+		}
 		
 		player->GetWeaponChildActor()->SetChildActorClass(info->itemActorClass);
 		player->GetEquipmentComp()->SetWeaponActor(*info, Cast<AItemActor>(player->GetWeaponChildActor()->GetChildActor()));
 		Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);
 
-		player->GetWeaponChildActor()->SetVisibility(false);
+		player->GetWeaponChildActor()->SetVisibility(true);
 
 		//player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 		AddStat(player, info->equipmentStat);
@@ -135,5 +143,6 @@ void AWeaponBaseActor::ItemChange_Default(APlayerCharacter* player, const FEquip
 		//player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 
 		player->SetWeaponEquipped(false);
+		player->GetDoubleSwordChild()->SetVisibility(false);
 	}
 }

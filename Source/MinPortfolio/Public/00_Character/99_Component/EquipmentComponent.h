@@ -29,6 +29,10 @@ protected:
 		TSubclassOf<class AItemActor> defaultArmorActorClass;
 	UPROPERTY()
 		class AItemActor* defaultArmorActor;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AItemActor> defaultDoubleSwordActorClass;
+	UPROPERTY()
+		class AItemActor* defaultDoubleSwordActor;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		class AItemActor* weaponActor;
@@ -49,4 +53,5 @@ public:
 	
 	class AItemActor* GetDefaultWeaponActor() { return defaultWeaponActor; }
 	class AItemActor* GetDefaultArmorActor() { return defaultArmorActor; }
+	class AItemActor* GetDefaultDoubleSwordActor() { return defaultDoubleSwordActor; }
 };

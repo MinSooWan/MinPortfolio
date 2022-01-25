@@ -70,6 +70,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		class UChildActorComponent* WeaponChild;
 	UPROPERTY(VisibleAnywhere)
+		class UChildActorComponent* DoubleSwordChild;
+	UPROPERTY(VisibleAnywhere)
 		class UChildActorComponent* ToolChild;
 
 	virtual void BeginPlay() override;
@@ -127,6 +129,7 @@ public:
 
 	class UChildActorComponent* GetWeaponChildActor() { return WeaponChild; }
 	class UChildActorComponent* GetToolChildActor() { return ToolChild; }
+	class UChildActorComponent* GetDoubleSwordChild() { return DoubleSwordChild; }
 
 	class UInventoryComponent* GetInventoryComp() { return inventoryComp; }
 

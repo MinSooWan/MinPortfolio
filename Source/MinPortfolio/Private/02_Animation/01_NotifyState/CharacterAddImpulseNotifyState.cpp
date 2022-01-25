@@ -1,0 +1,23 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "02_Animation/01_NotifyState/CharacterAddImpulseNotifyState.h"
+
+#include "00_Character/00_Player/PlayerCharacter.h"
+#include "GameFramework/PawnMovementComponent.h"
+
+void UCharacterAddImpulseNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
+{
+	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
+
+	player = MeshComp->GetOwner<APlayerCharacter>();
+	if(player != nullptr)
+	{
+		//player->GetCharacterMovement()->AddImpulse();
+	}
+}
+
+void UCharacterAddImpulseNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
+{
+	Super::NotifyEnd(MeshComp, Animation);
+}

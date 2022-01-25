@@ -28,8 +28,10 @@ protected:
 	virtual void ItemChange(class APlayerCharacter* player, const FEquipment* info, AItemActor* item) override;
 	virtual void ItemChange_Default(class APlayerCharacter* player, const FEquipment* info, AItemActor* item) override;
 
+
 	UPROPERTY(EditAnywhere)
 		FName SocketName;
+
 public:
 	AWeaponBaseActor();
 

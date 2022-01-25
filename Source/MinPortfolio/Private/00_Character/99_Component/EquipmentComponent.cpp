@@ -5,6 +5,7 @@
 #include "01_Item/ItemActor.h"
 #include "01_Item/ItemType.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "01_Item/00_Equipment/EquipmentActor.h"
 
 // Sets default values for this component's properties
 UEquipmentComponent::UEquipmentComponent()
@@ -40,10 +41,12 @@ void UEquipmentComponent::EquipmentCompInit()
 {
 	AItemActor* spawnWeapon = GetWorld()->SpawnActor<AItemActor>(defaultWeaponActorClass);
 	AItemActor* spawnArmor = GetWorld()->SpawnActor<AItemActor>(defaultArmorActorClass);
+	AItemActor* spawnDouble = GetWorld()->SpawnActor<AItemActor>(defaultDoubleSwordActorClass);
 
 	if (spawnWeapon != nullptr && spawnArmor != nullptr) {
 		defaultWeaponActor = spawnWeapon;
 		defaultArmorActor = spawnArmor;
+		defaultDoubleSwordActor = spawnDouble;
 
 		weaponActor = defaultWeaponActor;
 		armorActor = defaultArmorActor;
@@ -54,6 +57,13 @@ void UEquipmentComponent::EquipmentCompInit()
 
 		if (armorActor != nullptr) {
 			armorActor->SetEquipped(true);
+		}
+
+		if(defaultDoubleSwordActor != nullptr)
+		{
+			GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->SetChildActorClass(defaultDoubleSwordActorClass);
+			Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor())->
+				GetStaticMesh()->SetStaticMesh(defaultDoubleSwordActor->GetItemInfo<FWeapon>()->mesh);
 		}
 
 		spawnWeapon->SetActorHiddenInGame(true);
