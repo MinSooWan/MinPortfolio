@@ -50,3 +50,30 @@ float ABaseCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, 
 {
 	return 0.0f;
 }
+
+void ABaseCharacter::AddDebuffState(EDebuffState buff, const float value, const float cool, EDebuffType type)
+{
+	auto debuff = NewObject<UDebuffObject>(debuffclass);
+	debuffs.Add(debuff);
+	debuff->SetDebuff(buff);
+	debuff->AddDebuffState(value, cool, this, type);
+}
+
+void ABaseCharacter::RemoveDebuffState(EDebuffState buff, const float value, UDebuffObject* buffObject)
+{
+	switch (buff)
+	{
+	case EDebuffState::GIVE_ATC_DOWN:
+		GetStatusComponent()->AddATC(value);
+		break;
+	case EDebuffState::GIVE_DEF_DOWN:
+		GetStatusComponent()->AddDEF(value);
+		break;
+	case EDebuffState::GIVE_SLOW:
+		GetStatusComponent()->AddDEX(value);
+		break;
+	}
+
+	debuffs.Remove(buffObject);
+	buffObject->BeginDestroy();
+}

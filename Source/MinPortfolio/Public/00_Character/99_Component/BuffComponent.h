@@ -15,18 +15,6 @@ enum class EBuffState : uint8
 	GIVE_DEX_UP,
 };
 
-UENUM(BlueprintType)
-enum class EDebuffState : uint8
-{
-	NORMAL,
-	GIVE_BURN,
-	GIVE_FROZEN,
-	GIVE_SHOCK,
-	GIVE_SLOW,
-	GIVE_ATC_DOWN,
-	GIVE_DEF_DOWN
-};
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MINPORTFOLIO_API UBuffComponent : public UActorComponent
 {
@@ -42,18 +30,15 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		TArray<EBuffState> buffStates;
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-		TArray<EDebuffState> debuffStates;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	TArray<EBuffState> GetBuffStates() { return buffStates; }
-	TArray<EDebuffState> GetDebuffStates() { return debuffStates; }
 
 	UFUNCTION(BlueprintCallable)
-	void AddBuffState(EBuffState buff, const float value, const float cool);
+		void AddBuffState(EBuffState buff, const float value, const float cool);
 
 	UFUNCTION()
 		void RemoveBuffState(EBuffState buff, const float value);

@@ -76,4 +76,3 @@ void UBuffComponent::RemoveBuffState(EBuffState buff, const float value)
 
 	buffStates.Remove(buff);
 }
-

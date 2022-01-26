@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "00_Character/98_Object/DebuffObject.h"
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
@@ -43,6 +44,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 		float landingTime;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+		TArray<class UDebuffObject*> debuffs;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UDebuffObject> debuffclass;
+
 	virtual void Landed(const FHitResult& Hit) override;
 public:	
 	// Called every frame
@@ -59,4 +66,10 @@ public:
 	enum class EActionState GetActionState() { return actionState; }
 
 	virtual void SetActionState(const EActionState state) { }
+
+	UFUNCTION(BlueprintCallable)
+		void AddDebuffState(EDebuffState buff, const float value, const float cool, EDebuffType type);
+
+	UFUNCTION()
+		void RemoveDebuffState(EDebuffState buff, const float value, class UDebuffObject* buffObject);
 };

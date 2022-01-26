@@ -4,6 +4,7 @@
 #include "04_Skill/01_Skill_Effect/Skill_AllStateUpActor.h"
 
 #include "00_Character/00_Player/BaseCharacter.h"
+#include "00_Character/99_Component/BuffComponent.h"
 #include "04_Skill/SkillInfomation.h"
 
 void ASkill_AllStateUpActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
@@ -11,7 +12,7 @@ void ASkill_AllStateUpActor::UseSkill(ABaseCharacter* target, ABaseCharacter* ow
 	Super::UseSkill(target, owner);
 
 	owner->PlayAnimMontage(GetSkillInfo<FSkill>()->useSkillMontage);
-	owner->GetStatusComponent()->AddATC(GetSkillInfo<FSkill_Effect>()->effectValue);
-	owner->GetStatusComponent()->AddDEF(GetSkillInfo<FSkill_Effect>()->effectValue);
-	owner->GetStatusComponent()->AddDEX(GetSkillInfo<FSkill_Effect>()->effectValue);
+	owner->GetBuffComp()->AddBuffState(EBuffState::GIVE_ATC_UP, GetSkillInfo<FSkill_Effect>()->effectValue, GetSkillInfo<FSkill_Effect>()->coolTime);
+	owner->GetBuffComp()->AddBuffState(EBuffState::GIVE_DEF_UP, GetSkillInfo<FSkill_Effect>()->effectValue, GetSkillInfo<FSkill_Effect>()->coolTime);
+	owner->GetBuffComp()->AddBuffState(EBuffState::GIVE_DEX_UP, GetSkillInfo<FSkill_Effect>()->effectValue, GetSkillInfo<FSkill_Effect>()->coolTime);
 }
