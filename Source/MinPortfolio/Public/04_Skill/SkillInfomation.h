@@ -98,6 +98,12 @@ public:
 	UPROPERTY(EditAnywhere)
 		TArray<ESkillAddOptions> effectOption;
 
+	UPROPERTY(EditAnywhere)
+		float effectValue = 0;
+
+	UPROPERTY(EditAnywhere)
+		float coolTime = 0;
+
 	FSkill_Effect()
 	{
 		skillType = ESkillType::EFFECT;

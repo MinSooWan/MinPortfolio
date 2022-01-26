@@ -5,6 +5,7 @@
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "04_Skill/00_Skill_Attack/00_Arrow/ArrowActor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void USkillArrowNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
@@ -16,8 +17,6 @@ void USkillArrowNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 			auto location = player->GetMesh()->GetSocketLocation(socketName);
 			auto rotation = player->GetMesh()->GetSocketRotation(socketName);
 			spawnArrow = player->GetWorld()->SpawnActor<AArrowActor>(arrowClass, location, rotation);
-
-			spawnArrow->GetProjectilMovementComp()->MaxSpeed = Speed;
 		}
 	}
 }
@@ -43,7 +42,7 @@ void USkillArrowNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSe
 	if (player != nullptr) {
 		if (spawnArrow != nullptr) {
 			
-			spawnArrow->GetProjectilMovementComp()->Velocity = MeshComp->GetOwner()->GetActorForwardVector() * 500;
+			spawnArrow->GetProjectilMovementComp()->Velocity = (MeshComp->GetOwner<APlayerCharacter>()->target->GetActorLocation() - MeshComp->GetOwner<APlayerCharacter>()->GetActorLocation()) * Speed;
 		}
 	}
 }

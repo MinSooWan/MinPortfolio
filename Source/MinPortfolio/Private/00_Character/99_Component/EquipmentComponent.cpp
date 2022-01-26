@@ -42,11 +42,14 @@ void UEquipmentComponent::EquipmentCompInit()
 	AItemActor* spawnWeapon = GetWorld()->SpawnActor<AItemActor>(defaultWeaponActorClass);
 	AItemActor* spawnArmor = GetWorld()->SpawnActor<AItemActor>(defaultArmorActorClass);
 	AItemActor* spawnDouble = GetWorld()->SpawnActor<AItemActor>(defaultDoubleSwordActorClass);
+	GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->SetChildActorClass(defaultDoubleSwordActorClass);
+	Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor())->
+		GetStaticMesh()->SetStaticMesh(spawnDouble->GetItemInfo<FWeapon>()->mesh);
 
 	if (spawnWeapon != nullptr && spawnArmor != nullptr) {
 		defaultWeaponActor = spawnWeapon;
 		defaultArmorActor = spawnArmor;
-		defaultDoubleSwordActor = spawnDouble;
+		defaultDoubleSwordActor = Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor());
 
 		weaponActor = defaultWeaponActor;
 		armorActor = defaultArmorActor;
@@ -61,9 +64,7 @@ void UEquipmentComponent::EquipmentCompInit()
 
 		if(defaultDoubleSwordActor != nullptr)
 		{
-			GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->SetChildActorClass(defaultDoubleSwordActorClass);
-			Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor())->
-				GetStaticMesh()->SetStaticMesh(defaultDoubleSwordActor->GetItemInfo<FWeapon>()->mesh);
+			
 		}
 
 		spawnWeapon->SetActorHiddenInGame(true);

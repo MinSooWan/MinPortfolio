@@ -4,6 +4,7 @@
 #include "00_Character/00_Player/BaseCharacter.h"
 #include "00_Character/99_Component/StatusComponent.h"
 #include "TimerManager.h"
+#include "00_Character/99_Component/BuffComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -13,6 +14,7 @@ ABaseCharacter::ABaseCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	statComp = CreateDefaultSubobject<UStatusComponent>(TEXT("statusComp"));
+	buffComp = CreateDefaultSubobject<UBuffComponent>(TEXT("BuffComp"));
 
 }
 

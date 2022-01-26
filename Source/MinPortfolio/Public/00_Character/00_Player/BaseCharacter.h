@@ -31,6 +31,8 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		class UStatusComponent* statComp;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+		class UBuffComponent* buffComp;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		EActionState actionState = EActionState::NORMAL;
@@ -52,6 +54,7 @@ public:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	class UStatusComponent* GetStatusComponent() { return statComp; }
+	class UBuffComponent* GetBuffComp() { return buffComp; }
 
 	enum class EActionState GetActionState() { return actionState; }
 

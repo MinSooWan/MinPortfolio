@@ -52,6 +52,10 @@ void USkillComponent::UseSkill(FName skillCode)
 				if (Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skill_code.IsEqual(skillCode))
 				{
 					if (GetOwner<APlayerCharacter>()->target != nullptr) {
+						if (Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skillType == ESkillType::ATTACK) {
+							FRotator rot = (GetOwner<APlayerCharacter>()->target->GetActorLocation() - GetOwner<APlayerCharacter>()->GetActorLocation()).Rotation();
+							GetOwner<APlayerCharacter>()->SetActorRotation(rot);
+						}
 						Cast<ASkillBaseActor>(iter)->UseSkill(Cast<ABaseCharacter>(GetOwner<APlayerCharacter>()->target), GetOwner<APlayerCharacter>());
 						break;
 					}
