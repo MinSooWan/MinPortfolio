@@ -23,7 +23,7 @@ protected:
 
 	void ToolChange(class APlayerCharacter* player, AItemActor* item);
 
-	virtual void UseItem(class ABaseCharacter* target) override;
+	virtual void UseItem(class ABaseCharacter* owner) override;
 
 	UPROPERTY()
 		TArray<AActor*> hitArray;

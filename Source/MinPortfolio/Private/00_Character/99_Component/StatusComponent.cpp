@@ -48,6 +48,11 @@ void UStatusComponent::AddHP(const float value)
 	characterStat.HP = FMath::Clamp(characterStat.HP + value, 0.f, characterStat.MaxHP);
 }
 
+void UStatusComponent::AddMaxHP(const float value)
+{
+	characterStat.MaxHP += value;
+}
+
 void UStatusComponent::AddATC(const float value)
 {
 	characterStat.ATC += value;
@@ -71,6 +76,11 @@ void UStatusComponent::AddSP(const int32 value)
 void UStatusComponent::SetHP(const float value)
 {
 	characterStat.HP = value;
+}
+
+void UStatusComponent::SetMaxHP(const float value)
+{
+	characterStat.MaxHP = value;
 }
 
 void UStatusComponent::SetATC(const float value)

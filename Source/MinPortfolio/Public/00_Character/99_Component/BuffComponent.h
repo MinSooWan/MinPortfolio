@@ -13,6 +13,7 @@ enum class EBuffState : uint8
 	GIVE_ATC_UP,
 	GIVE_DEF_UP,
 	GIVE_DEX_UP,
+	GIVE_HP_UP
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

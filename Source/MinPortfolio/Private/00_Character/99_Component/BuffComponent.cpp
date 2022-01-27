@@ -49,6 +49,10 @@ void UBuffComponent::AddBuffState(EBuffState buff, const float value, const floa
 	case EBuffState::GIVE_DEX_UP:
 		GetOwner<APlayerCharacter>()->GetStatusComponent()->AddDEX(value);
 		break;
+	case EBuffState::GIVE_HP_UP:
+		GetOwner<APlayerCharacter>()->GetStatusComponent()->AddMaxHP(value);
+		GetOwner<APlayerCharacter>()->GetStatusComponent()->AddHP(value);
+		break;
 	}
 
 	buffStates.Emplace(buff);
@@ -71,6 +75,10 @@ void UBuffComponent::RemoveBuffState(EBuffState buff, const float value)
 		break;
 	case EBuffState::GIVE_DEX_UP:
 		GetOwner<APlayerCharacter>()->GetStatusComponent()->SetDEX(GetOwner<APlayerCharacter>()->GetStatusComponent()->GetDEX() - value);
+		break;
+	case EBuffState::GIVE_HP_UP:
+		GetOwner<APlayerCharacter>()->GetStatusComponent()->SetMaxHP(GetOwner<APlayerCharacter>()->GetStatusComponent()->GetMaxHP() - value);
+		GetOwner<APlayerCharacter>()->GetStatusComponent()->SetHP(GetOwner<APlayerCharacter>()->GetStatusComponent()->GetHP() - value);
 		break;
 	}
 

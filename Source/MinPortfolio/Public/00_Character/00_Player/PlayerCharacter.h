@@ -109,7 +109,6 @@ protected:
 
 	UPROPERTY()
 		EActionState TempAction;
-
 	
 public:
 

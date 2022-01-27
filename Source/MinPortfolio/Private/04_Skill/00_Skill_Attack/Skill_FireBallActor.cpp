@@ -40,7 +40,6 @@ void ASkill_FireBallActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owne
 		auto skill = GetWorld()->SpawnActor<ASkillBaseActor>(GetSkillInfo<FSkill>()->skillActorClass, owner ->GetActorLocation() + owner->GetActorForwardVector() * 10, FRotator::ZeroRotator);
 		
 		skill->SetLifeSpan(lifeTiem);
-		skill->GetProjectilMovementComp()->MaxSpeed = speed;
 		skill->GetProjectilMovementComp()->Velocity = target->GetActorLocation() - owner->GetActorLocation();
 	}
 }

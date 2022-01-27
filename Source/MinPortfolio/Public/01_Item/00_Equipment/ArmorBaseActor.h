@@ -16,7 +16,7 @@ class MINPORTFOLIO_API AArmorBaseActor : public AEquipmentActor
 	
 protected:
 
-	virtual void UseItem(class ABaseCharacter* target) override;
+	virtual void UseItem(class ABaseCharacter* owner) override;
 
 	virtual void ItemChange(class APlayerCharacter* player, const FEquipment* info, AItemActor* item) override;
 	virtual void ItemChange_Default(class APlayerCharacter* player, const FEquipment* info, AItemActor* item) override;

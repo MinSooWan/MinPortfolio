@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GenericTeamAgentInterface.h"
 #include "00_Character/98_Object/DebuffObject.h"
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
@@ -37,7 +38,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		EActionState actionState = EActionState::NORMAL;
-
 	UPROPERTY()
 		FTimerHandle landingTimeHandle;
 
@@ -51,6 +51,9 @@ protected:
 		TSubclassOf<class UDebuffObject> debuffclass;
 
 	virtual void Landed(const FHitResult& Hit) override;
+
+	UPROPERTY()
+		FGenericTeamId myTeam;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -68,8 +71,17 @@ public:
 	virtual void SetActionState(const EActionState state) { }
 
 	UFUNCTION(BlueprintCallable)
-		void AddDebuffState(EDebuffState buff, const float value, const float cool, EDebuffType type);
+		void AddDebuffStateCharacter(EDebuffState buff, const float value, const float cool, EDebuffType type);
 
 	UFUNCTION()
 		void RemoveDebuffState(EDebuffState buff, const float value, class UDebuffObject* buffObject);
+
+	TArray<class UDebuffObject*> GetDebuffs() { return debuffs; }
+	void RemoveDebuffObejct(class UDebuffObject* buffObject);
+
+	/** Assigns Team Agent to given TeamID */
+	virtual void SetGenericTeamId(const FGenericTeamId& TeamID) { myTeam = TeamID; }
+
+	/** Retrieve team identifier in form of FGenericTeamId */
+	virtual FGenericTeamId GetGenericTeamId() const { return myTeam; }
 };

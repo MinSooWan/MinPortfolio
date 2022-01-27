@@ -15,7 +15,7 @@ class MINPORTFOLIO_API AEquipmentActor : public AItemActor
 	GENERATED_BODY()
 	
 protected:
-	virtual void UseItem(class ABaseCharacter* target) override;
+	virtual void UseItem(class ABaseCharacter* owner) override;
 
 	virtual void AddStat(class ABaseCharacter* target, const FCharacterStat& statToAdd);
 	virtual void RemoveStat(class ABaseCharacter* target, const FCharacterStat& statToRemove);	

@@ -37,10 +37,10 @@ void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
 	}
 }
 
-void AToolBaseActor::UseItem(ABaseCharacter* target)
+void AToolBaseActor::UseItem(ABaseCharacter* owner)
 {
-	if (target != nullptr) {
-		APlayerCharacter* player = Cast<APlayerCharacter>(target);
+	if (owner != nullptr) {
+		APlayerCharacter* player = Cast<APlayerCharacter>(owner);
 		const FGatheringTool* info = GetItemInfo<FGatheringTool>();
 
 		if (info != nullptr) {

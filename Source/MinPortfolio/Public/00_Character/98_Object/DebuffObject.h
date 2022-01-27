@@ -28,7 +28,7 @@ enum class EDebuffType : uint8
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class MINPORTFOLIO_API UDebuffObject : public UObject
 {
 	GENERATED_BODY()
@@ -48,14 +48,21 @@ private:
 
 	UPROPERTY()
 		EDebuffState debuff;
+	UPROPERTY()
+		float effect_value;
 
 public:
-	void SetDebuff(EDebuffState value) { debuff = value; }
+	void SetDebuff(EDebuffState value, float effectValue) { debuff = value; effect_value = effectValue; }
 
 	void AddDebuffState(const float value, const float cool, class ABaseCharacter* target, EDebuffType type);
 
-	void GiveStatDown(const float cool, const float value);
+	void GiveStatDown(const float cool);
 
 	UFUNCTION()
-		void GiveDamageDebuff(const float cool, const float value);
+		void GiveDamageDebuff(const float cool);
+
+	EDebuffState* Getdebuff() { return &debuff; }
+	float GetEffectValue() { return effect_value; }
+	FTimerHandle* GetDebuffHandle() { return &debuffHandle; }
+	FTimerHandle* GetDamageDebuffHandle() { return &damageDebuffHandle; }
 };

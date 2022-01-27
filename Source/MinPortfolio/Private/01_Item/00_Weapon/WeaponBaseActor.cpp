@@ -1,10 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "01_Item/00_Weapon/WeaponBaseActor.h"
 #include "00_Character/99_Component/StatusComponent.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/99_Component/EquipmentComponent.h"
+#include "00_Character/99_Component/SkillComponent.h"
 #include "01_Item/ItemType.h"
 #include "01_Item/ItemActor.h"
 #include "Components/ChildActorComponent.h"
@@ -37,12 +38,12 @@ void AWeaponBaseActor::PostInitializeComponents()
 	OnActorBeginOverlap.AddUniqueDynamic(this, &AWeaponBaseActor::OnActorBeginOverlapEvent);
 }
 
-void AWeaponBaseActor::UseItem(class ABaseCharacter* target)
+void AWeaponBaseActor::UseItem(class ABaseCharacter* owner)
 {
-	Super::UseItem(target);
+	Super::UseItem(owner);
 
-	if (target != nullptr) {
-		APlayerCharacter* player = Cast<APlayerCharacter>(target);
+	if (owner != nullptr) {
+		APlayerCharacter* player = Cast<APlayerCharacter>(owner);
 		const FWeapon* info = GetItemInfo<FWeapon>();
 
 		if (info != nullptr) {
@@ -56,6 +57,10 @@ void AWeaponBaseActor::UseItem(class ABaseCharacter* target)
 					ItemChange_Default(player, player->GetEquipmentComp()->GetDefaultWeaponActor()->GetItemInfo<FWeapon>(), player->GetEquipmentComp()->GetDefaultWeaponActor());
 				}
 				else {
+					if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_WeaponAtcUp"))
+					{
+						player->GetStatusComponent()->SetATC(player->GetStatusComponent()->GetATC() - 30);
+					}
 					RemoveStat(player, player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->equipmentStat);
 					ItemChange(player, spawnItem->GetItemInfo<FWeapon>(), spawnItem);
 				}
@@ -104,9 +109,13 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* in
 		player->GetEquipmentComp()->SetWeaponActor(*info, Cast<AItemActor>(player->GetWeaponChildActor()->GetChildActor()));
 		Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);
 
-		player->GetWeaponChildActor()->SetVisibility(true);
+		player->GetWeaponChildActor()->SetVisibility(false);
 
 		//player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
+		if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_WeaponAtcUp"))
+		{
+			player->GetStatusComponent()->AddATC(30);
+		}
 		AddStat(player, info->equipmentStat);
 
 		player->SetWeaponEquipped(true);
@@ -130,6 +139,10 @@ void AWeaponBaseActor::ItemChange_Default(APlayerCharacter* player, const FEquip
 		Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);
 
 		//player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
+		if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_WeaponAtcUp"))
+		{
+			player->GetStatusComponent()->SetATC(player->GetStatusComponent()->GetATC() - 30);
+		}
 
 		player->SetWeaponEquipped(false);
 		player->GetDoubleSwordChild()->SetVisibility(false);

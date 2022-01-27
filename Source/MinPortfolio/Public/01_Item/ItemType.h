@@ -279,8 +279,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UParticleSystem* useParticle;
 
-	UPROPERTY(EditAnywhere)
-		class UAnimMontage* useMontage;
 public:
 	FBattleItem() {
 		item_Type = EItemType::BATTLE_ITEM;

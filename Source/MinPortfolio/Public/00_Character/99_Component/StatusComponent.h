@@ -105,12 +105,14 @@ public:
 	int32 GetSP() { return characterStat.SkillPoint; }
 
 	void AddHP(const float value);
+	void AddMaxHP(const float value);
 	void AddATC(const float value);
 	void AddDEF(const float value);
 	void AddDEX(const float value);
 	void AddSP(const int32 value);
 
 	void SetHP(const float value);
+	void SetMaxHP(const float value);
 	void SetATC(const float value);
 	void SetDEF(const float value);
 	void SetDEX(const float value);

@@ -84,6 +84,8 @@ APlayerCharacter::APlayerCharacter()
 	DoubleSwordChild->SetupAttachment(GetMesh(), "hand_l_double");
 
 	DoubleSwordChild->SetVisibility(false);
+
+	SetGenericTeamId(FGenericTeamId(4));
 }
 
 void APlayerCharacter::MoveForward(float Value)

@@ -51,12 +51,15 @@ float ABaseCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, 
 	return 0.0f;
 }
 
-void ABaseCharacter::AddDebuffState(EDebuffState buff, const float value, const float cool, EDebuffType type)
+void ABaseCharacter::AddDebuffStateCharacter(EDebuffState buff, const float value, const float cool, EDebuffType type)
 {
 	auto debuff = NewObject<UDebuffObject>(debuffclass);
-	debuffs.Add(debuff);
-	debuff->SetDebuff(buff);
-	debuff->AddDebuffState(value, cool, this, type);
+	if (debuff != nullptr) {
+		debuffs.Add(debuff);
+		debuff->SetDebuff(buff, value);
+		debuff->AddDebuffState(value, cool, this, type);
+	}
+
 }
 
 void ABaseCharacter::RemoveDebuffState(EDebuffState buff, const float value, UDebuffObject* buffObject)
@@ -75,5 +78,11 @@ void ABaseCharacter::RemoveDebuffState(EDebuffState buff, const float value, UDe
 	}
 
 	debuffs.Remove(buffObject);
-	buffObject->BeginDestroy();
+	buffObject->ConditionalBeginDestroy();
 }
+
+void ABaseCharacter::RemoveDebuffObejct(UDebuffObject* buffObject)
+{
+	debuffs.Remove(buffObject);
+}
+

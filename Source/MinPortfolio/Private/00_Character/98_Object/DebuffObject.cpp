@@ -12,53 +12,57 @@ void UDebuffObject::AddDebuffState(const float value, const float cool, ABaseCha
 
 	if (Target != nullptr) {
 		if (type == EDebuffType::ONE) {
-			GiveStatDown(cool, value);
+			GiveStatDown(cool);
 			FTimerDelegate endTimeDel = FTimerDelegate::CreateUObject(target, &ABaseCharacter::RemoveDebuffState, debuff, value, this);
-			GetWorld()->GetTimerManager().SetTimer(debuffHandle, endTimeDel, cool, false);
+			Target->GetWorld()->GetTimerManager().SetTimer(debuffHandle, endTimeDel, cool, false);
 		}
 		else {
-			FTimerDelegate damageEndTimeDel = FTimerDelegate::CreateUObject(this, &UDebuffObject::GiveDamageDebuff, cool, value);
-			GetWorld()->GetTimerManager().SetTimer(damageDebuffHandle, damageEndTimeDel, 1, true);
+			FTimerDelegate damageEndTimeDel = FTimerDelegate::CreateUObject(this, &UDebuffObject::GiveDamageDebuff, cool);
+			Target->GetWorld()->GetTimerManager().SetTimer(damageDebuffHandle, damageEndTimeDel, 1, true);
 		}
 	}
 }
 
-void UDebuffObject::GiveStatDown(const float cool, const float value)
+void UDebuffObject::GiveStatDown(const float cool)
 {
 	if (Target != nullptr) {
 		switch (debuff)
 		{
 		case EDebuffState::GIVE_ATC_DOWN:
-			Target->GetStatusComponent()->SetATC(Target->GetStatusComponent()->GetATC() - value);
+			Target->GetStatusComponent()->SetATC(Target->GetStatusComponent()->GetATC() - effect_value);
 			break;
 		case EDebuffState::GIVE_DEF_DOWN:
-			Target->GetStatusComponent()->SetDEF(Target->GetStatusComponent()->GetDEF() - value);
+			Target->GetStatusComponent()->SetDEF(Target->GetStatusComponent()->GetDEF() - effect_value);
 			break;
 		case EDebuffState::GIVE_SLOW:
-			Target->GetStatusComponent()->SetDEX(Target->GetStatusComponent()->GetDEX() - value);
+			Target->GetStatusComponent()->SetDEX(Target->GetStatusComponent()->GetDEX() - effect_value);
 			break;
 		}
 	}
 }
 
 
-void UDebuffObject::GiveDamageDebuff(const float cool,const float value)
+void UDebuffObject::GiveDamageDebuff(const float cool)
 {
 	if (Target != nullptr) {
-		switch (debuff)
-		{
-		case EDebuffState::GIVE_BURN:
-			Target->GetStatusComponent()->SetHP(Target->GetStatusComponent()->GetHP() - value);
-			break;
-		}
-
 		if (cool == cnt)
 		{
-			GetWorld()->GetTimerManager().ClearTimer(damageDebuffHandle);
+			Target->GetWorld()->GetTimerManager().ClearTimer(damageDebuffHandle);
+			Target->RemoveDebuffObejct(this);
+			ConditionalBeginDestroy();
+			return;
 		}
 		else
 		{
 			cnt++;
 		}
+
+		switch (debuff)
+		{
+		case EDebuffState::GIVE_BURN:
+			Target->GetStatusComponent()->SetHP(Target->GetStatusComponent()->GetHP() - effect_value);
+			break;
+		}
+		
 	}
 }

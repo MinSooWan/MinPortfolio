@@ -13,5 +13,11 @@ UCLASS()
 class MINPORTFOLIO_API ABattleItemActor : public AItemActor
 {
 	GENERATED_BODY()
-	
+
+public:
+
+	virtual void UseItem(class ABaseCharacter* owner) override;
+
+	UFUNCTION()
+		void SpawnPaticle(class ABaseCharacter* target);
 };

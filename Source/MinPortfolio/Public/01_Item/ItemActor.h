@@ -49,7 +49,7 @@ public:
 	FName GetItemCode() { return itemCode; }
 
 	UFUNCTION(BlueprintCallable)
-		virtual void UseItem(class ABaseCharacter* target) { };
+		virtual void UseItem(class ABaseCharacter* itemOwner) { };
 
 	bool GetEquipped() { return bEquipped; }
 	void SetEquipped(bool equipped) { bEquipped = equipped; }

@@ -1,9 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "00_Character/99_Component/SkillComponent.h"
 #include "00_Character/00_Player/BaseCharacter.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "00_Character/99_Component/EquipmentComponent.h"
+#include "01_Item/ItemActor.h"
 #include "04_Skill/SkillBaseActor.h"
 
 // Sets default values for this component's properties
@@ -38,7 +40,22 @@ void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 void USkillComponent::AddSkill(AActor* skill)
 {
 	skills.Emplace(skill);
+	if(Cast<ASkillBaseActor>(skill)->GetSkillInfo<FSkill>()->skill_code == "Skill_Passive_WeaponAtcUp")
+	{
+		if(GetOwner<APlayerCharacter>()->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FIteminfo>()->item_Code != "item_Equipment_NoWeapon")
+		{
+			GetOwner<APlayerCharacter>()->GetStatusComponent()->AddATC(30);
+		}
+	}
+	else if(Cast<ASkillBaseActor>(skill)->GetSkillInfo<FSkill>()->skill_code == "Skill_Passive_ArmorDefUp")
+	{
+		if (GetOwner<APlayerCharacter>()->GetEquipmentComp()->GetArmorActor()->GetItemInfo<FIteminfo>()->item_Code != "item_Equipment_NoArmor")
+		{
+			GetOwner<APlayerCharacter>()->GetStatusComponent()->AddDEF(30);
+		}
+	}
 	skill_infos.Emplace(Cast<ASkillBaseActor>(skill)->GetSkillInfo<FSkill>()->skill_Name);
+	skill_codes.Emplace(Cast<ASkillBaseActor>(skill)->GetSkillInfo<FSkill>()->skill_code);
 	skill->SetActorHiddenInGame(true);
 }
 

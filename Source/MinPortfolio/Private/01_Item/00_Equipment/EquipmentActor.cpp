@@ -10,9 +10,9 @@
 #include "Components/ChildActorComponent.h"
 #include "01_Item/00_Weapon/WeaponBaseActor.h"
 
-void AEquipmentActor::UseItem(class ABaseCharacter* target)
+void AEquipmentActor::UseItem(class ABaseCharacter* owner)
 {
-	Super::UseItem(target);
+	Super::UseItem(owner);
 }
 
 void AEquipmentActor::AddStat(ABaseCharacter* target, const FCharacterStat& statToAdd)
