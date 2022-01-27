@@ -52,8 +52,12 @@ protected:
 
 	virtual void Landed(const FHitResult& Hit) override;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		FGenericTeamId myTeam;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+		class UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

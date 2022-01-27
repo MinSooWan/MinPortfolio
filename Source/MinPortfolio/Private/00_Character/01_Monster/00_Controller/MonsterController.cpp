@@ -44,9 +44,29 @@ AMonsterController::AMonsterController()
 	PerceptionComponent->ConfigureSense(*hearingConfig);
 }
 
+void AMonsterController::OnPerceptionUpdatedEvent(AActor* Actor, FAIStimulus Stimulus)
+{
+	if (Stimulus.WasSuccessfullySensed()) {
+		if (Actor->IsA<ABaseCharacter>()) {
+
+			auto myTeam = GetPawn<ABaseCharacter>()->GetGenericTeamId();
+			auto otherTeam = Cast<ABaseCharacter>(Actor)->GetGenericTeamId();
+
+			//적인상태
+			if (myTeam != otherTeam) {
+				if (GetBlackboardComponent()->GetValueAsObject("Target") == nullptr) {
+					GetBlackboardComponent()->SetValueAsObject("Target", Actor);
+				}
+			}
+		}
+	}
+}
+
 void AMonsterController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	PerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this, &AMonsterController::OnPerceptionUpdatedEvent);
 }
 
 void AMonsterController::OnPossess(APawn* InPawn)
@@ -60,10 +80,7 @@ void AMonsterController::OnPossess(APawn* InPawn)
 		{
 			RunBehaviorTree(monster->GetAiTree());
 			GetBlackboardComponent()->SetValueAsVector("HomeLocation", InPawn->GetActorLocation());
-			if(monster->GetTargetLocation() != nullptr)
-			{
-				GetBlackboardComponent()->SetValueAsVector("TargetLocation", monster->GetTargetLocation()->GetActorLocation());
-			}
+			
 		}
 	}
 }

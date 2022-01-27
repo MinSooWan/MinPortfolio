@@ -13,7 +13,7 @@ AMonsterCharacter::AMonsterCharacter()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	GetMesh()->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
+	GetMesh()->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_Yes;
 
 	SetGenericTeamId(FGenericTeamId(5));
 }

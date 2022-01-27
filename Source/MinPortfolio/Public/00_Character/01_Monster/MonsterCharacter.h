@@ -28,9 +28,16 @@ protected:
 		class UBehaviorTree* aiTree;
 	UPROPERTY(EditAnywhere)
 		AActor* targetLocation;
+	UPROPERTY()
+		bool bMoving = false;
 
+	UPROPERTY()
+		FTimerHandle movingHandle;
 public:
+	FTimerHandle GetMovingHandle() { return movingHandle; }
+	bool GetMoving() { return bMoving; }
+	void SetMoving(bool value) { bMoving = value; }
 
 	class UBehaviorTree* GetAiTree() { return aiTree; }
-	AActor* GetTargetLocation() { return targetLocation; }
+	AActor* GetTargetActorLocation() { return targetLocation; }
 };

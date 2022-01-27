@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Perception/AIPerceptionTypes.h"
 #include "MonsterController.generated.h"
 
 UENUM(BlueprintType)
@@ -38,6 +39,8 @@ public:
 
 	AMonsterController();
 
+	UFUNCTION()
+		void OnPerceptionUpdatedEvent(AActor* Actor, FAIStimulus Stimulus);
 protected:
 	
 	virtual void PostInitializeComponents() override;

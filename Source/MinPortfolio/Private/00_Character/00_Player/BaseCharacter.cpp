@@ -6,6 +6,10 @@
 #include "TimerManager.h"
 #include "00_Character/99_Component/BuffComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Damage.h"
+#include "Perception/AISense_Hearing.h"
+#include "Perception/AISense_Sight.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -16,6 +20,12 @@ ABaseCharacter::ABaseCharacter()
 	statComp = CreateDefaultSubobject<UStatusComponent>(TEXT("statusComp"));
 	buffComp = CreateDefaultSubobject<UBuffComponent>(TEXT("BuffComp"));
 
+	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionComp"));
+	AIPerceptionStimuliSourceComponent->bAutoRegister = true;
+
+	AIPerceptionStimuliSourceComponent->RegisterForSense(UAISense_Sight::StaticClass());
+	AIPerceptionStimuliSourceComponent->RegisterForSense(UAISense_Damage::StaticClass());
+	AIPerceptionStimuliSourceComponent->RegisterForSense(UAISense_Hearing::StaticClass());
 }
 
 // Called when the game starts or when spawned
