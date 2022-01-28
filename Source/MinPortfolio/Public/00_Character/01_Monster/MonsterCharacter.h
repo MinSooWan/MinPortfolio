@@ -25,6 +25,11 @@ public:
 protected:
 
 	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ATriggerSphere> triggerClass;
+	UPROPERTY()
+		class ATriggerSphere* moveZone;
+
+	UPROPERTY(EditAnywhere)
 		class UBehaviorTree* aiTree;
 	UPROPERTY(EditAnywhere)
 		AActor* targetLocation;
@@ -33,11 +38,19 @@ protected:
 
 	UPROPERTY()
 		FTimerHandle movingHandle;
+
+	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY()
+		FVector homeLocation;
 public:
 	FTimerHandle GetMovingHandle() { return movingHandle; }
 	bool GetMoving() { return bMoving; }
-	void SetMoving(bool value) { bMoving = value; }
+
 
 	class UBehaviorTree* GetAiTree() { return aiTree; }
 	AActor* GetTargetActorLocation() { return targetLocation; }
+
+	UFUNCTION()
+		void OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);
 };

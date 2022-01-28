@@ -20,8 +20,7 @@ EBTNodeResult::Type URandomMove::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 		{
 			aiCon = monster->GetController<AAIController>();
 			float time = FMath::RandRange(1, 5);
-			monster->SetMoving(true);
-
+			
 			auto location = OwnerComp.GetBlackboardComponent()->GetValueAsVector("HomeLocation");
 			UNavigationSystemV1::K2_GetRandomReachablePointInRadius(monster, location, result, 1500);
 		}
