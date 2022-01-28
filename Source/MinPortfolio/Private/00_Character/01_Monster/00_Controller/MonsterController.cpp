@@ -60,6 +60,12 @@ void AMonsterController::OnPerceptionUpdatedEvent(AActor* Actor, FAIStimulus Sti
 			}
 		}
 	}
+	else
+	{
+		if (GetBlackboardComponent()->GetValueAsObject("Target") != nullptr) {
+			GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
+		}
+	}
 }
 
 void AMonsterController::PostInitializeComponents()
