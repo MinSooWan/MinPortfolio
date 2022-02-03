@@ -34,7 +34,7 @@ void ACustomController::OnPossess(APawn* aPawn)
 
 void ACustomController::ChangeBattleCharacter()
 {
-	/*
+	
 	APlayerCharacter* player = Cast<APlayerCharacter>(GetPawn());
 	auto location = GetPawn()->GetActorLocation();
 	auto rotator = GetPawn()->GetActorRotation();
@@ -56,8 +56,10 @@ void ACustomController::ChangeBattleCharacter()
 
 	newPawn->GetStatusComponent()->SetAll(player);
 
+	newPawn->GetInventoryComp()->SetItemArray(player->GetInventoryComp()->GetItemArray());
+
 	newPawn->GetMesh()->SetAnimInstanceClass(newPawn->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FGatheringTool>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 	SetPawn(newPawn);
 	mainWidget->SetVisibility(ESlateVisibility::Hidden);
-	*/
+	
 }
