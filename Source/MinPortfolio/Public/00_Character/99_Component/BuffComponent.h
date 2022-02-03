@@ -43,4 +43,5 @@ public:
 
 	UFUNCTION()
 		void RemoveBuffState(EBuffState buff, const float value);
+
 };

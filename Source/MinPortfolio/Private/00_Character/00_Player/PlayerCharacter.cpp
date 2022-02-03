@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/ChildActorComponent.h"
 #include "00_Character/00_Player/BaseCharacter.h"
+#include "00_Character/00_Player/00_Controller/BattleController.h"
 #include "Components/ChildActorComponent.h"
 #include "00_Character/99_Component/EquipmentComponent.h"
 #include "01_Item/ItemActor.h"
@@ -160,6 +161,13 @@ void APlayerCharacter::BeginPlay()
 
 }
 
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	
+}
+
 void APlayerCharacter::Jump()
 {
 	
@@ -254,6 +262,18 @@ void APlayerCharacter::SetActionState(const EActionState state)
 	case EActionState::JUMP:
 		break;
 	default:
+		break;
+	}
+}
+
+void APlayerCharacter::Battle_SetActionState(const EActionState state)
+{
+	actionState = state;
+
+	switch (actionState)
+	{
+	case EActionState::ATTACK:
+		PlayAnimMontage(GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->attackMontage);
 		break;
 	}
 }

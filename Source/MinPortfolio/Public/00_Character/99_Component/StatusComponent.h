@@ -120,4 +120,6 @@ public:
 
 	void AddStat(const FCharacterStat& statToAdd);
 	void RemoveStat(const FCharacterStat& statToRemove);
+
+	void SetAll(ABaseCharacter* target);
 };

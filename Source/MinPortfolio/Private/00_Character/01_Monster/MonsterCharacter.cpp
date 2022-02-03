@@ -7,6 +7,7 @@
 #include "00_Character/01_Monster/00_Controller/MonsterController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Engine/TriggerSphere.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -18,9 +19,15 @@ AMonsterCharacter::AMonsterCharacter()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
+	GetCharacterMovement()->MaxWalkSpeed = 400;
+
 	GetMesh()->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_Yes;
 
 	SetGenericTeamId(FGenericTeamId(5));
+
+	widgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("widget"));
+	widgetComp->SetupAttachment(RootComponent);
+	widgetComp->SetVisibility(false);
 }
 
 void AMonsterCharacter::BeginPlay()
@@ -49,6 +56,7 @@ void AMonsterCharacter::Tick(float DeltaTime)
 		case EPathFollowingRequestResult::AlreadyAtGoal:
 			bMoving = false;
 			GetController<AMonsterController>()->RunBehaviorTree(aiTree);
+			widgetComp->SetVisibility(false);
 			break;
 		case EPathFollowingRequestResult::Failed:
 			

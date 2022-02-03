@@ -34,6 +34,9 @@ protected:
 public:
 	AToolBaseActor();
 
+	UPROPERTY()
+		class APlayerCharacter* playerOwner;
+
 	class UStaticMeshComponent* GetStaticMesh() { return staticMesh; }
 
 	void ClearHitArray() { hitArray.Empty(); }

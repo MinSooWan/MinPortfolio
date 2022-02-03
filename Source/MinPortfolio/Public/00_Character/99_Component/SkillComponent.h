@@ -7,7 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "SkillComponent.generated.h"
 
-
+TArray<AActor*> operator*(const TArray<AActor&>& Array);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MINPORTFOLIO_API USkillComponent : public UActorComponent
 {

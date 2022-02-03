@@ -13,7 +13,8 @@ UCLASS()
 class MINPORTFOLIO_API APlayerCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
-	
+
+protected:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -33,7 +34,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
 
-protected:
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
@@ -52,6 +52,7 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
@@ -76,9 +77,12 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaTime) override;
 
+public:
 	virtual void Jump() override;
 
+protected:
 	virtual void Landed(const FHitResult& Hit) override;
 
 	UPROPERTY()
@@ -109,8 +113,20 @@ protected:
 
 	UPROPERTY()
 		EActionState TempAction;
+
+	UPROPERTY()
+		bool bMoveToTarget = false;
+
+	UPROPERTY()
+		FVector targetLocation;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ABattleController> battleControllerClass;
 	
 public:
+
+	UPROPERTY()
+		bool bContinueAttack = false;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		AActor* target;
@@ -123,6 +139,7 @@ public:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void SetActionState(const EActionState state) override;
+	void Battle_SetActionState(const EActionState state);
 
 	class UEquipmentComponent* GetEquipmentComp() { return equipmentComp; }
 
@@ -144,10 +161,14 @@ public:
 	void SetOverlapmaterial(AActor* value) { overlapMaterial = value; }
 
 	EActionState GetTempAction() { return TempAction; }
+
+	TSubclassOf<class ABattleController> GetBattleControllerClass() { return battleControllerClass; }
+
 protected:
 
 	virtual void PostInitializeComponents() override;
 
+public:
 	void PresedRunStart();
 	void PresedRunStop();
 
@@ -156,6 +177,8 @@ protected:
 	void PresedAttack();
 
 	void PresedOnMenu();
+
+protected:
 
 	UFUNCTION()
 		void OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);

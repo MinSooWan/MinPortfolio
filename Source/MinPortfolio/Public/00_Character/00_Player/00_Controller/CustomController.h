@@ -23,7 +23,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 		class UMainWidget* mainWidget;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ABattleCharacter> BattleCharacterClass;
+
 public:
 	class UMainWidget* GetMainWidget() { return mainWidget; }
 
+	void ChangeBattleCharacter();
 };

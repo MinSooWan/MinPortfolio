@@ -32,5 +32,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void UseItem(FName itemCode);
 
-	const TArray<AActor*> GetItemArray() { return itemArray; }
+	TArray<AActor*> GetItemArray() { return itemArray; }
 };

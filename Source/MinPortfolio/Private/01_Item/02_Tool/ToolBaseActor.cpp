@@ -3,12 +3,17 @@
 
 #include "01_Item/02_Tool/ToolBaseActor.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "00_Character/00_Player/00_Controller/BattleController.h"
+#include "00_Character/00_Player/00_Controller/CustomController.h"
+#include "00_Character/01_Monster/MonsterCharacter.h"
 #include "00_Character/99_Component/ToolComponent.h"
 #include "01_Item/ItemType.h"
 #include "Components/ChildActorComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "01_Item/01_Material/MaterialBaseActor.h"
+#include "03_Widget/MainWidget.h"
+#include "99_GameMode/MainGameModeBase.h"
 
 void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
 {
@@ -33,6 +38,7 @@ void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
 
 			player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FGatheringTool>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 
+			Cast<AToolBaseActor>(player->GetToolComp()->GetToolActor())->playerOwner = player;
 		}
 	}
 }
@@ -58,13 +64,17 @@ void AToolBaseActor::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* O
 {
 	if (OtherActor != nullptr && hitArray.Contains(OtherActor) == false) {
 		hitArray.Emplace(OtherActor);
-
+		
 		if (OtherActor->IsA<AItemActor>()) {
 			
 
 		}
-		else {
-			UE_LOG(LogTemp, Log, TEXT("111111111111111111"));
+		else if(OtherActor->IsA<AMonsterCharacter>()) {
+			//UKismetSystemLibrary::PrintString(this, "2222222222");
+			if(playerOwner != nullptr)
+			{
+				playerOwner->GetController<ACustomController>()->ChangeBattleCharacter();
+			}
 		}
 	}
 }

@@ -36,14 +36,17 @@ protected:
 	UPROPERTY()
 		bool bMoving = false;
 
-	UPROPERTY()
-		FTimerHandle movingHandle;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+		class UWidgetComponent* widgetComp;
 
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY()
 		FVector homeLocation;
 public:
+	UPROPERTY()
+		FTimerHandle movingHandle;
+
 	FTimerHandle GetMovingHandle() { return movingHandle; }
 	bool GetMoving() { return bMoving; }
 
@@ -53,4 +56,6 @@ public:
 
 	UFUNCTION()
 		void OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);
+
+	class UWidgetComponent* GetWidgetComp() { return widgetComp; }
 };

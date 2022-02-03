@@ -7,6 +7,7 @@
 #include "00_Character/01_Monster/00_Controller/MonsterController.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 EBTNodeResult::Type URandomMove::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -15,12 +16,13 @@ EBTNodeResult::Type URandomMove::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	bNotifyTick = true;
 	if(monster != nullptr)
 	{
-		UKismetSystemLibrary::PrintString(monster, "ExecuteTask");
-		if(!monster->GetWorld()->GetTimerManager().IsTimerActive(monster->GetMovingHandle()))
+		//UKismetSystemLibrary::PrintString(monster, "ExecuteTask");
+		if(!monster->GetWorld()->GetTimerManager().IsTimerActive(monster->movingHandle))
 		{
 			aiCon = monster->GetController<AAIController>();
 			float time = FMath::RandRange(1, 5);
-			
+
+			monster->GetWorld()->GetTimerManager().SetTimer(monster->movingHandle, FTimerDelegate(), time, false);
 			auto location = OwnerComp.GetBlackboardComponent()->GetValueAsVector("HomeLocation");
 			UNavigationSystemV1::K2_GetRandomReachablePointInRadius(monster, location, result, 1500);
 		}
@@ -35,6 +37,12 @@ void URandomMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 
 	if(monster != nullptr)
 	{
+		if(aiCon->GetBlackboardComponent()->GetValueAsObject("Target") != nullptr)
+		{
+			monster->GetWorld()->GetTimerManager().ClearTimer(monster->movingHandle);
+			monster->GetWidgetComp()->SetVisibility(true);
+			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		}
 
 		switch (aiCon->MoveToLocation(result))
 		{

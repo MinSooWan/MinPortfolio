@@ -3,8 +3,10 @@
 
 #include "00_Character/01_Monster/00_Controller/MonsterController.h"
 
+#include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/01_Monster/MonsterCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig.h"
 #include "Perception/AISenseConfig_Damage.h"
@@ -47,24 +49,25 @@ AMonsterController::AMonsterController()
 void AMonsterController::OnPerceptionUpdatedEvent(AActor* Actor, FAIStimulus Stimulus)
 {
 	if (Stimulus.WasSuccessfullySensed()) {
-		if (Actor->IsA<ABaseCharacter>()) {
+		if (Actor->IsA<APlayerCharacter>()) {
 
 			auto myTeam = GetPawn<ABaseCharacter>()->GetGenericTeamId();
 			auto otherTeam = Cast<ABaseCharacter>(Actor)->GetGenericTeamId();
 
 			//적인상태
 			if (myTeam != otherTeam) {
+				/*
 				if (GetBlackboardComponent()->GetValueAsObject("Target") == nullptr) {
 					GetBlackboardComponent()->SetValueAsObject("Target", Actor);
+					GetPawn<AMonsterCharacter>()->GetWidgetComp()->SetVisibility(true);
 				}
+				*/
 			}
 		}
 	}
 	else
 	{
-		if (GetBlackboardComponent()->GetValueAsObject("Target") != nullptr) {
-			GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
-		}
+		
 	}
 }
 
@@ -84,8 +87,8 @@ void AMonsterController::OnPossess(APawn* InPawn)
 	{
 		if(monster->GetAiTree() != nullptr)
 		{
-			RunBehaviorTree(monster->GetAiTree());
-			GetBlackboardComponent()->SetValueAsVector("HomeLocation", InPawn->GetActorLocation());
+			//RunBehaviorTree(monster->GetAiTree());
+			//GetBlackboardComponent()->SetValueAsVector("HomeLocation", InPawn->GetActorLocation());
 			
 		}
 	}

@@ -113,3 +113,12 @@ void UStatusComponent::RemoveStat(const FCharacterStat& statToRemove)
 	characterStat -= statToRemove;
 }
 
+void UStatusComponent::SetAll(ABaseCharacter* target)
+{
+	characterStat.ATC = target->GetStatusComponent()->GetATC();
+	characterStat.DEF = target->GetStatusComponent()->GetDEF();
+	characterStat.DEX = target->GetStatusComponent()->GetDEX();
+	characterStat.HP = target->GetStatusComponent()->GetHP();
+	characterStat.MaxHP = target->GetStatusComponent()->GetMaxHP();
+}
+
