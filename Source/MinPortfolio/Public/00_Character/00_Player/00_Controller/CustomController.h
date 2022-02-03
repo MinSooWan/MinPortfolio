@@ -17,6 +17,8 @@ class MINPORTFOLIO_API ACustomController : public APlayerController
 protected:
 	virtual void OnPossess(APawn* aPawn) override;
 
+	virtual void SetupInputComponent() override;
+
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UMainWidget> mainWidgetClass;
 
