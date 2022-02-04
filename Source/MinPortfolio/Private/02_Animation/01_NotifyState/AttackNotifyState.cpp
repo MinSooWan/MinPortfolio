@@ -3,7 +3,6 @@
 
 #include "02_Animation/01_NotifyState/AttackNotifyState.h"
 
-#include "00_Character/00_Player/BattleCharacter.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/99_Component/EquipmentComponent.h"
 #include "01_Item/00_Weapon/WeaponBaseActor.h"

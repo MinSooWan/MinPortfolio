@@ -167,7 +167,22 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
+	Super::Tick(DeltaTime);
+	if (bMoveToTarget == true)
+	{
+		targetLocation = target->GetActorLocation() - GetActorLocation();
+		//UKismetSystemLibrary::PrintString(this, targetLocation.ToString());
+		if (target->GetDistanceTo(this) <= 150)
+		{
+			bMoveToTarget = false;
+			Battle_SetActionState(EActionState::ATTACK);
+		}
+		else {
+			AddMovementInput(targetLocation);
+		}
+
+		//GetMovementComponent()->Velocity = (target->GetActorLocation() - GetActorLocation());
+	}
 }
 
 void APlayerCharacter::Jump()
@@ -325,16 +340,31 @@ void APlayerCharacter::PresedOnMenu()
 	GetController<ACustomController>()->GetMainWidget()->OnMenuWidget.Broadcast();
 }
 
+void APlayerCharacter::PressedBattle_Attack()
+{
+	UKismetSystemLibrary::PrintString(this, "22222222222222");
+	if (target != nullptr)
+	{
+		UKismetSystemLibrary::PrintString(this, "3333333333333");
+		if (!equipmentComp->GetWeaponActor()->GetItemInfo<FWeapon>()->item_Code.IsEqual("item_Equipment_NoWeapon")) {
+			if (actionState == EActionState::ATTACK)
+			{
+				bContinueAttack = true;
+			}
+			else {
+				bMoveToTarget = true;
+			}
+			//SetActorLocation(target->GetActorLocation());
+		}
+	}
+}
+
 void APlayerCharacter::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)
 {
 	if (OtherActor->IsA<AMaterialBaseActor>() && OtherActor->IsValidLowLevel()) {
 		Cast<AMaterialBaseActor>(OtherActor)->GetPickUpWidget()->SetVisibility(true);
 
 		overlapMaterial = OtherActor;
-	}
-	else if(OtherActor->IsA<ABaseCharacter>())
-	{
-		target = OtherActor;
 	}
 }
 

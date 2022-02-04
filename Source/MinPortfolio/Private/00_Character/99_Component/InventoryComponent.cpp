@@ -4,6 +4,8 @@
 #include "00_Character/99_Component/InventoryComponent.h"
 #include "01_Item/ItemActor.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "98_Instance/MyGameInstance.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()

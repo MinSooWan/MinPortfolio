@@ -13,6 +13,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "01_Item/01_Material/MaterialBaseActor.h"
 #include "03_Widget/MainWidget.h"
+#include "98_Instance/MyGameInstance.h"
 #include "99_GameMode/MainGameModeBase.h"
 
 void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
@@ -73,7 +74,8 @@ void AToolBaseActor::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* O
 			//UKismetSystemLibrary::PrintString(this, "2222222222");
 			if(playerOwner != nullptr)
 			{
-				playerOwner->GetController<ACustomController>()->ChangeBattleCharacter();
+				GetGameInstance<UMyGameInstance>()->SetTarget(Cast<AMonsterCharacter>(OtherActor));
+				playerOwner->GetController<ACustomController>()->ChangeBattleLevel();
 			}
 		}
 	}

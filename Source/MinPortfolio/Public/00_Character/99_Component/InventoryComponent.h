@@ -35,4 +35,5 @@ public:
 	TArray<AActor*> GetItemArray() { return itemArray; }
 
 	void SetItemArray(TArray<AActor*> value) { itemArray = value; }
+
 };

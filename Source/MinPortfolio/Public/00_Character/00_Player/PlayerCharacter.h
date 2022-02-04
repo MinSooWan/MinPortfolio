@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "00_Character/00_Player/BaseCharacter.h"
+#include "00_Character/99_Component/InventoryComponent.h"
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -119,9 +120,6 @@ protected:
 
 	UPROPERTY()
 		FVector targetLocation;
-
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class ABattleController> battleControllerClass;
 	
 public:
 
@@ -162,8 +160,6 @@ public:
 
 	EActionState GetTempAction() { return TempAction; }
 
-	TSubclassOf<class ABattleController> GetBattleControllerClass() { return battleControllerClass; }
-
 protected:
 
 	virtual void PostInitializeComponents() override;
@@ -177,6 +173,8 @@ public:
 	void PresedAttack();
 
 	void PresedOnMenu();
+
+	void PressedBattle_Attack();
 
 protected:
 

@@ -23,8 +23,6 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
-	virtual void UseItem(class ABaseCharacter* owner) override;
-
 	virtual void ItemChange(class APlayerCharacter* player, const FEquipment* info, AItemActor* item) override;
 	virtual void ItemChange_Default(class APlayerCharacter* player, const FEquipment* info, AItemActor* item) override;
 
@@ -33,10 +31,14 @@ protected:
 		FName SocketName;
 
 public:
+	virtual void UseItem(class ABaseCharacter* owner) override;
+
 	AWeaponBaseActor();
 
 	TArray<class AActor*> GetHitArray() { return hitArray; }
 
 	void ClearHitArray() { hitArray.Empty(); }
+
+	FName GetSocketName() { return SocketName; }
 
 };

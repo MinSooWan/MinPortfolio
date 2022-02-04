@@ -23,8 +23,6 @@ protected:
 
 	void ToolChange(class APlayerCharacter* player, AItemActor* item);
 
-	virtual void UseItem(class ABaseCharacter* owner) override;
-
 	UPROPERTY()
 		TArray<AActor*> hitArray;
 
@@ -32,6 +30,9 @@ protected:
 		void OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);
 
 public:
+
+	virtual void UseItem(class ABaseCharacter* owner) override;
+
 	AToolBaseActor();
 
 	UPROPERTY()

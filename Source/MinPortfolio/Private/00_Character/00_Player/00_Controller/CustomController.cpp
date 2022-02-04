@@ -3,7 +3,6 @@
 
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 
-#include "00_Character/00_Player/BattleCharacter.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/99_Component/BuffComponent.h"
 #include "03_Widget/MainWidget.h"
@@ -12,27 +11,29 @@
 #include "00_Character/99_Component/EquipmentComponent.h"
 #include "00_Character/99_Component/InventoryComponent.h"
 #include "00_Character/99_Component/SkillComponent.h"
+#include "01_Item/00_Equipment/ArmorBaseActor.h"
 #include "01_Item/00_Weapon/WeaponBaseActor.h"
+#include "01_Item/02_Tool/ToolBaseActor.h"
+#include "98_Instance/MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 void ACustomController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
-
+	UKismetSystemLibrary::PrintString(this, "22222222222222");
 	APlayerCharacter* player = Cast<APlayerCharacter>(aPawn);
 
 	if (player != nullptr) {
 
-		if (!player->IsA<ABattleCharacter>()) {
-			mainWidget = CreateWidget<UMainWidget>(this, mainWidgetClass);
-			if (mainWidget != nullptr) {
+		mainWidget = CreateWidget<UMainWidget>(this, mainWidgetClass);
+		if (mainWidget != nullptr) {
 
-				player->GetToolComp()->ToolCompInit();
-				player->GetEquipmentComp()->EquipmentCompInit();
+			player->GetToolComp()->ToolCompInit();
+			player->GetEquipmentComp()->EquipmentCompInit();
 
-				mainWidget->AddToViewport();
-			}
+			mainWidget->AddToViewport();
 		}
+		SetupInputComponent();
 	}
 }
 
@@ -40,69 +41,44 @@ void ACustomController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	InputComponent->BindAxis("MoveForward", GetPawn<APlayerCharacter>(), &APlayerCharacter::MoveForward);
-	InputComponent->BindAxis("MoveRight", GetPawn<APlayerCharacter>(), &APlayerCharacter::MoveRight);
+	if (GetPawn<APlayerCharacter>() != nullptr) {
+		InputComponent->BindAxis("MoveForward", GetPawn<APlayerCharacter>(), &APlayerCharacter::MoveForward);
+		InputComponent->BindAxis("MoveRight", GetPawn<APlayerCharacter>(), &APlayerCharacter::MoveRight);
 
-	InputComponent->BindAxis("Turn", GetPawn<APlayerCharacter>(), &APawn::AddControllerYawInput);
-	InputComponent->BindAxis("TurnRate", GetPawn<APlayerCharacter>(), &APlayerCharacter::TurnAtRate);
-	InputComponent->BindAxis("LookUp", GetPawn<APlayerCharacter>(), &APawn::AddControllerPitchInput);
-	InputComponent->BindAxis("LookUpRate", GetPawn<APlayerCharacter>(), &APlayerCharacter::LookUpAtRate);
+		InputComponent->BindAxis("Turn", GetPawn<APlayerCharacter>(), &APawn::AddControllerYawInput);
+		InputComponent->BindAxis("TurnRate", GetPawn<APlayerCharacter>(), &APlayerCharacter::TurnAtRate);
+		InputComponent->BindAxis("LookUp", GetPawn<APlayerCharacter>(), &APawn::AddControllerPitchInput);
+		InputComponent->BindAxis("LookUpRate", GetPawn<APlayerCharacter>(), &APlayerCharacter::LookUpAtRate);
 
-	InputComponent->BindAction("Jump", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::Jump);
-	InputComponent->BindAction("Jump", EInputEvent::IE_Released, GetPawn<APlayerCharacter>(), &ACharacter::StopJumping);
+		InputComponent->BindAction("Jump", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::Jump);
+		InputComponent->BindAction("Jump", EInputEvent::IE_Released, GetPawn<APlayerCharacter>(), &ACharacter::StopJumping);
 
-	InputComponent->BindAction("Run", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedRunStart);
-	InputComponent->BindAction("Run", EInputEvent::IE_Released, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedRunStop);
+		InputComponent->BindAction("Run", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedRunStart);
+		InputComponent->BindAction("Run", EInputEvent::IE_Released, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedRunStop);
 
-	InputComponent->BindAction("Roll", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedRoll);
+		InputComponent->BindAction("Roll", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedRoll);
 
-	InputComponent->BindAction("Attack", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedAttack);
+		InputComponent->BindAction("Attack", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedAttack);
 
-	InputComponent->BindAction("OnMenu", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedOnMenu);
+		InputComponent->BindAction("OnMenu", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedOnMenu);
+	}
+	else
+	{
+		UKismetSystemLibrary::PrintString(this, "111111111111111");
+	}
 }
 
-void ACustomController::ChangeBattleCharacter()
+void ACustomController::ChangeBattleLevel()
 {
+	APlayerCharacter* player = GetPawn<APlayerCharacter>();
+
+	player->GetMesh()->GetAnimInstance()->StopAllMontages(0.1);
+
+	GetGameInstance<UMyGameInstance>()->SetPlayer(player);
+	GetGameInstance<UMyGameInstance>()->SetWeapon(Cast<AWeaponBaseActor>(player->GetEquipmentComp()->GetWeaponActor()));
+	GetGameInstance<UMyGameInstance>()->SetArmor(Cast<AArmorBaseActor>(player->GetEquipmentComp()->GetArmorActor()));
+	GetGameInstance<UMyGameInstance>()->SetTool(Cast<AToolBaseActor>(player->GetToolComp()->GetToolActor()));
 
 	UGameplayStatics::OpenLevel(this, "Demonstration");
 
-	APlayerCharacter* player = Cast<APlayerCharacter>(GetPawn());
-
-	auto location = GetPawn()->GetActorLocation();
-	auto rotator = GetPawn()->GetActorRotation();
-	auto newPawn = GetWorld()->SpawnActor<ABattleCharacter>(BattleCharacterClass, location, rotator);
-	
-	newPawn->GetToolChildActor()->SetChildActorClass(player->GetToolChildActor()->GetChildActorClass());
-	newPawn->GetToolChildActor()->SetVisibility(false);
-
-	newPawn->GetToolComp()->SetToolActor(player->GetToolComp()->GetToolActor());
-
-	auto spawnWeapon = GetWorld()->SpawnActor<AWeaponBaseActor>(player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FIteminfo>()->itemActorClass);
-
-	newPawn->GetWeaponChildActor()->SetChildActorClass(Cast<AWeaponBaseActor>(spawnWeapon)->GetItemInfo<FIteminfo>()->itemActorClass);
-	newPawn->GetWeaponChildActor()->SetVisibility(true);
-
-	newPawn->GetEquipmentComp()->SetWeaponActor(*Cast<AWeaponBaseActor>(newPawn->GetWeaponChildActor()->GetChildActor())->
-		GetItemInfo<FIteminfo>(), Cast<AWeaponBaseActor>(newPawn->GetWeaponChildActor()->GetChildActor()));
-
-	newPawn->GetEquipmentComp()->SetArmorActor(*player->GetEquipmentComp()->GetArmorActor()->GetItemInfo<FIteminfo>(), player->GetEquipmentComp()->GetArmorActor());
-
-	newPawn->GetDoubleSwordChild()->SetChildActorClass(player->GetDoubleSwordChild()->GetChildActorClass());
-
-	newPawn->GetStatusComponent()->SetAll(player);
-
-	newPawn->GetInventoryComp()->SetItemArray(player->GetInventoryComp()->GetItemArray());
-
-	newPawn->GetSkillComp()->SetSkills(player->GetSkillComp()->GetSkills());
-	newPawn->GetSkillComp()->SetSkillCodes(player->GetSkillComp()->GetSkillCodes());
-	newPawn->GetSkillComp()->SetSkillInfos(player->GetSkillComp()->GetSkillInfos());
-
-	SetPawn(newPawn);
-	Possess(newPawn);
-	mainWidget->SetVisibility(ESlateVisibility::Hidden);
-
-	newPawn->GetMesh()->GetAnimInstance()->StopAllMontages(0.1);
-	if (newPawn->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass() != nullptr) {
-		newPawn->GetMesh()->SetAnimInstanceClass(newPawn->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
-	}
 }

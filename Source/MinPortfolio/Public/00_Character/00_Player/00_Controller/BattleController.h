@@ -15,5 +15,7 @@ class MINPORTFOLIO_API ABattleController : public APlayerController
 	GENERATED_BODY()
 
 protected:
+	virtual void SetupInputComponent() override;
+
 	virtual void OnPossess(APawn* aPawn) override;
 };
