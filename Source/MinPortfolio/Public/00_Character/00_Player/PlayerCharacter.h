@@ -55,7 +55,7 @@ public:
 
 protected:
 	// APawn interface
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		class UInventoryComponent* inventoryComp;

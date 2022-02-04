@@ -48,24 +48,26 @@ void AWeaponBaseActor::UseItem(class ABaseCharacter* owner)
 
 		if (info != nullptr) {
 			AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
-			if (player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->item_Code.IsEqual("item_Equipment_NoWeapon")) {
-				ItemChange(player, spawnItem->GetItemInfo<FWeapon>(), spawnItem);
-			}
-			else {
-				if (player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->item_Code.IsEqual(info->item_Code)) {
-					RemoveStat(player, info->equipmentStat);
-					ItemChange_Default(player, player->GetEquipmentComp()->GetDefaultWeaponActor()->GetItemInfo<FWeapon>(), player->GetEquipmentComp()->GetDefaultWeaponActor());
-				}
-				else {
-					if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_WeaponAtcUp"))
-					{
-						player->GetStatusComponent()->SetATC(player->GetStatusComponent()->GetATC() - 30);
-					}
-					RemoveStat(player, player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->equipmentStat);
+
+			if (player->GetEquipmentComp()->GetWeaponActor() != nullptr) {
+				if (player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->item_Code.IsEqual("item_Equipment_NoWeapon")) {
 					ItemChange(player, spawnItem->GetItemInfo<FWeapon>(), spawnItem);
 				}
+				else {
+					if (player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->item_Code.IsEqual(info->item_Code)) {
+						RemoveStat(player, info->equipmentStat);
+						ItemChange_Default(player, player->GetEquipmentComp()->GetDefaultWeaponActor()->GetItemInfo<FWeapon>(), player->GetEquipmentComp()->GetDefaultWeaponActor());
+					}
+					else {
+						if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_WeaponAtcUp"))
+						{
+							player->GetStatusComponent()->SetATC(player->GetStatusComponent()->GetATC() - 30);
+						}
+						RemoveStat(player, player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->equipmentStat);
+						ItemChange(player, spawnItem->GetItemInfo<FWeapon>(), spawnItem);
+					}
+				}
 			}
-
 			spawnItem->Destroy();
 		}
 	}

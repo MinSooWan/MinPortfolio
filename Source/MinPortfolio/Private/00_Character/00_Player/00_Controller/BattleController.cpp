@@ -39,34 +39,21 @@ void ABattleController::OnPossess(APawn* aPawn)
 
 	if(player != nullptr)
 	{
+		UKismetSystemLibrary::PrintString(this, "controller");
 		SetupInputComponent();
+		player->GetEquipmentComp()->EquipmentCompInit();
+		player->GetToolComp()->ToolCompInit();
+		/*
+		auto tool = GetWorld()->SpawnActor<AToolBaseActor>(GetGameInstance<UMyGameInstance>()->GetTool());
+		tool->UseItem(player);
+		player->GetToolChildActor()->SetVisibility(false);
 
-		//GetGameInstance<UMyGameInstance>()->GetTool()->UseItem(player);
-		//player->GetToolChildActor()->SetVisibility(false);
-
-		GetGameInstance<UMyGameInstance>()->GetWeapon()->UseItem(player);
+		auto weapon = GetWorld()->SpawnActor<AWeaponBaseActor>(GetGameInstance<UMyGameInstance>()->GetWeapon());
+		weapon->UseItem(player);
 		//UKismetSystemLibrary::PrintString(this, GetGameInstance<UMyGameInstance>()->GetItemCode().ToString());
 		player->GetWeaponChildActor()->SetVisibility(true);
 
-		if (GetGameInstance<UMyGameInstance>() != nullptr) {
-			//player->GetMesh()->SetAnimInstanceClass(player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
-			auto transform = GetGameInstance<UMyGameInstance>()->GetTargetPoint()[0];
-			//GetGameInstance<UMyGameInstance>()->GetTarget()->SetActorLocation(transform.GetLocation());
-			//GetGameInstance<UMyGameInstance>()->GetTarget()->SetActorRotation(transform.GetRotation());
-			int32 count = 1;
-
-			if (count > 0) {
-				for (auto i = 1; i <= count; i++)
-				{
-					transform = GetGameInstance<UMyGameInstance>()->GetTargetPoint()[i];
-					/*
-					auto spawn = GetWorld()->SpawnActor<AMonsterCharacter>(GetGameInstance<UMyGameInstance>()->GetTarget()->GetClass(),
-						transform);
-						*/
-				}
-			}
-			
-		}
+		*/
 	}
 
 }

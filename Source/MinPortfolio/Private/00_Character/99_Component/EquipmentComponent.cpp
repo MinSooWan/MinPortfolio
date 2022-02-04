@@ -6,6 +6,7 @@
 #include "01_Item/ItemType.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "01_Item/00_Equipment/EquipmentActor.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values for this component's properties
 UEquipmentComponent::UEquipmentComponent()
@@ -25,7 +26,7 @@ void UEquipmentComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	UKismetSystemLibrary::PrintString(this, "component");
 }
 
 
@@ -39,6 +40,7 @@ void UEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UEquipmentComponent::EquipmentCompInit()
 {
+	
 	AItemActor* spawnWeapon = GetWorld()->SpawnActor<AItemActor>(defaultWeaponActorClass);
 	AItemActor* spawnArmor = GetWorld()->SpawnActor<AItemActor>(defaultArmorActorClass);
 	AItemActor* spawnDouble = GetWorld()->SpawnActor<AItemActor>(defaultDoubleSwordActorClass);

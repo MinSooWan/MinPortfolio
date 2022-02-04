@@ -22,9 +22,11 @@
 #include "01_Item/01_Material/MaterialBaseActor.h"
 #include "Components/WidgetComponent.h"
 #include "00_Character/99_Component/ToolComponent.h"
+#include "01_Item/00_Equipment/ArmorBaseActor.h"
 #include "01_Item/01_Material/MaterialBaseActor.h"
 #include "01_Item/02_Tool/ToolBaseActor.h"
 #include "03_Widget/MainWidget.h"
+#include "98_Instance/MyGameInstance.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -130,6 +132,7 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+/*
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
@@ -154,13 +157,51 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedAttack);
 
 	PlayerInputComponent->BindAction("OnMenu", EInputEvent::IE_Pressed, this, &APlayerCharacter::PresedOnMenu);
-	*/
+	
 }
+*/
 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UKismetSystemLibrary::PrintString(this, "playerbegin");
+	if(GetController()->IsA<ACustomController>())
+	{
+		//UKismetSystemLibrary::PrintString(this, "This CustomController");
+	}
+	else if(GetController()->IsA<ABattleController>())
+	{
+		
+		//UKismetSystemLibrary::PrintString(this, "This BattleController");
+		if(GetGameInstance<UMyGameInstance>()->GetWeapon() != nullptr)
+		{
+			auto tool = GetWorld()->SpawnActor<AToolBaseActor>(GetGameInstance<UMyGameInstance>()->GetTool());
+			if(tool != nullptr)
+			{
+				tool->UseItem(this);
+				ToolChild->SetVisibility(false);
+			}
+
+			auto armor = GetWorld()->SpawnActor<AArmorBaseActor>(GetGameInstance<UMyGameInstance>()->GetArmor());
+			if(armor != nullptr)
+			{
+				armor->UseItem(this);
+			}
+
+			auto weapon = GetWorld()->SpawnActor<AWeaponBaseActor>(GetGameInstance<UMyGameInstance>()->GetWeapon());
+			if (weapon != nullptr) {
+
+				weapon->UseItem(this);
+				WeaponChild->SetVisibility(true);
+				if(weapon->GetItemInfo<FWeapon>()->swordType == ESwordType::DOUBLE_SWORD)
+				{
+					DoubleSwordChild->SetVisibility(true);
+				}
+				GetMesh()->SetAnimInstanceClass(weapon->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
+			}
+		}
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)

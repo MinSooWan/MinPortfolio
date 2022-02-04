@@ -26,24 +26,24 @@ protected:
 		TArray<FTransform> targetPoint;
 
 	UPROPERTY()
-		class AWeaponBaseActor* weapon;
+		TSubclassOf<class AItemActor> weapon;
 	UPROPERTY()
-		class AArmorBaseActor* armor;
+		TSubclassOf<class AItemActor> armor;
 	UPROPERTY()
-		class AToolBaseActor* tool;
+		TSubclassOf<class AItemActor> tool;
 
 
 public:
 	void SetPlayer(class APlayerCharacter* value) { player = value; }
 	void SetTarget(class AMonsterCharacter* value) { target = value; }
-	void SetWeapon(class AWeaponBaseActor* value) { weapon = value; }
-	void SetArmor(class AArmorBaseActor* value) { armor = value; }
-	void SetTool(class AToolBaseActor* value) { tool = value; }
+	void SetWeapon(TSubclassOf<class AItemActor> value) { weapon = value; }
+	void SetArmor(TSubclassOf<class AItemActor> value) { armor = value; }
+	void SetTool(TSubclassOf<class AItemActor> value) { tool = value; }
 
 	class APlayerCharacter* GetPlayer() { return player; }
 	class AMonsterCharacter* GetTarget() { return target; }
 	TArray<FTransform> GetTargetPoint() { return targetPoint; }
-	class AWeaponBaseActor* GetWeapon() { return weapon; }
-	class AArmorBaseActor* GetArmor() { return armor; }
-	class AToolBaseActor* GetTool() { return tool; }
+	TSubclassOf<class AItemActor> GetWeapon() { return weapon; }
+	TSubclassOf<class AItemActor> GetArmor() { return armor; }
+	TSubclassOf<class AItemActor> GetTool() { return tool; }
 };

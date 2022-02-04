@@ -20,7 +20,6 @@
 void ACustomController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
-	UKismetSystemLibrary::PrintString(this, "22222222222222");
 	APlayerCharacter* player = Cast<APlayerCharacter>(aPawn);
 
 	if (player != nullptr) {
@@ -62,10 +61,6 @@ void ACustomController::SetupInputComponent()
 
 		InputComponent->BindAction("OnMenu", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedOnMenu);
 	}
-	else
-	{
-		UKismetSystemLibrary::PrintString(this, "111111111111111");
-	}
 }
 
 void ACustomController::ChangeBattleLevel()
@@ -75,9 +70,9 @@ void ACustomController::ChangeBattleLevel()
 	player->GetMesh()->GetAnimInstance()->StopAllMontages(0.1);
 
 	GetGameInstance<UMyGameInstance>()->SetPlayer(player);
-	GetGameInstance<UMyGameInstance>()->SetWeapon(Cast<AWeaponBaseActor>(player->GetEquipmentComp()->GetWeaponActor()));
-	GetGameInstance<UMyGameInstance>()->SetArmor(Cast<AArmorBaseActor>(player->GetEquipmentComp()->GetArmorActor()));
-	GetGameInstance<UMyGameInstance>()->SetTool(Cast<AToolBaseActor>(player->GetToolComp()->GetToolActor()));
+	GetGameInstance<UMyGameInstance>()->SetWeapon(player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FIteminfo>()->itemActorClass);
+	GetGameInstance<UMyGameInstance>()->SetArmor(player->GetEquipmentComp()->GetArmorActor()->GetItemInfo<FIteminfo>()->itemActorClass);
+	GetGameInstance<UMyGameInstance>()->SetTool(player->GetToolComp()->GetToolActor()->GetItemInfo<FIteminfo>()->itemActorClass);
 
 	UGameplayStatics::OpenLevel(this, "Demonstration");
 
