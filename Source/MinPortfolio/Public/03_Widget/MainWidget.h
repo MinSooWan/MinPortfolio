@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MainWidget.generated.h"
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMenuWidget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeKeyMode, bool, IsKeyMode);
 
 /**
  * 
@@ -55,8 +56,17 @@ protected:
 	UFUNCTION()
 		void OnMenuWidgetEvent();
 
+	UPROPERTY()
+		TArray<class UKeyImage*> keyImages;
+
 public:
 	const TMap<FKey, class UTexture2D*> GetKeyImage() { return keyImage; }
+	TArray<class UKeyImage*> GetKeyImages() { return keyImages; }
+
+	void InitKeyImage();
+
+	UFUNCTION()
+		void ChangeKeyImage(bool IsKeyMode);
 
 	class UEquippedItemWidget* GetEquippedItemWidget() { return UMG_EquippedItem; };
 	class UBackgroundBlur* GetBackgroundBlur_Image() { return BackgroundBlur_Image; };
@@ -70,4 +80,5 @@ public:
 	class UNeedSpLackWidget* GetNeedSPLack() { return UMG_NeedSPLack; }
 
 	FOnMenuWidget OnMenuWidget;
+	FChangeKeyMode ChangeKeyMode;
 };

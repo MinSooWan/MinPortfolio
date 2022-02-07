@@ -32,6 +32,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "97_Task/CharacterTurnGameplayTask.h"
+#include "Kismet/KismetInputLibrary.h"
 
 #define ORIGINAL_WALK_SPPED 600;
 
@@ -229,7 +230,7 @@ void APlayerCharacter::BeginPlay()
 			SetActorRotation((target->GetActorLocation() - GetActorLocation()).Rotation());
 
 			targets.Add(monster);
-			tempcnt = 0;
+			targetNum = 0;
 
 			//UKismetSystemLibrary::PrintString(this, FString::FromInt(cnt));
 
@@ -297,65 +298,23 @@ void APlayerCharacter::Tick(float DeltaTime)
 			AddMovementInput(location);
 		}
 	}
-
-	if(bTempTrun == true)
-	{
-		FRotator rot = (target->GetActorLocation() - GetActorLocation()).Rotation();
-
-		rot.Roll = 0;
-		rot.Pitch = 0;
-
-		float Yaw = ((target->GetActorLocation() - GetActorLocation()).Rotation() - GetActorRotation()).Yaw;
-		if (Yaw > 180) {
-			Yaw -= 360;
-		}
-		else if (Yaw < -180) {
-			Yaw += 360;
-		}
-
-		UKismetSystemLibrary::PrintString(this, FString::FromInt(Yaw));
-
-		if (0 < Yaw) {
-			rot.Yaw = 5;
-			if (((target->GetActorLocation() - GetActorLocation()).Rotation().Yaw - GetActorRotation().Yaw) < 5)
-			{
-				bTempTrun = false;
-			}
-			else
-			{
-				AddActorWorldRotation(rot);
-			}
-		}
-		else if (Yaw < 0) {
-			rot.Yaw = -5;
-			if (((target->GetActorLocation() - GetActorLocation()).Rotation().Yaw - GetActorRotation().Yaw) > 5)
-			{
-				bTempTrun = false;
-			}
-			else
-			{
-				AddActorWorldRotation(rot);
-			}
-		}
-		
-	}
 }
 
-void APlayerCharacter::temptrunfunction()
+void APlayerCharacter::targetChange_right()
 {
 	if(targets.Num() > 1)
 	{
-		if(targets.Num() - 1 == tempcnt)
+		if(targets.Num() - 1 == targetNum)
 		{
-			tempcnt = 0;
-			target = targets[tempcnt];
+			targetNum = 0;
+			target = targets[targetNum];
 		}
 		else
 		{
-			tempcnt++;
-			target = targets[tempcnt];
+			targetNum++;
+			target = targets[targetNum];
 		}
-		bTempTrun = true;
+		UCharacterTurnGameplayTask::CharacterTurnGameplayTask(this, Cast<AMonsterCharacter>(target))->ReadyForActivation();
 	}
 }
 
@@ -533,6 +492,11 @@ void APlayerCharacter::PressedBattle_Attack()
 
 
 	}
+}
+
+void APlayerCharacter::PressedAnyKey()
+{
+	GetController<ACustomController>()->GetMainWidget()->ChangeKeyMode.Broadcast(UKismetInputLibrary::Key_IsGamepadKey(EKeys::AnyKey));
 }
 
 void APlayerCharacter::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)

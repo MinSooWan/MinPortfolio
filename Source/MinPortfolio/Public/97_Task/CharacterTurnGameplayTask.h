@@ -19,15 +19,14 @@ class MINPORTFOLIO_API UCharacterTurnGameplayTask : public UGameplayTask
 public:
 	UCharacterTurnGameplayTask(const FObjectInitializer& ObjectInitializer);
 
+	UFUNCTION(BlueprintCallable)
+		static UCharacterTurnGameplayTask* CharacterTurnGameplayTask(class ABaseCharacter* taskOwner, class ABaseCharacter* targetActor);
 private:
 
 	UPROPERTY()
-		class APlayerCharacter* owner;
+		class ABaseCharacter* owner;
 	UPROPERTY()
-		class AMonsterCharacter* target;
-
-	UPROPERTY()
-		FRotator targetRot;
+		class ABaseCharacter* target;
 
 public:
 	virtual void Activate() override;

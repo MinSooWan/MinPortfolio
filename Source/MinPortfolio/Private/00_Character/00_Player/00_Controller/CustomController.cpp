@@ -61,6 +61,8 @@ void ACustomController::SetupInputComponent()
 		InputComponent->BindAction("Attack", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedAttack);
 
 		InputComponent->BindAction("OnMenu", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedOnMenu);
+
+		InputComponent->BindAction("AnyKey", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PressedAnyKey);
 	}
 }
 

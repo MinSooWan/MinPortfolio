@@ -15,12 +15,14 @@ class MINPORTFOLIO_API UKeyImage : public UImage
 {
 	GENERATED_BODY()
 
-protected:
-	void ButtonImage();
-
 public:
 
 	UPROPERTY(EditAnywhere)
-		FKey keyButtonName;
+		FKey GamepadButtonName;
+	UPROPERTY(EditAnywhere)
+		FKey keyBoradButtonName;
 
+	void ButtonInitImage();
+	void ButtonInitImage_Pad();
+	void ButtonInitImage_KeyBorad();
 };

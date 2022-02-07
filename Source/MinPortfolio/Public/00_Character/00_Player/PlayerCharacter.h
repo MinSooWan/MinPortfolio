@@ -83,14 +83,11 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(BlueprintReadWrite)
-		bool bTempTrun = false;
-
 	UPROPERTY()
-		int32 tempcnt;
+		int32 targetNum;
 
 	UFUNCTION(BlueprintCallable)
-		void temptrunfunction();
+		void targetChange_right();
 
 public:
 	virtual void Jump() override;
@@ -138,6 +135,9 @@ protected:
 	UPROPERTY()
 		FVector startLocation;
 
+	UPROPERTY()
+		bool bInputKeyisPad = false;
+
 public:
 
 	UPROPERTY()
@@ -184,6 +184,8 @@ public:
 
 	FVector GetStartLocation() { return startLocation; }
 
+	bool GetInputKeyisPad() { return bInputKeyisPad; }
+
 protected:
 
 	virtual void PostInitializeComponents() override;
@@ -200,6 +202,7 @@ public:
 
 	void PressedBattle_Attack();
 
+	void PressedAnyKey();
 protected:
 
 	UFUNCTION()
