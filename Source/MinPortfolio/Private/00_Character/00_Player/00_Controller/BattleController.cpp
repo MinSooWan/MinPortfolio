@@ -17,18 +17,9 @@ void ABattleController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("Battle_Attack", EInputEvent::IE_Pressed, GetOwner<APlayerCharacter>(), &APlayerCharacter::PressedBattle_Attack);
+	InputComponent->BindAction("Battle_Attack", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PressedBattle_Attack);
 
-	InputComponent->BindAxis("MoveForward", GetOwner<APlayerCharacter>(), &APlayerCharacter::MoveForward);
-	InputComponent->BindAxis("MoveRight", GetOwner<APlayerCharacter>(), &APlayerCharacter::MoveRight);
-
-	InputComponent->BindAxis("Turn", GetOwner<APlayerCharacter>(), &APawn::AddControllerYawInput);
-	InputComponent->BindAxis("TurnRate", GetOwner<APlayerCharacter>(), &APlayerCharacter::TurnAtRate);
-	InputComponent->BindAxis("LookUp", GetOwner<APlayerCharacter>(), &APawn::AddControllerPitchInput);
-	InputComponent->BindAxis("LookUpRate", GetOwner<APlayerCharacter>(), &APlayerCharacter::LookUpAtRate);
-
-	InputComponent->BindAction("Jump", EInputEvent::IE_Pressed, GetOwner<APlayerCharacter>(), &APlayerCharacter::Jump);
-	InputComponent->BindAction("Jump", EInputEvent::IE_Released, GetOwner<APlayerCharacter>(), &ACharacter::StopJumping);
+	InputComponent->BindAction("Battle_Skill", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::TempUseSkill);
 }
 
 void ABattleController::OnPossess(APawn* aPawn)
@@ -39,21 +30,10 @@ void ABattleController::OnPossess(APawn* aPawn)
 
 	if(player != nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, "controller");
 		SetupInputComponent();
 		player->GetEquipmentComp()->EquipmentCompInit();
 		player->GetToolComp()->ToolCompInit();
-		/*
-		auto tool = GetWorld()->SpawnActor<AToolBaseActor>(GetGameInstance<UMyGameInstance>()->GetTool());
-		tool->UseItem(player);
-		player->GetToolChildActor()->SetVisibility(false);
-
-		auto weapon = GetWorld()->SpawnActor<AWeaponBaseActor>(GetGameInstance<UMyGameInstance>()->GetWeapon());
-		weapon->UseItem(player);
-		//UKismetSystemLibrary::PrintString(this, GetGameInstance<UMyGameInstance>()->GetItemCode().ToString());
-		player->GetWeaponChildActor()->SetVisibility(true);
-
-		*/
+		
 	}
 
 }

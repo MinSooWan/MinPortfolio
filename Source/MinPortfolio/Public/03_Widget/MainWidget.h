@@ -17,6 +17,9 @@ class MINPORTFOLIO_API UMainWidget : public UUserWidget
 
 protected:
 
+	UPROPERTY(EditAnywhere)
+		TMap<FKey, class UTexture2D*> keyImage;
+
 	UPROPERTY()
 		class UEquippedItemWidget* UMG_EquippedItem;
 
@@ -53,6 +56,8 @@ protected:
 		void OnMenuWidgetEvent();
 
 public:
+	const TMap<FKey, class UTexture2D*> GetKeyImage() { return keyImage; }
+
 	class UEquippedItemWidget* GetEquippedItemWidget() { return UMG_EquippedItem; };
 	class UBackgroundBlur* GetBackgroundBlur_Image() { return BackgroundBlur_Image; };
 	class UImage* GetBackGroundImage() { return Image_BackGround; };

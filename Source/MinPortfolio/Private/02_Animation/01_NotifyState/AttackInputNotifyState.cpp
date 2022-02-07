@@ -4,6 +4,7 @@
 #include "02_Animation/01_NotifyState/AttackInputNotifyState.h"
 
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UAttackInputNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
                                           float TotalDuration)
@@ -43,6 +44,10 @@ void UAttackInputNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 		if(nextSection == "End")
 		{
 			owner->Battle_SetActionState(EActionState::NORMAL);
+			owner->SetActorRotation((owner->GetStartLocation() - owner->GetActorLocation()).Rotation());
+			owner->GetCharacterMovement()->MaxWalkSpeed = 1200;
+			owner->SetMoveToStart(true);
+
 		}
 		else {
 			if (bContinue == true)
@@ -53,6 +58,9 @@ void UAttackInputNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 			{
 				owner->Battle_SetActionState(EActionState::NORMAL);
 				owner->GetMesh()->GetAnimInstance()->StopAllMontages(0.1);
+				owner->SetActorRotation((owner->GetStartLocation() - owner->GetActorLocation()).Rotation());
+				owner->GetCharacterMovement()->MaxWalkSpeed = 1200;
+				owner->SetMoveToStart(true);
 			}
 		}
 		owner->bContinueAttack = false;

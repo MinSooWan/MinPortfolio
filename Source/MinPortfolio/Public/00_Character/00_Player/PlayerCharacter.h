@@ -53,6 +53,8 @@ public:
 	 */
 	void LookUpAtRate(float Rate);
 
+	void TempUseSkill();
+
 protected:
 	// APawn interface
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -76,9 +78,19 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		class UChildActorComponent* ToolChild;
 
+	void InitStat();
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(BlueprintReadWrite)
+		bool bTempTrun = false;
+
+	UPROPERTY()
+		int32 tempcnt;
+
+	UFUNCTION(BlueprintCallable)
+		void temptrunfunction();
 
 public:
 	virtual void Jump() override;
@@ -117,14 +129,22 @@ protected:
 
 	UPROPERTY()
 		bool bMoveToTarget = false;
+	UPROPERTY()
+		bool bMoveToStatrLocation = false;
 
 	UPROPERTY()
 		FVector targetLocation;
-	
+
+	UPROPERTY()
+		FVector startLocation;
+
 public:
 
 	UPROPERTY()
 		bool bContinueAttack = false;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+		TArray<class AMonsterCharacter*> targets;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		AActor* target;
@@ -159,6 +179,10 @@ public:
 	void SetOverlapmaterial(AActor* value) { overlapMaterial = value; }
 
 	EActionState GetTempAction() { return TempAction; }
+
+	void SetMoveToStart(bool value) { bMoveToStatrLocation = value; }
+
+	FVector GetStartLocation() { return startLocation; }
 
 protected:
 

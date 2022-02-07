@@ -7,6 +7,7 @@
 #include "00_Character/99_Component/EquipmentComponent.h"
 #include "01_Item/ItemActor.h"
 #include "04_Skill/SkillBaseActor.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values for this component's properties
 USkillComponent::USkillComponent()

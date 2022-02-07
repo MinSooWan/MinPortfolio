@@ -31,6 +31,7 @@ public:
 
 	TArray<AActor*> GetSkills() { return skills; }
 	void SetSkills(TArray<AActor*> value) { skills = value; }
+
 	TArray<FName> GetSkillInfos() { return skill_infos; }
 	void SetSkillInfos(TArray<FName> value) { skill_infos = value; }
 	TArray<FName> GetSkillCodes() { return skill_codes; }

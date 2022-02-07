@@ -26,7 +26,6 @@ void UEquipmentComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	UKismetSystemLibrary::PrintString(this, "component");
 }
 
 

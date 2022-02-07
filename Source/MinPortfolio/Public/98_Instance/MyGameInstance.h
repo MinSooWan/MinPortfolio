@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "00_Character/99_Component/StatusComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/TargetPoint.h"
 #include "MyGameInstance.generated.h"
@@ -16,11 +17,9 @@ class MINPORTFOLIO_API UMyGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY()
-		class APlayerCharacter* player;
 
 	UPROPERTY()
-		class AMonsterCharacter* target;
+		TSubclassOf<class AMonsterCharacter> target;
 
 	UPROPERTY(EditAnywhere)
 		TArray<FTransform> targetPoint;
@@ -31,19 +30,24 @@ protected:
 		TSubclassOf<class AItemActor> armor;
 	UPROPERTY()
 		TSubclassOf<class AItemActor> tool;
-
+	UPROPERTY()
+		TArray<TSubclassOf<class ASkillBaseActor>> skill;
+	UPROPERTY()
+		FCharacterStat stat;
 
 public:
-	void SetPlayer(class APlayerCharacter* value) { player = value; }
-	void SetTarget(class AMonsterCharacter* value) { target = value; }
+	void SetTarget(TSubclassOf<class AMonsterCharacter> value) { target = value; }
 	void SetWeapon(TSubclassOf<class AItemActor> value) { weapon = value; }
 	void SetArmor(TSubclassOf<class AItemActor> value) { armor = value; }
 	void SetTool(TSubclassOf<class AItemActor> value) { tool = value; }
+	void SetSkill(TSubclassOf<class ASkillBaseActor> value) { skill.Add(value); }
+	void SetStat(FCharacterStat value);
 
-	class APlayerCharacter* GetPlayer() { return player; }
-	class AMonsterCharacter* GetTarget() { return target; }
+	TSubclassOf<class AMonsterCharacter> GetTarget() { return target; }
 	TArray<FTransform> GetTargetPoint() { return targetPoint; }
 	TSubclassOf<class AItemActor> GetWeapon() { return weapon; }
 	TSubclassOf<class AItemActor> GetArmor() { return armor; }
 	TSubclassOf<class AItemActor> GetTool() { return tool; }
+	TArray<TSubclassOf<class ASkillBaseActor>> GetSkill() { return skill; }
+	FCharacterStat Getstat() { return stat; }
 };

@@ -16,6 +16,7 @@
 #include "01_Item/ItemActor.h"
 #include "01_Item/00_Weapon/WeaponBaseActor.h"
 #include "00_Character/00_Player/00_Controller/CustomController.h"
+#include "00_Character/01_Monster/MonsterCharacter.h"
 #include "01_Item/ItemType.h"
 #include "00_Character/99_Component/InventoryComponent.h"
 #include "00_Character/99_Component/SkillComponent.h"
@@ -26,9 +27,11 @@
 #include "01_Item/01_Material/MaterialBaseActor.h"
 #include "01_Item/02_Tool/ToolBaseActor.h"
 #include "03_Widget/MainWidget.h"
+#include "04_Skill/SkillBaseActor.h"
 #include "98_Instance/MyGameInstance.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "97_Task/CharacterTurnGameplayTask.h"
 
 #define ORIGINAL_WALK_SPPED 600;
 
@@ -132,6 +135,11 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+void APlayerCharacter::TempUseSkill()
+{
+	skillComp->UseSkill("Skill_Attack_FatalDriveArrowAttack");
+}
+
 /*
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -161,21 +169,31 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 }
 */
 
+void APlayerCharacter::InitStat()
+{
+	statComp->SetHP(GetGameInstance<UMyGameInstance>()->Getstat().HP);
+	statComp->SetATC(GetGameInstance<UMyGameInstance>()->Getstat().ATC);
+	statComp->SetDEF(GetGameInstance<UMyGameInstance>()->Getstat().DEF);
+	statComp->SetDEX(GetGameInstance<UMyGameInstance>()->Getstat().DEX);
+	statComp->SetMaxHP(GetGameInstance<UMyGameInstance>()->Getstat().MaxHP);
+}
+
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UKismetSystemLibrary::PrintString(this, "playerbegin");
 	if(GetController()->IsA<ACustomController>())
 	{
 		//UKismetSystemLibrary::PrintString(this, "This CustomController");
 	}
 	else if(GetController()->IsA<ABattleController>())
 	{
-		
+
 		//UKismetSystemLibrary::PrintString(this, "This BattleController");
 		if(GetGameInstance<UMyGameInstance>()->GetWeapon() != nullptr)
 		{
+			startLocation = GetActorLocation();
+
 			auto tool = GetWorld()->SpawnActor<AToolBaseActor>(GetGameInstance<UMyGameInstance>()->GetTool());
 			if(tool != nullptr)
 			{
@@ -200,6 +218,41 @@ void APlayerCharacter::BeginPlay()
 				}
 				GetMesh()->SetAnimInstanceClass(weapon->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 			}
+
+			//FMath::RandRange(0, 3);
+			int32 cnt = 3;
+			auto monster = GetWorld()->SpawnActor<AMonsterCharacter>(GetGameInstance<UMyGameInstance>()->GetTarget(),
+				GetGameInstance<UMyGameInstance>()->GetTargetPoint()[0]);
+
+			target = monster;
+
+			SetActorRotation((target->GetActorLocation() - GetActorLocation()).Rotation());
+
+			targets.Add(monster);
+			tempcnt = 0;
+
+			//UKismetSystemLibrary::PrintString(this, FString::FromInt(cnt));
+
+			if (cnt > 0) {
+				for (int32 i = 1; i < cnt; i++)
+				{
+					monster = GetWorld()->SpawnActor<AMonsterCharacter>(GetGameInstance<UMyGameInstance>()->GetTarget(),
+						GetGameInstance<UMyGameInstance>()->GetTargetPoint()[i]);
+					targets.Add(monster);
+				}
+			}
+
+			for(auto iter : GetGameInstance<UMyGameInstance>()->GetSkill())
+			{
+				auto skill = GetWorld()->SpawnActor<ASkillBaseActor>(iter);
+				skillComp->AddSkill(skill);
+			}
+
+			InitStat();
+
+			//auto FVector(110,160,20)transform = FTransform(FRotator(0,0,-20),);
+			FollowCamera->SetRelativeLocation(FVector(110, 160, 20));
+			FollowCamera->SetRelativeRotation(FRotator(0, -20,0));
 		}
 	}
 }
@@ -208,7 +261,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	Super::Tick(DeltaTime);
 	if (bMoveToTarget == true)
 	{
 		targetLocation = target->GetActorLocation() - GetActorLocation();
@@ -223,6 +275,87 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 
 		//GetMovementComponent()->Velocity = (target->GetActorLocation() - GetActorLocation());
+	}
+
+	if(bMoveToStatrLocation == true)
+	{
+		auto location = startLocation - GetActorLocation();
+		//UKismetSystemLibrary::PrintString(this, location.ToString());
+
+		if(location.X >= -0.1f)
+		{
+			UKismetSystemLibrary::PrintString(this, "startLocation Goal");
+			bMoveToStatrLocation = false;
+			if(target != nullptr)
+			{
+				SetActorRotation((target->GetActorLocation() - GetActorLocation()).Rotation());
+				GetCharacterMovement()->MaxWalkSpeed = ORIGINAL_WALK_SPPED;
+			}
+		}
+		else
+		{
+			AddMovementInput(location);
+		}
+	}
+
+	if(bTempTrun == true)
+	{
+		FRotator rot = (target->GetActorLocation() - GetActorLocation()).Rotation();
+
+		rot.Roll = 0;
+		rot.Pitch = 0;
+
+		float Yaw = ((target->GetActorLocation() - GetActorLocation()).Rotation() - GetActorRotation()).Yaw;
+		if (Yaw > 180) {
+			Yaw -= 360;
+		}
+		else if (Yaw < -180) {
+			Yaw += 360;
+		}
+
+		UKismetSystemLibrary::PrintString(this, FString::FromInt(Yaw));
+
+		if (0 < Yaw) {
+			rot.Yaw = 5;
+			if (((target->GetActorLocation() - GetActorLocation()).Rotation().Yaw - GetActorRotation().Yaw) < 5)
+			{
+				bTempTrun = false;
+			}
+			else
+			{
+				AddActorWorldRotation(rot);
+			}
+		}
+		else if (Yaw < 0) {
+			rot.Yaw = -5;
+			if (((target->GetActorLocation() - GetActorLocation()).Rotation().Yaw - GetActorRotation().Yaw) > 5)
+			{
+				bTempTrun = false;
+			}
+			else
+			{
+				AddActorWorldRotation(rot);
+			}
+		}
+		
+	}
+}
+
+void APlayerCharacter::temptrunfunction()
+{
+	if(targets.Num() > 1)
+	{
+		if(targets.Num() - 1 == tempcnt)
+		{
+			tempcnt = 0;
+			target = targets[tempcnt];
+		}
+		else
+		{
+			tempcnt++;
+			target = targets[tempcnt];
+		}
+		bTempTrun = true;
 	}
 }
 
@@ -383,20 +516,22 @@ void APlayerCharacter::PresedOnMenu()
 
 void APlayerCharacter::PressedBattle_Attack()
 {
-	UKismetSystemLibrary::PrintString(this, "22222222222222");
 	if (target != nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, "3333333333333");
-		if (!equipmentComp->GetWeaponActor()->GetItemInfo<FWeapon>()->item_Code.IsEqual("item_Equipment_NoWeapon")) {
-			if (actionState == EActionState::ATTACK)
-			{
-				bContinueAttack = true;
+		if (bMoveToStatrLocation == false) {
+			if (!equipmentComp->GetWeaponActor()->GetItemInfo<FWeapon>()->item_Code.IsEqual("item_Equipment_NoWeapon")) {
+				if (actionState == EActionState::ATTACK)
+				{
+					bContinueAttack = true;
+				}
+				else {
+					bMoveToTarget = true;
+				}
+				//SetActorLocation(target->GetActorLocation());
 			}
-			else {
-				bMoveToTarget = true;
-			}
-			//SetActorLocation(target->GetActorLocation());
 		}
+
+
 	}
 }
 

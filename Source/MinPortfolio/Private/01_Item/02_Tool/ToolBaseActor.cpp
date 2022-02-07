@@ -74,7 +74,7 @@ void AToolBaseActor::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* O
 			//UKismetSystemLibrary::PrintString(this, "2222222222");
 			if(playerOwner != nullptr)
 			{
-				GetGameInstance<UMyGameInstance>()->SetTarget(Cast<AMonsterCharacter>(OtherActor));
+				GetGameInstance<UMyGameInstance>()->SetTarget(Cast<AMonsterCharacter>(OtherActor)->GetClass());
 				playerOwner->GetController<ACustomController>()->ChangeBattleLevel();
 			}
 		}
