@@ -13,9 +13,12 @@
 #include "03_Widget/02_Skill/SkillLearnCheckWidget.h"
 #include "03_Widget/02_Skill/SkillMainWidget.h"
 #include "03_Widget/02_Skill/SkillTreeWidget.h"
+#include "03_Widget/03_KeyImage/KeySettingWidget.h"
 #include "04_Skill/SkillBaseActor.h"
 #include "Components/Button.h"
+#include "Components/CanvasPanel.h"
 #include "Components/Image.h"
+#include "Kismet/KismetInputLibrary.h"
 
 void USkillButtonWidget::SetSkillButton(const FSkill* skill_info)
 {
@@ -118,6 +121,8 @@ FReply USkillButtonWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FK
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->SetVisibility(ESlateVisibility::Hidden);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetVisibility(ESlateVisibility::Visible);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetSkillButton()->SetFocus();
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Skill()->SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Menu()->SetVisibility(ESlateVisibility::Visible);
 	}
 	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_DPad_Right))
 	{
@@ -147,6 +152,44 @@ FReply USkillButtonWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FK
 	{
 		Button_Skill->OnClicked.Broadcast();
 	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::W))
+	{
+		if (Navigation->Up.Widget != nullptr) {
+			Navigation->Up.Widget->SetFocus();
+		}
+	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::A))
+	{
+		if (Navigation->Left.Widget != nullptr) {
+			Navigation->Left.Widget->SetFocus();
+		}
+	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::D))
+	{
+		if (Navigation->Right.Widget != nullptr) {
+			Navigation->Right.Widget->SetFocus();
+		}
+	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::S))
+	{
+		if (Navigation->Down.Widget != nullptr) {
+			Navigation->Down.Widget->SetFocus();
+		}
+	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::Escape))
+	{
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetVisibility(ESlateVisibility::Visible);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetSkillButton()->SetFocus();
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Skill()->SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Menu()->SetVisibility(ESlateVisibility::Visible);
+	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::SpaceBar))
+	{
+		Button_Skill->OnClicked.Broadcast();
+	}
+
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->ChangeKeyImage(UKismetInputLibrary::Key_IsGamepadKey(InKeyEvent.GetKey()));
 
 	return FReply::Handled();
 }

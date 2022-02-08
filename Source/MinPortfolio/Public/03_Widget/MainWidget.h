@@ -51,21 +51,28 @@ protected:
 	UPROPERTY()
 		class UNeedSpLackWidget* UMG_NeedSPLack;
 
+	UPROPERTY()
+		class UKeySettingWidget* UMG_Key;
+
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
 		void OnMenuWidgetEvent();
 
-	UPROPERTY()
-		TArray<class UKeyImage*> keyImages;
+	UPROPERTY(BlueprintReadWrite)
+		TArray<class UUserWidget*> keyImages_key;
+	UPROPERTY(BlueprintReadWrite)
+		TArray<class UUserWidget*> keyImages_pad;
 
 public:
 	const TMap<FKey, class UTexture2D*> GetKeyImage() { return keyImage; }
-	TArray<class UKeyImage*> GetKeyImages() { return keyImages; }
+
+	TArray<class UUserWidget*> GetKeyImages_Key() { return keyImages_key; }
+	TArray<class UUserWidget*> GetKeyImages_Pad() { return keyImages_pad; }
 
 	void InitKeyImage();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void ChangeKeyImage(bool IsKeyMode);
 
 	class UEquippedItemWidget* GetEquippedItemWidget() { return UMG_EquippedItem; };
@@ -78,6 +85,7 @@ public:
 	class USkillMainWidget* GetSkillMainWidget() { return UMG_skill; }
 	class UNeedSkillFalseWidget* GetNeedSkillFalse() { return UMG_NeedSkillFalse; }
 	class UNeedSpLackWidget* GetNeedSPLack() { return UMG_NeedSPLack; }
+	class UKeySettingWidget* GetKeySetting() { return UMG_Key; }
 
 	FOnMenuWidget OnMenuWidget;
 	FChangeKeyMode ChangeKeyMode;

@@ -15,6 +15,9 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "03_Widget/02_Skill/SkillTreeWidget.h"
+#include "03_Widget/03_KeyImage/KeySettingWidget.h"
+#include "Components/CanvasPanel.h"
+#include "Kismet/KismetInputLibrary.h"
 
 void UMenuWidget::NativeConstruct()
 {
@@ -63,6 +66,8 @@ void UMenuWidget::SkillClick()
 	SetVisibility(ESlateVisibility::Hidden);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->SetVisibility(ESlateVisibility::Visible);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetRootButton()->SetFocus();
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Menu()->SetVisibility(ESlateVisibility::Hidden);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Skill()->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMenuWidget::EquipmentClick()
@@ -194,22 +199,18 @@ FReply UMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 	if (InKeyEvent.GetKey() == FKey("Gamepad_RightShoulder"))
 	{
 		pressedNext();
-		return FReply::Handled();
 	}
 	else if (InKeyEvent.GetKey() == FKey("Gamepad_LeftShoulder"))
 	{
 		pressedPrevious();
-		return FReply::Handled();;
 	}
 	else if(InKeyEvent.GetKey() == FKey("E"))
 	{
 		pressedNext();
-		return FReply::Handled();
 	}
 	else if(InKeyEvent.GetKey() == FKey("Q"))
 	{
 		pressedPrevious();
-		return FReply::Handled();
 	}
 	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Right))
 	{
@@ -217,6 +218,14 @@ FReply UMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 		SetVisibility(ESlateVisibility::Hidden);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackGroundImage()->SetVisibility(ESlateVisibility::Hidden);
 	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::Escape))
+	{
+		GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeGameOnly());
+		SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackGroundImage()->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->ChangeKeyImage(UKismetInputLibrary::Key_IsGamepadKey(InKeyEvent.GetKey()));
 
 	return FReply::Handled();
 }
