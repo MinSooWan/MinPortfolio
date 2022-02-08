@@ -75,6 +75,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void ChangeKeyImage(bool IsKeyMode);
 
+	void OnMenu();
+	void OffMenu();
+
+	void OnInven();
+	void OffInven();
+
+	void OnSkillTree();
+	void OffSkillTree();
+
 	class UEquippedItemWidget* GetEquippedItemWidget() { return UMG_EquippedItem; };
 	class UBackgroundBlur* GetBackgroundBlur_Image() { return BackgroundBlur_Image; };
 	class UImage* GetBackGroundImage() { return Image_BackGround; };

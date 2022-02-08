@@ -59,6 +59,7 @@ void UMenuWidget::InventoryClick()
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackgroundBlur_Image()->SetVisibility(ESlateVisibility::Visible);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->OnInventoryWidget();
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->SetFocus();
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->OnInven();
 }
 
 void UMenuWidget::SkillClick()
@@ -66,8 +67,7 @@ void UMenuWidget::SkillClick()
 	SetVisibility(ESlateVisibility::Hidden);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->SetVisibility(ESlateVisibility::Visible);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetRootButton()->SetFocus();
-	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Menu()->SetVisibility(ESlateVisibility::Hidden);
-	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Skill()->SetVisibility(ESlateVisibility::Visible);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->OnSkillTree();
 }
 
 void UMenuWidget::EquipmentClick()
@@ -217,12 +217,14 @@ FReply UMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 		GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeGameOnly());
 		SetVisibility(ESlateVisibility::Hidden);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackGroundImage()->SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->OffMenu();
 	}
 	else if(InKeyEvent.GetKey() == FKey(EKeys::Escape))
 	{
 		GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeGameOnly());
 		SetVisibility(ESlateVisibility::Hidden);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackGroundImage()->SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->OffMenu();
 	}
 
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->ChangeKeyImage(UKismetInputLibrary::Key_IsGamepadKey(InKeyEvent.GetKey()));

@@ -11,4 +11,5 @@ void UKeySettingWidget::NativeConstruct()
 
 	CanvasPanel_Menu->SetVisibility(ESlateVisibility::Hidden);
 	CanvasPanel_Skill->SetVisibility(ESlateVisibility::Hidden);
+	CanvasPanel_Inven->SetVisibility(ESlateVisibility::Hidden);
 }

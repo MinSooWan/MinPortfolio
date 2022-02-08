@@ -121,8 +121,7 @@ FReply USkillButtonWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FK
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->SetVisibility(ESlateVisibility::Hidden);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetVisibility(ESlateVisibility::Visible);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetSkillButton()->SetFocus();
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Skill()->SetVisibility(ESlateVisibility::Hidden);
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Menu()->SetVisibility(ESlateVisibility::Visible);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->OffSkillTree();
 	}
 	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_DPad_Right))
 	{
@@ -181,8 +180,7 @@ FReply USkillButtonWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FK
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->SetVisibility(ESlateVisibility::Hidden);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetVisibility(ESlateVisibility::Visible);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetSkillButton()->SetFocus();
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Skill()->SetVisibility(ESlateVisibility::Hidden);
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Menu()->SetVisibility(ESlateVisibility::Visible);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->OffSkillTree();
 	}
 	else if(InKeyEvent.GetKey() == FKey(EKeys::SpaceBar))
 	{

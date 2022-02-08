@@ -26,9 +26,13 @@ protected:
 
 	UPROPERTY()
 		class UCanvasPanel* CanvasPanel_Skill;
+
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_Inven;
 public:
 
 	class UCanvasPanel* GetCanvasPanel_Main() { return CanvasPanel_Main; }
 	class UCanvasPanel* GetCanvasPanel_Menu() { return CanvasPanel_Menu; }
 	class UCanvasPanel* GetCanvasPanel_Skill() { return CanvasPanel_Skill; }
+	class UCanvasPanel* GetCanvasPanel_Inven() { return CanvasPanel_Inven; }
 };

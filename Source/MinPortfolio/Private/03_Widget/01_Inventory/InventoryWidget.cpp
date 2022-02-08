@@ -14,6 +14,7 @@
 #include "Components/BackgroundBlur.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Kismet/KismetInputLibrary.h"
 
 void UInventoryWidget::NativeConstruct()
 {
@@ -192,35 +193,33 @@ FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKey
 {
 	Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 
-	if (InKeyEvent.GetKey() == FKey("Gamepad_RightShoulder"))
+	if (InKeyEvent.GetKey() == FKey("Gamepad_RightShoulder") && InKeyEvent.GetKey() == FKey(EKeys::E))
 	{
 		PressedNextButton_Type();
-		return FReply::Handled();
 	}
-	else if (InKeyEvent.GetKey() == FKey("Gamepad_LeftShoulder"))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_LeftShoulder") && InKeyEvent.GetKey() == FKey(EKeys::Q))
 	{
 		PressedPreviousButton_Type();
-		return FReply::Handled();
 	}
-	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Right"))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Right") && InKeyEvent.GetKey() == FKey(EKeys::D))
 	{
 		PressedNextButton_Item();
-		return FReply::Handled();
 	}
-	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Left"))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Left") && InKeyEvent.GetKey() == FKey(EKeys::A))
 	{
 		PressedPreviousButton_Item();
-		return FReply::Handled();
 	}
-	else if(InKeyEvent.GetKey() == FKey("Gamepad_DPad_Up"))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Up") && InKeyEvent.GetKey() == FKey(EKeys::W))
 	{
 		PressedUpButton_Item();
 	}
-	else if(InKeyEvent.GetKey() == FKey("Gamepad_DPad_Down"))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Down") && InKeyEvent.GetKey() == FKey(EKeys::S))
 	{
 		PressedDownButton_Item();
 	}
-	
+
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->ChangeKeyImage(UKismetInputLibrary::Key_IsGamepadKey(InKeyEvent.GetKey()));
+
 	return FReply::Handled();
 }
 
@@ -253,7 +252,20 @@ FReply UInventoryWidget::NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEv
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetTextBlock_MenuName()->SetText(FText::FromString(TEXT("Menu")));
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetInventoryButton()->SetFocus();
 		SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->OffInven();
 	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::Escape))
+	{
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackgroundBlur_Image()->SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetVisibility(ESlateVisibility::Visible);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetTextBlock_MenuName()->SetText(FText::FromString(TEXT("Menu")));
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetInventoryButton()->SetFocus();
+		SetVisibility(ESlateVisibility::Hidden);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->OffInven();
+	}
+
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->ChangeKeyImage(UKismetInputLibrary::Key_IsGamepadKey(InKeyEvent.GetKey()));
+
 	return FReply::Handled();
 }
 
