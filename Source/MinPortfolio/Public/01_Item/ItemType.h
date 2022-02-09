@@ -47,7 +47,7 @@ enum class ESwordType : uint8
 UENUM(BlueprintType)
 enum class EArmorType : uint8
 {
-	TOP, PANTS
+	TOP, SHOES
 };
 
 UENUM(BlueprintType)
@@ -243,14 +243,15 @@ public:
 	class UAnimMontage* GetRollMontage() { return rollMontage; }
 };
 
-//规绢备
+//规绢备_蔼渴
 USTRUCT(BlueprintType)
 struct FArmor : public FEquipment
 {
 	GENERATED_BODY()
 
 public:
-	EArmorType armorType;	
+	UPROPERTY(EditAnywhere)
+		EArmorType armorType;	
 
 public:
 	FArmor() {

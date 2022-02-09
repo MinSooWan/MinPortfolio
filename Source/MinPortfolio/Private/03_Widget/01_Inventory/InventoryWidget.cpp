@@ -193,27 +193,27 @@ FReply UInventoryWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKey
 {
 	Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 
-	if (InKeyEvent.GetKey() == FKey("Gamepad_RightShoulder") && InKeyEvent.GetKey() == FKey(EKeys::E))
+	if (InKeyEvent.GetKey() == FKey("Gamepad_RightShoulder") || InKeyEvent.GetKey() == FKey(EKeys::E))
 	{
 		PressedNextButton_Type();
 	}
-	else if (InKeyEvent.GetKey() == FKey("Gamepad_LeftShoulder") && InKeyEvent.GetKey() == FKey(EKeys::Q))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_LeftShoulder") || InKeyEvent.GetKey() == FKey(EKeys::Q))
 	{
 		PressedPreviousButton_Type();
 	}
-	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Right") && InKeyEvent.GetKey() == FKey(EKeys::D))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Right") || InKeyEvent.GetKey() == FKey(EKeys::D))
 	{
 		PressedNextButton_Item();
 	}
-	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Left") && InKeyEvent.GetKey() == FKey(EKeys::A))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Left") || InKeyEvent.GetKey() == FKey(EKeys::A))
 	{
 		PressedPreviousButton_Item();
 	}
-	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Up") && InKeyEvent.GetKey() == FKey(EKeys::W))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Up") || InKeyEvent.GetKey() == FKey(EKeys::W))
 	{
 		PressedUpButton_Item();
 	}
-	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Down") && InKeyEvent.GetKey() == FKey(EKeys::S))
+	else if (InKeyEvent.GetKey() == FKey("Gamepad_DPad_Down") || InKeyEvent.GetKey() == FKey(EKeys::S))
 	{
 		PressedDownButton_Item();
 	}

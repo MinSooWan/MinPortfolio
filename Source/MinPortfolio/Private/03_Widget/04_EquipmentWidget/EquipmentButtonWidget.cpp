@@ -8,6 +8,8 @@
 #include "01_Item/ItemType.h"
 #include "03_Widget/MainWidget.h"
 #include "03_Widget/01_Inventory/UseItemCheckWidget.h"
+#include "03_Widget/04_EquipmentWidget/EquipmentMainWidget.h"
+#include "Components/CanvasPanel.h"
 #include "Components/Image.h"
 
 void UEquipmentButtonWidget::OnPressedEvnet()
@@ -19,6 +21,7 @@ void UEquipmentButtonWidget::OnReleasedEvnet()
 {
 	//Image_button->SetBrushFromTexture(defaultImage);
 	GetOwningPlayer<ACustomController>()->GetPawn<APlayerCharacter>()->GetInventoryComp()->UseItem(item_code);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetEquipmentWidget()->GetCanvasPanel()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UEquipmentButtonWidget::OnHoveredEvnet()

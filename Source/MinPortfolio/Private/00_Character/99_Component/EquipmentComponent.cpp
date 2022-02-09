@@ -43,17 +43,21 @@ void UEquipmentComponent::EquipmentCompInit()
 	AItemActor* spawnWeapon = GetWorld()->SpawnActor<AItemActor>(defaultWeaponActorClass);
 	AItemActor* spawnArmor = GetWorld()->SpawnActor<AItemActor>(defaultArmorActorClass);
 	AItemActor* spawnDouble = GetWorld()->SpawnActor<AItemActor>(defaultDoubleSwordActorClass);
+	AItemActor* spawnPants = GetWorld()->SpawnActor<AItemActor>(defaultShoesActorClass);
+
 	GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->SetChildActorClass(defaultDoubleSwordActorClass);
 	Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor())->
 		GetStaticMesh()->SetStaticMesh(spawnDouble->GetItemInfo<FWeapon>()->mesh);
 
-	if (spawnWeapon != nullptr && spawnArmor != nullptr) {
+	if (spawnWeapon != nullptr && spawnArmor != nullptr && spawnPants != nullptr) {
 		defaultWeaponActor = spawnWeapon;
 		defaultArmorActor = spawnArmor;
 		defaultDoubleSwordActor = Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor());
+		defaultShoesActor = spawnPants;
 
 		weaponActor = defaultWeaponActor;
 		armorActor = defaultArmorActor;
+		shoesActor = defaultShoesActor;
 
 		if (weaponActor != nullptr) {
 			weaponActor->SetEquipped(true);
@@ -68,8 +72,14 @@ void UEquipmentComponent::EquipmentCompInit()
 			
 		}
 
+		if(shoesActor != nullptr)
+		{
+			shoesActor->SetEquipped(true);
+		}
+
 		spawnWeapon->SetActorHiddenInGame(true);
 		spawnArmor->SetActorHiddenInGame(true);
+		spawnPants->SetActorHiddenInGame(true);
 	}
 }
 
@@ -86,6 +96,15 @@ void UEquipmentComponent::SetArmorActor(const FIteminfo& itemInfo, AItemActor* i
 	if (item != nullptr) {
 		item->SetEquipped(true);
 		armorActor = item;
+	}
+}
+
+void UEquipmentComponent::SetShoesActor(const FIteminfo& itemInfo, AItemActor* item)
+{
+	if(item != nullptr)
+	{
+		item->SetEquipped(true);
+		shoesActor = item;
 	}
 }
 

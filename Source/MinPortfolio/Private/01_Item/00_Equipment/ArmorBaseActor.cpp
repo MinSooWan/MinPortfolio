@@ -64,7 +64,6 @@ void AArmorBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* inf
 
 		AddStat(player, info->equipmentStat);
 
-		player->SetArmorEquipped(true);
 	}
 }
 
@@ -84,7 +83,5 @@ void AArmorBaseActor::ItemChange_Default(APlayerCharacter* player, const FEquipm
 		}
 
 		player->GetEquipmentComp()->SetArmorActor(*info, player->GetEquipmentComp()->GetDefaultArmorActor());
-
-		player->SetArmorEquipped(false);
 	}
 }

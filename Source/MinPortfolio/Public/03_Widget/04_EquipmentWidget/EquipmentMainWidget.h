@@ -29,7 +29,27 @@ protected:
 	UPROPERTY()
 		class UButton* Button_Armor;
 	UPROPERTY()
-		class UButton* Button_Pants;
+		class UButton* Button_Shoes;
+
+	UPROPERTY()
+		class UImage* Image_Weapon;
+	UPROPERTY()
+		class UImage* Image_Armor;
+	UPROPERTY()
+		class UImage* Image_Shoes;
+
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel;
+
+	UPROPERTY()
+		class UEquipmentPanelWidget* UMG_EquipmentPanel;
+
+	UPROPERTY()
+		class UEquipmentButtonWidget* nowItemButton;
+	UPROPERTY()
+		class UEquipmentButtonWidget* previousItemButton;
+	UPROPERTY()
+		class UEquipmentButtonWidget* nextItemButton;
 
 	virtual void NativeConstruct() override;
 
@@ -37,11 +57,23 @@ protected:
 
 	void WidgetFocus(class UButton* widget);
 
-	void OnClickButton_Weapon();
-	void OnClickButton_Armor();
-	void OnClickButton_Pants();
+	UFUNCTION()
+		void OnClickButton_Weapon();
+	UFUNCTION()
+		void OnClickButton_Armor();
+	UFUNCTION()
+		void OnClickButton_Shoes();
+
+	void PressedNextButton_Item();
+	void PressedPreviousButton_Item();
+	void PressedUpButton_Item();
+	void PressedDownButton_Item();
 
 public:
 
+	class UCanvasPanel* GetCanvasPanel() { return CanvasPanel; }
+
 	void OnEquipmentWidget();
+
+	void SetItemImage();
 };

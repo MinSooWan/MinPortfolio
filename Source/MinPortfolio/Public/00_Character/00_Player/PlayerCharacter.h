@@ -118,9 +118,6 @@ protected:
 	UPROPERTY()
 		bool bWeaponEquipped = false;
 
-	UPROPERTY()
-		bool bArmorEquipped = false;
-
 	UPROPERTY(VisibleAnywhere)
 		AActor* overlapMaterial;
 
@@ -177,7 +174,6 @@ public:
 	bool GetWeaponEquipped() { return bWeaponEquipped; }
 
 	void SetWeaponEquipped(bool value) { bWeaponEquipped = value; }
-	void SetArmorEquipped(bool value) { bArmorEquipped = value; }
 
 	void SetOverlapmaterial(AActor* value) { overlapMaterial = value; }
 

@@ -30,6 +30,10 @@ protected:
 	UPROPERTY()
 		class AItemActor* defaultArmorActor;
 	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AItemActor> defaultShoesActorClass;
+	UPROPERTY()
+		class AItemActor* defaultShoesActor;
+	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AItemActor> defaultDoubleSwordActorClass;
 	UPROPERTY()
 		class AItemActor* defaultDoubleSwordActor;
@@ -38,6 +42,8 @@ protected:
 		class AItemActor* weaponActor;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		class AItemActor* armorActor;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+		class AItemActor* shoesActor;
 
 public:	
 	// Called every frame
@@ -47,11 +53,14 @@ public:
 
 	class AItemActor* GetWeaponActor() { return weaponActor; }
 	class AItemActor* GetArmorActor() { return armorActor; }
+	class AItemActor* GetShoesActor() { return shoesActor; }
 
 	void SetWeaponActor(const FIteminfo& itemInfo, class AItemActor* item);
 	void SetArmorActor(const FIteminfo& itemInfo, class AItemActor* item);
+	void SetShoesActor(const FIteminfo& itemInfo, class AItemActor* item);
 	
 	class AItemActor* GetDefaultWeaponActor() { return defaultWeaponActor; }
 	class AItemActor* GetDefaultArmorActor() { return defaultArmorActor; }
 	class AItemActor* GetDefaultDoubleSwordActor() { return defaultDoubleSwordActor; }
+	class AItemActor* GetDefaultShoesActor() { return defaultShoesActor; }
 };
