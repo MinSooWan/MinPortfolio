@@ -32,6 +32,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "97_Task/CharacterTurnGameplayTask.h"
+#include "Components/SceneCaptureComponent2D.h"
 #include "Kismet/KismetInputLibrary.h"
 
 #define ORIGINAL_WALK_SPPED 600;
@@ -93,6 +94,9 @@ APlayerCharacter::APlayerCharacter()
 	DoubleSwordChild->SetVisibility(false);
 
 	SetGenericTeamId(FGenericTeamId(4));
+
+	sceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("sceneCapture"));
+	sceneCapture->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -186,6 +190,7 @@ void APlayerCharacter::BeginPlay()
 	if(GetController()->IsA<ACustomController>())
 	{
 		//UKismetSystemLibrary::PrintString(this, "This CustomController");
+		sceneCapture->ShowOnlyComponent(GetMesh());
 	}
 	else if(GetController()->IsA<ABattleController>())
 	{

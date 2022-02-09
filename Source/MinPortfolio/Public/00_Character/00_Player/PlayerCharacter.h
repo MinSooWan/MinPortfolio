@@ -78,6 +78,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		class UChildActorComponent* ToolChild;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+		class USceneCaptureComponent2D* sceneCapture;
+
 	void InitStat();
 	virtual void BeginPlay() override;
 

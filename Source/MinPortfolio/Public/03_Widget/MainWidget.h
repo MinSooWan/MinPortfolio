@@ -54,6 +54,9 @@ protected:
 	UPROPERTY()
 		class UKeySettingWidget* UMG_Key;
 
+	UPROPERTY()
+		class UEquipmentMainWidget* UMG_EquipmentMain;
+
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
@@ -95,6 +98,7 @@ public:
 	class UNeedSkillFalseWidget* GetNeedSkillFalse() { return UMG_NeedSkillFalse; }
 	class UNeedSpLackWidget* GetNeedSPLack() { return UMG_NeedSPLack; }
 	class UKeySettingWidget* GetKeySetting() { return UMG_Key; }
+	class UEquipmentMainWidget* GetEquipmentWidget() { return UMG_EquipmentMain; }
 
 	FOnMenuWidget OnMenuWidget;
 	FChangeKeyMode ChangeKeyMode;

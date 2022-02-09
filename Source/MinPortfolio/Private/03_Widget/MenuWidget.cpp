@@ -16,6 +16,7 @@
 #include "Components/TextBlock.h"
 #include "03_Widget/02_Skill/SkillTreeWidget.h"
 #include "03_Widget/03_KeyImage/KeySettingWidget.h"
+#include "03_Widget/04_EquipmentWidget/EquipmentMainWidget.h"
 #include "Components/CanvasPanel.h"
 #include "Kismet/KismetInputLibrary.h"
 
@@ -72,6 +73,8 @@ void UMenuWidget::SkillClick()
 
 void UMenuWidget::EquipmentClick()
 {
+	SetVisibility(ESlateVisibility::Hidden);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetEquipmentWidget()->OnEquipmentWidget();
 }
 
 void UMenuWidget::QuestClick()
