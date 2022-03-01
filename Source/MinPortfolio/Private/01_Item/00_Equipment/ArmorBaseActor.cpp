@@ -9,6 +9,7 @@
 #include "01_Item/ItemActor.h"
 #include "00_Character/99_Component/StatusComponent.h"
 #include "Components/ChildActorComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void AArmorBaseActor::UseItem(class ABaseCharacter* owner)
 {
@@ -19,26 +20,13 @@ void AArmorBaseActor::UseItem(class ABaseCharacter* owner)
 		const FArmor* info = GetItemInfo<FArmor>();
 
 		if (info != nullptr) {
-			AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
-			if (player->GetEquipmentComp()->GetArmorActor()->GetItemInfo<FArmor>()->item_Code.IsEqual("item_Equipment_NoArmor")) {
+			AItemActor* spawnItem = Cast<AItemActor>(this);
+
+			if (spawnItem != nullptr) {
+				Cast<AEquipmentActor>(player->GetEquipmentComp()->GetArmorActor())->SetEquipped(false);
+				RemoveStat(player, player->GetEquipmentComp()->GetArmorActor()->GetItemStat());
 				ItemChange(player, spawnItem->GetItemInfo<FArmor>(), spawnItem);
 			}
-			else {
-				if (player->GetEquipmentComp()->GetArmorActor()->GetItemInfo<FArmor>()->item_Code.IsEqual(info->item_Code)) {
-					RemoveStat(player, info->equipmentStat);
-					ItemChange_Default(player, player->GetEquipmentComp()->GetDefaultArmorActor()->GetItemInfo<FArmor>(), player->GetEquipmentComp()->GetDefaultArmorActor());
-				}
-				else {
-					if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_ArmorDefUp"))
-					{
-						player->GetStatusComponent()->SetDEF(player->GetStatusComponent()->GetDEF() - 30);
-					}
-					RemoveStat(player, player->GetEquipmentComp()->GetArmorActor()->GetItemInfo<FArmor>()->equipmentStat);
-					ItemChange(player, spawnItem->GetItemInfo<FArmor>(), spawnItem);
-				}
-			}
-
-			spawnItem->Destroy();
 		}
 	}
 }
@@ -53,16 +41,16 @@ void AArmorBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* inf
 
 		player->GetEquipmentComp()->GetArmorActor()->Destroy();
 
+		Cast<AEquipmentActor>(item)->SetEquipped(true);
+
 		player->GetEquipmentComp()->SetArmorActor(*info, item);
 
-		UE_LOG(LogTemp, Log, TEXT("111111111111"));
 		if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_ArmorDefUp"))
 		{
-			UE_LOG(LogTemp, Log, TEXT("2222222222"));
 			player->GetStatusComponent()->AddDEF(30);
 		}
 
-		AddStat(player, info->equipmentStat);
+		AddStat(player, itemStat);
 
 	}
 }
@@ -82,6 +70,10 @@ void AArmorBaseActor::ItemChange_Default(APlayerCharacter* player, const FEquipm
 			player->GetStatusComponent()->SetDEF(player->GetStatusComponent()->GetDEF() - 30);
 		}
 
-		player->GetEquipmentComp()->SetArmorActor(*info, player->GetEquipmentComp()->GetDefaultArmorActor());
 	}
+}
+
+void AArmorBaseActor::AddOption(EAddOptionsType_Equipment option)
+{
+	Super::AddOption(option);
 }

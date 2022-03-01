@@ -75,6 +75,7 @@ void UMenuWidget::EquipmentClick()
 {
 	SetVisibility(ESlateVisibility::Hidden);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetEquipmentWidget()->OnEquipmentWidget();
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->OnEquipment();
 }
 
 void UMenuWidget::QuestClick()

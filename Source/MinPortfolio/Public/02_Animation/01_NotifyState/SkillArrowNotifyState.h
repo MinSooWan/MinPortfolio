@@ -21,13 +21,15 @@ protected:
 	UPROPERTY()
 		class AArrowActor* spawnArrow;
 	UPROPERTY()
-		class APlayerCharacter* player;
+		class ABaseCharacter* owner;
 
 	UPROPERTY(EditAnywhere)
 		FName socketName;
 
 	UPROPERTY(EditAnywhere)
 		float Speed;
+	UPROPERTY(EditAnywhere)
+		float damage;
 
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;
 	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime) override;

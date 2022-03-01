@@ -57,6 +57,12 @@ protected:
 	UPROPERTY()
 		class UEquipmentMainWidget* UMG_EquipmentMain;
 
+	UPROPERTY()
+		class UBattle_SkillMainWidget* UMG_BattleSkillMain;
+
+	UPROPERTY()
+		class UBattle_InvenMainWidget* UMG_BattleInvenMain;
+
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
@@ -87,6 +93,9 @@ public:
 	void OnSkillTree();
 	void OffSkillTree();
 
+	void OnEquipment();
+	void OffEquipment();
+
 	class UEquippedItemWidget* GetEquippedItemWidget() { return UMG_EquippedItem; };
 	class UBackgroundBlur* GetBackgroundBlur_Image() { return BackgroundBlur_Image; };
 	class UImage* GetBackGroundImage() { return Image_BackGround; };
@@ -99,6 +108,8 @@ public:
 	class UNeedSpLackWidget* GetNeedSPLack() { return UMG_NeedSPLack; }
 	class UKeySettingWidget* GetKeySetting() { return UMG_Key; }
 	class UEquipmentMainWidget* GetEquipmentWidget() { return UMG_EquipmentMain; }
+	class UBattle_SkillMainWidget* GetUMG_BattleSkillMain() { return UMG_BattleSkillMain; }
+	class UBattle_InvenMainWidget* GetUMG_BattleInvenMain() { return UMG_BattleInvenMain; }
 
 	FOnMenuWidget OnMenuWidget;
 	FChangeKeyMode ChangeKeyMode;

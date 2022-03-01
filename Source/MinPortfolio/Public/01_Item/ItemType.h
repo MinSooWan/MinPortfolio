@@ -74,6 +74,10 @@ enum class EAddOptionsType_Material : uint8
 	GIVE_SLOW, //적에게 둔화를 입힌다.(일정시간 동안 민첩성이 감소된다.)
 	GIVE_ATC_DOWN, //적에게 일정시간 동안 공격력 감소효과를 준다.
 	GIVE_DEF_DOWN, //적에게 일정시간 동안 방어력 감소효과를 준다.
+	ADD_ATC_TIME, //공격력을 일정시간 동안 증가시킨다.
+	ADD_DEF_TIME, //방어력을 일정시간 동안증가시킨다.
+	ADD_DEX_TIME, //민첩성을 일정시간 동안증가시킨다.
+	ADD_HP_TIME, //최대 체력을 일정시간 동안증가시킨다.(현재 체력도 증가)
 	ADD_MAX
 };
 
@@ -87,6 +91,24 @@ enum class EAddOptionsType_Equipment : uint8
 	ADD_HP,
 	ADD_ITEM,
 	ADD_EXP,
+	ADD_MAX
+};
+
+//무기에 붙는 추가옵션
+UENUM(BlueprintType)
+enum class EAddOptionsType_Equipment_Weapon : uint8
+{
+	ADD_ATC,
+	ADD_DEF,
+	ADD_DEX,
+	ADD_HP,
+	ADD_ITEM,
+	ADD_EXP,
+	GIVE_DAMAGE,
+	GIVE_BURN,
+	GIVE_FROZEN,
+	GIVE_SHOCK, 
+	GIVE_SLOW,
 	ADD_MAX
 };
 
@@ -164,20 +186,14 @@ public:
 		class UStaticMesh* mesh;
 
 	UPROPERTY(EditAnywhere)
-		TArray<EAddOptionsType_Material> addOption;	
-
-	UPROPERTY(EditAnywhere)
 		EGatheringToolType needTool;
-
-	UPROPERTY(EditAnywhere)
-		FCharacterStat materialStat;
+		
 public:
 
 	FItemMaterial() {
 		item_Type = EItemType::MATERIAL;
 	}
 
-	TArray<EAddOptionsType_Material> GetAddOption() { return addOption; }
 	EMateriarType GetMateriarType() { return materiar_Type; }
 	
 };
@@ -190,22 +206,15 @@ struct FEquipment : public FIteminfo
 
 public:
 	UPROPERTY(EditAnywhere)
-		TArray<EAddOptionsType_Equipment> addOption;
-	UPROPERTY(EditAnywhere)
 		class UStaticMesh* mesh;
 	UPROPERTY(EditAnywhere)
 		EEquipmentType equipment_Type;
-	UPROPERTY(EditAnywhere)
-		FCharacterStat equipmentStat;
 
 public:
 	FEquipment() {
 		item_Type = EItemType::EQUIPMENT;
 	}
-
-	TArray<EAddOptionsType_Equipment> GetAddOption() { return addOption; }
 	EEquipmentType GetEquipmentType() { return equipment_Type; }
-	FCharacterStat GetEquipmentStat() { return equipmentStat; }
 };
 
 //무기
@@ -232,6 +241,9 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIsSword"))
 		ESwordType swordType;
+
+	UPROPERTY(EditAnywhere)
+		float damage;
 
 public:
 	FWeapon() {
@@ -280,6 +292,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UParticleSystem* useParticle;
 
+	UPROPERTY(EditAnywhere)
+		float needCP;
+
 public:
 	FBattleItem() {
 		item_Type = EItemType::BATTLE_ITEM;
@@ -298,9 +313,7 @@ struct FBattle_Consume : public FBattleItem
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
-		TArray<EAddOptionsType_BattleItem> addOption;	
-	
+
 public:
 	FBattle_Consume() {
 		battleItemType = EBattleItemType::BATTLE_CONSUME;
@@ -309,7 +322,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		float damage;
 
-	TArray<EAddOptionsType_BattleItem> GetAddOption() { return addOption; }
 };
 
 //회복 소모품
@@ -319,8 +331,7 @@ struct FRecovery_Consume : public FBattleItem
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
-		TArray<EAddOptionsType_RecoveryItem> addOption;
+
 	
 	FRecovery_Consume() {
 		battleItemType = EBattleItemType::RECOVERY_CONSUME;
@@ -328,8 +339,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		float recover;
-
-	TArray<EAddOptionsType_RecoveryItem> GetAddOption() { return addOption; }
 };
 
 //EGatheringToolType

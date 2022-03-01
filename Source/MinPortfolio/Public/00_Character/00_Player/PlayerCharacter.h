@@ -7,6 +7,8 @@
 #include "00_Character/99_Component/InventoryComponent.h"
 #include "PlayerCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLoadTransform, FVector, valLoc, FRotator, valRot);
+
 /**
  * 
  */
@@ -53,8 +55,6 @@ public:
 	 */
 	void LookUpAtRate(float Rate);
 
-	void TempUseSkill();
-
 protected:
 	// APawn interface
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -78,9 +78,11 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		class UChildActorComponent* ToolChild;
 
+	/*
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		class USceneCaptureComponent2D* sceneCapture;
-
+	*/
+	
 	void InitStat();
 	virtual void BeginPlay() override;
 
@@ -89,10 +91,14 @@ protected:
 	UPROPERTY()
 		int32 targetNum;
 
+public:
+
 	UFUNCTION(BlueprintCallable)
 		void targetChange_right();
 
-public:
+	UFUNCTION()
+		void TargetChange_Left();
+
 	virtual void Jump() override;
 
 protected:
@@ -125,20 +131,11 @@ protected:
 		EActionState TempAction;
 
 	UPROPERTY()
-		bool bMoveToTarget = false;
-	UPROPERTY()
-		bool bMoveToStatrLocation = false;
-
-	UPROPERTY()
-		FVector targetLocation;
-
-	UPROPERTY()
-		FVector startLocation;
-
-	UPROPERTY()
 		bool bInputKeyisPad = false;
 
 public:
+	UPROPERTY()
+		FLoadTransform LoadTransform;
 
 	UPROPERTY()
 		bool bContinueAttack = false;
@@ -179,11 +176,9 @@ public:
 
 	EActionState GetTempAction() { return TempAction; }
 
-	void SetMoveToStart(bool value) { bMoveToStatrLocation = value; }
-
-	FVector GetStartLocation() { return startLocation; }
-
 	bool GetInputKeyisPad() { return bInputKeyisPad; }
+
+	virtual void NormalActionState(const EActionState state) override;
 
 protected:
 
@@ -202,6 +197,12 @@ public:
 	void PressedBattle_Attack();
 
 	void PressedAnyKey();
+
+	virtual void ActionChange() override;
+	virtual void ActionChange(float cool) override;
+
+	virtual void ActionChange_Able() override;
+	virtual void ActionChange_Impossible() override;
 protected:
 
 	UFUNCTION()
@@ -215,4 +216,7 @@ protected:
 
 	UFUNCTION()
 		void OnNormalEndAnimation(EActionState action);
+
+	UFUNCTION()
+		void LoadLocationEvent(FVector val, FRotator valrot);
 };

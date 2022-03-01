@@ -4,6 +4,7 @@
 #include "01_Item/00_Weapon/WeaponBaseActor.h"
 #include "00_Character/99_Component/StatusComponent.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "00_Character/01_Monster/MonsterCharacter.h"
 #include "00_Character/99_Component/EquipmentComponent.h"
 #include "00_Character/99_Component/SkillComponent.h"
 #include "01_Item/ItemType.h"
@@ -16,17 +17,44 @@
 void AWeaponBaseActor::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)
 {
 	if (OtherActor != nullptr && hitArray.Contains(OtherActor) == false) {
-		hitArray.Emplace(OtherActor);
+		if (OtherActor->IsA<AMonsterCharacter>()) {
+			hitArray.Emplace(OtherActor);
 
-		FHitResult hit;
+			auto damage = 10;
+			if (UsingItemOwner != nullptr) {
+				damage = UsingItemOwner->GetStatusComponent()->GetATC() + itemStat.ATC;
+			}
+			Cast<AMonsterCharacter>(OtherActor)->GiveDamage(20);
 
-		TArray<TEnumAsByte<EObjectTypeQuery>> objectType;
-		objectType.Emplace(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel2));
+			auto location = Cast<AMonsterCharacter>(OtherActor)->GetMesh()->GetComponentLocation();
 
-		if (UKismetSystemLibrary::LineTraceSingleForObjects(this, GetActorLocation(), OtherActor->GetActorLocation(), objectType, false,
-			TArray<AActor*>(), EDrawDebugTrace::ForDuration, hit, true)) {
-			UGameplayStatics::SpawnEmitterAtLocation(this, AttackParticle, hit.Location, FRotator::ZeroRotator, true);
+			UGameplayStatics::SpawnEmitterAtLocation(this, AttackParticle, location, FRotator::ZeroRotator, true);
 
+			if (addOption.Num() > 0) {
+				for (auto iter : addOption)
+				{
+					switch (iter)
+					{
+					case EAddOptionsType_Equipment_Weapon::GIVE_BURN:
+						Cast<AMonsterCharacter>(OtherActor)->AddDebuffStateCharacter(EDebuffState::GIVE_BURN, 5, 4, EDebuffType::DURATION);
+						break;
+					case EAddOptionsType_Equipment_Weapon::GIVE_FROZEN:
+						Cast<AMonsterCharacter>(OtherActor)->AddDebuffStateCharacter(EDebuffState::GIVE_FROZEN, 5, 9, EDebuffType::DURATION);
+						break;
+					case EAddOptionsType_Equipment_Weapon::GIVE_DAMAGE:
+						Cast<AMonsterCharacter>(OtherActor)->GetStatusComponent()->SetHP(
+							FMath::Clamp(Cast<AMonsterCharacter>(OtherActor)->GetStatusComponent()->GetHP() - GetItemInfo<FBattle_Consume>()->damage / 10,
+								0.f, Cast<AMonsterCharacter>(OtherActor)->GetStatusComponent()->GetMaxHP()));
+						break;
+					case EAddOptionsType_Equipment_Weapon::GIVE_SHOCK:
+						Cast<AMonsterCharacter>(OtherActor)->AddDebuffStateCharacter(EDebuffState::GIVE_SHOCK, 5, 14, EDebuffType::DURATION);
+						break;
+					case EAddOptionsType_Equipment_Weapon::GIVE_SLOW:
+						Cast<AMonsterCharacter>(OtherActor)->AddDebuffStateCharacter(EDebuffState::GIVE_SLOW, 20, 5, EDebuffType::ONE);
+						break;
+					}
+				}
+			}
 		}
 	}
 }
@@ -38,6 +66,11 @@ void AWeaponBaseActor::PostInitializeComponents()
 	OnActorBeginOverlap.AddUniqueDynamic(this, &AWeaponBaseActor::OnActorBeginOverlapEvent);
 }
 
+void AWeaponBaseActor::AddOption_Weapon(EAddOptionsType_Equipment_Weapon option)
+{
+	addOption.Add(option);
+}
+
 void AWeaponBaseActor::UseItem(class ABaseCharacter* owner)
 {
 	Super::UseItem(owner);
@@ -47,28 +80,13 @@ void AWeaponBaseActor::UseItem(class ABaseCharacter* owner)
 		const FWeapon* info = GetItemInfo<FWeapon>();
 
 		if (info != nullptr) {
-			AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
+			AItemActor* spawnItem = Cast<AItemActor>(this);
 
 			if (player->GetEquipmentComp()->GetWeaponActor() != nullptr) {
-				if (player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->item_Code.IsEqual("item_Equipment_NoWeapon")) {
-					ItemChange(player, spawnItem->GetItemInfo<FWeapon>(), spawnItem);
-				}
-				else {
-					if (player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->item_Code.IsEqual(info->item_Code)) {
-						RemoveStat(player, info->equipmentStat);
-						ItemChange_Default(player, player->GetEquipmentComp()->GetDefaultWeaponActor()->GetItemInfo<FWeapon>(), player->GetEquipmentComp()->GetDefaultWeaponActor());
-					}
-					else {
-						if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_WeaponAtcUp"))
-						{
-							player->GetStatusComponent()->SetATC(player->GetStatusComponent()->GetATC() - 30);
-						}
-						RemoveStat(player, player->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->equipmentStat);
-						ItemChange(player, spawnItem->GetItemInfo<FWeapon>(), spawnItem);
-					}
-				}
+				RemoveStat(player, player->GetEquipmentComp()->GetWeaponActor()->GetItemStat());
+				Cast<AEquipmentActor>(player->GetEquipmentComp()->GetWeaponActor())->SetEquipped(false);
+				ItemChange(player, spawnItem->GetItemInfo<FWeapon>(), spawnItem);
 			}
-			spawnItem->Destroy();
 		}
 	}
 
@@ -77,7 +95,6 @@ void AWeaponBaseActor::UseItem(class ABaseCharacter* owner)
 AWeaponBaseActor::AWeaponBaseActor()
 {
 	
-
 }
 
 void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* info, AItemActor* item)
@@ -90,7 +107,7 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* in
 
 		//player->GetWeaponChildActor()->SetVisibility(true);
 
-		player->GetEquipmentComp()->GetWeaponActor()->Destroy();
+		Cast<AEquipmentActor>(item)->SetEquipped(true);
 
 		player->GetEquipmentComp()->SetWeaponActor(*info, item);
 
@@ -108,7 +125,6 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* in
 		}
 		
 		player->GetWeaponChildActor()->SetChildActorClass(info->itemActorClass);
-		player->GetEquipmentComp()->SetWeaponActor(*info, Cast<AItemActor>(player->GetWeaponChildActor()->GetChildActor()));
 		Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);
 
 		player->GetWeaponChildActor()->SetVisibility(false);
@@ -118,7 +134,18 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* in
 		{
 			player->GetStatusComponent()->AddATC(30);
 		}
-		AddStat(player, info->equipmentStat);
+		AddStat(player, itemStat);
+
+		weapon = Cast<AWeaponBaseActor>(player->GetWeaponChildActor()->GetChildActor());
+		if(weapon != nullptr)
+		{
+			if (addOption.Num() > 0) {
+				for (auto iter : addOption)
+				{
+					Cast<AWeaponBaseActor>(weapon)->AddOption_Weapon(iter);
+				}
+			}
+		}
 
 		player->SetWeaponEquipped(true);
 	}
@@ -135,7 +162,6 @@ void AWeaponBaseActor::ItemChange_Default(APlayerCharacter* player, const FEquip
 			player->GetEquipmentComp()->GetWeaponActor()->Destroy();
 		}
 
-		player->GetEquipmentComp()->SetWeaponActor(*info, player->GetEquipmentComp()->GetDefaultWeaponActor());
 
 		player->GetWeaponChildActor()->SetChildActorClass(info->itemActorClass);
 		Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);

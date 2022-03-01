@@ -28,11 +28,25 @@ protected:
 	UPROPERTY(EditAnywhere)
 		class UParticleSystem* AttackParticle;
 
+	UPROPERTY()
+		bool bEquipped = false;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TArray<EAddOptionsType_Equipment> addOption;
+
 public:
+
+	UFUNCTION(BlueprintCallable)
+		virtual void AddOption(EAddOptionsType_Equipment option);
+
+	TArray<EAddOptionsType_Equipment> GetAddOption() { return addOption; }
 
 	AEquipmentActor();
 
 	class UStaticMeshComponent* GetStaticMesh() { return staticMesh; }
 
 	class UParticleSystem* GetAttackParticle() { return AttackParticle; }
+
+	bool GetEquipped() { return bEquipped; }
+	void SetEquipped(bool value) { bEquipped = value; }
 };

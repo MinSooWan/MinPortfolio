@@ -22,5 +22,8 @@ protected:
 	virtual void ItemChange_Default(class APlayerCharacter* player, const FEquipment* info, AItemActor* item) override;
 
 public:
+
+	virtual void AddOption(EAddOptionsType_Equipment option) override;
+
 	virtual void UseItem(class ABaseCharacter* owner) override;
 };

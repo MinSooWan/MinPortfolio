@@ -17,4 +17,6 @@ class MINPORTFOLIO_API ASkill_FatalDriveArrowAttackActor : public ASkillAttackAc
 public:
 
 	virtual void UseSkill(class ABaseCharacter* target, ABaseCharacter* owner) override;
+
+	virtual void EndAnimFunction() override;
 };

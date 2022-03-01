@@ -44,7 +44,7 @@ void UInventoryPanelWidget::ShowAll(UInventoryComponent* inventoryComp)
 		auto button = CreateWidget<UInventoryButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
 		const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-		button->SetUpButton(info);
+		button->SetUpButton(Cast<AItemActor>(iter));
 		button->SetPadding(30);
 		button->bIsFocusable = true;
 
@@ -78,7 +78,7 @@ void UInventoryPanelWidget::ShowEquipment(UInventoryComponent* inventoryComp)
 			auto button = CreateWidget<UInventoryButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-			button->SetUpButton(info);
+			button->SetUpButton(Cast<AItemActor>(iter));
 			button->SetPadding(30);
 			button->bIsFocusable = true;
 
@@ -113,7 +113,7 @@ void UInventoryPanelWidget::ShowMaterial(UInventoryComponent* inventoryComp)
 			auto button = CreateWidget<UInventoryButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-			button->SetUpButton(info);
+			button->SetUpButton(Cast<AItemActor>(iter));
 			button->SetPadding(30);
 			button->bIsFocusable = true;
 
@@ -148,7 +148,7 @@ void UInventoryPanelWidget::ShowTool(UInventoryComponent* inventoryComp)
 			auto button = CreateWidget<UInventoryButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-			button->SetUpButton(info);
+			button->SetUpButton(Cast<AItemActor>(iter));
 			button->SetPadding(30);
 			button->bIsFocusable = true;
 
@@ -183,7 +183,7 @@ void UInventoryPanelWidget::ShowBattleItem(UInventoryComponent* inventoryComp)
 			auto button = CreateWidget<UInventoryButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
 			const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-			button->SetUpButton(info);
+			button->SetUpButton(Cast<AItemActor>(iter));
 			button->SetPadding(30);
 			button->bIsFocusable = true;
 

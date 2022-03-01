@@ -37,6 +37,7 @@ void UTask_MoveToTarget::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 			case EPathFollowingRequestResult::AlreadyAtGoal:
 				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 			case EPathFollowingRequestResult::Failed:
+				aiCon->GetPawn<AMonsterCharacter>()->SetActionState(EActionState::NORMAL);
 				aiCon->GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
 				monster->GetWidgetComp()->SetVisibility(false);
 				FinishLatentTask(OwnerComp, EBTNodeResult::Failed);

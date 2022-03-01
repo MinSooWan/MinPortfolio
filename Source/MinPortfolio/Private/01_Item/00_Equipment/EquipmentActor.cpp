@@ -35,6 +35,11 @@ void AEquipmentActor::ItemChange_Default(APlayerCharacter* player, const FEquipm
 	
 }
 
+void AEquipmentActor::AddOption(EAddOptionsType_Equipment option)
+{
+	addOption.Add(option);
+}
+
 AEquipmentActor::AEquipmentActor()
 {
 	PrimaryActorTick.bCanEverTick = false;

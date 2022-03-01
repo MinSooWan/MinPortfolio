@@ -9,5 +9,16 @@
 void ASkill_DoubleArrowShotActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
 	Super::UseSkill(target, owner);
-	owner->PlayAnimMontage(GetSkillInfo<FSkill>()->useSkillMontage);
+
+	FTimerDelegate timeDel;
+	timeDel.BindUFunction(this, "EndAnimFunction");
+
+	GetWorld()->GetTimerManager().SetTimer(endSkillHandle, timeDel, owner->GetMesh()->GetAnimInstance()->Montage_Play(GetSkillInfo<FSkill>()->useSkillMontage), false);
+}
+
+void ASkill_DoubleArrowShotActor::EndAnimFunction()
+{
+	Super::EndAnimFunction();
+
+	skillOwner->NormalActionState(EActionState::NORMAL);
 }

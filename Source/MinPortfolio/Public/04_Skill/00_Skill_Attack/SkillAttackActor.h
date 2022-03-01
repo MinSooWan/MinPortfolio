@@ -14,7 +14,16 @@ class MINPORTFOLIO_API ASkillAttackActor : public ASkillBaseActor
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY()
+		FTimerHandle endSkillHandle;
+
 public:
 
 	virtual void UseSkill(class ABaseCharacter* target, class ABaseCharacter* owner) override;
+
+	virtual void EndDynamicFunction() override { }
+
+	UFUNCTION()
+		virtual void EndAnimFunction() { }
 };

@@ -23,16 +23,10 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AItemActor> defaultWeaponActorClass;
-	UPROPERTY()
-		class AItemActor* defaultWeaponActor;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AItemActor> defaultArmorActorClass;
-	UPROPERTY()
-		class AItemActor* defaultArmorActor;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AItemActor> defaultShoesActorClass;
-	UPROPERTY()
-		class AItemActor* defaultShoesActor;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AItemActor> defaultDoubleSwordActorClass;
 	UPROPERTY()
@@ -58,9 +52,10 @@ public:
 	void SetWeaponActor(const FIteminfo& itemInfo, class AItemActor* item);
 	void SetArmorActor(const FIteminfo& itemInfo, class AItemActor* item);
 	void SetShoesActor(const FIteminfo& itemInfo, class AItemActor* item);
-	
-	class AItemActor* GetDefaultWeaponActor() { return defaultWeaponActor; }
-	class AItemActor* GetDefaultArmorActor() { return defaultArmorActor; }
+
 	class AItemActor* GetDefaultDoubleSwordActor() { return defaultDoubleSwordActor; }
-	class AItemActor* GetDefaultShoesActor() { return defaultShoesActor; }
+
+	bool CheckInven(AItemActor* item);
+
+	void EquipmentItemAddToInven();
 };

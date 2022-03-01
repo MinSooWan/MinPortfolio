@@ -107,12 +107,13 @@ protected:
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 	virtual FReply NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
-	void SetItemInfo(FIteminfo* info);
+	void SetItemInfo(AItemActor* item);
 
 	FString GetAddOptionDescription_Equipment(EAddOptionsType_Equipment option);
 	FString GetAddOptionDescription_Material(EAddOptionsType_Material option);
 	FString GetAddOptionDescription_BattleItem(EAddOptionsType_BattleItem option);
 	FString GetAddOptionDescription_RecoveryItem(EAddOptionsType_RecoveryItem option);
+	FString GetAddOptionDescription_RecoveryItem(EAddOptionsType_Equipment_Weapon option);
 
 	void PressedNextButton_Type();
 	void PressedPreviousButton_Type();
@@ -130,4 +131,3 @@ public:
 	class UInventoryPanelWidget* GetInvnetoryPanel() { return UMG_InvnetoryPanel; };
 
 };
-

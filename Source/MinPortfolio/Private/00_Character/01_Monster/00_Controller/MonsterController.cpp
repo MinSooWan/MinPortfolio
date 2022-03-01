@@ -7,6 +7,7 @@
 #include "00_Character/01_Monster/MonsterCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig.h"
 #include "Perception/AISenseConfig_Damage.h"
@@ -56,12 +57,11 @@ void AMonsterController::OnPerceptionUpdatedEvent(AActor* Actor, FAIStimulus Sti
 
 			//적인상태
 			if (myTeam != otherTeam) {
-				/*
 				if (GetBlackboardComponent()->GetValueAsObject("Target") == nullptr) {
+					GetPawn<AMonsterCharacter>()->SetActionState(EActionState::RUN);
 					GetBlackboardComponent()->SetValueAsObject("Target", Actor);
 					GetPawn<AMonsterCharacter>()->GetWidgetComp()->SetVisibility(true);
 				}
-				*/
 			}
 		}
 	}
@@ -87,9 +87,8 @@ void AMonsterController::OnPossess(APawn* InPawn)
 	{
 		if(monster->GetAiTree() != nullptr)
 		{
-			//RunBehaviorTree(monster->GetAiTree());
-			//GetBlackboardComponent()->SetValueAsVector("HomeLocation", InPawn->GetActorLocation());
-			
+			RunBehaviorTree(monster->GetAiTree());
+			GetBlackboardComponent()->SetValueAsVector("HomeLocation", InPawn->GetActorLocation());
 		}
 	}
 }

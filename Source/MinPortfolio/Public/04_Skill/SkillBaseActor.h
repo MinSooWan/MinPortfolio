@@ -32,6 +32,11 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		class UProjectileMovementComponent* ProjectilMovementComp;
 
+	UPROPERTY()
+		class ABaseCharacter* skillOwner;
+	UPROPERTY()
+		class ABaseCharacter* skillTarget;
+
 public:
 	template <typename T>
 	const T* GetSkillInfo();
@@ -44,6 +49,11 @@ public:
 	class USphereComponent* GetSphereComp() { return sphereComp; }
 
 	class UProjectileMovementComponent* GetProjectilMovementComp() { return ProjectilMovementComp; }
+
+	UFUNCTION()
+		virtual void EndDynamicFunction() { }
+
+	void SetSkillCharacter(class ABaseCharacter* owner, class ABaseCharacter* target) { skillOwner = owner; skillTarget = target; }
 };
 
 template <typename T>

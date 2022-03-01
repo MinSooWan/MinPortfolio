@@ -15,7 +15,8 @@ enum class EActionState : uint8
 	RUN,
 	ATTACK,
 	ROLL,
-	JUMP
+	JUMP,
+	MOVE
 };
 
 UCLASS()
@@ -58,6 +59,28 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		class UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
 
+	UPROPERTY()
+		FTimerHandle AbleAction;
+	UPROPERTY()
+		FTimerHandle ImpossibleAction;
+
+	UPROPERTY()
+		bool bAbleAction = false;
+
+	UPROPERTY()
+		bool bMoveToTarget = false;
+	UPROPERTY()
+		bool bMoveToStatrLocation = false;
+
+	UPROPERTY()
+		FVector startLocation;
+
+	UPROPERTY(EditAnywhere)
+		float distanceValue;
+
+	UPROPERTY(EditAnywhere)
+		class UAnimMontage* hitMontage;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -88,4 +111,43 @@ public:
 
 	/** Retrieve team identifier in form of FGenericTeamId */
 	virtual FGenericTeamId GetGenericTeamId() const { return myTeam; }
+
+	UFUNCTION(BlueprintCallable)
+		virtual void GiveDamage(float Damage);
+
+	UFUNCTION()
+		virtual void NormalActionState(const EActionState state) { actionState = state; }
+
+	FTimerHandle& GetAbleActionHandle() { return AbleAction; }
+	FTimerHandle& GetImpossibleActionHandle() { return ImpossibleAction; }
+
+	UFUNCTION()
+		virtual void ActionChange();
+	virtual void ActionChange(float cool);
+
+	UFUNCTION()
+		virtual void ActionChange_Able();
+	UFUNCTION()
+		virtual void ActionChange_Impossible();
+
+	bool GetAbleAction() { return bAbleAction; }
+
+	void SetMoveToStart(bool value) { bMoveToStatrLocation = value; }
+
+	bool GetMoveToTarget() { return bMoveToTarget; }
+	void SetMoveToTarget(bool value) { bMoveToTarget = value; }
+
+	bool GetMoveToStatrLocation() { return bMoveToStatrLocation; }
+	void SetMoveToStatrLocation(bool value) { bMoveToStatrLocation = value; }
+
+	FVector GetStartLocation() { return startLocation; }
+	void SetStartLocation(FVector value) { startLocation = value; }
+
+	const float GetDistanceValue() { return distanceValue; }
+
+	UFUNCTION()
+		void LoadToLevel();
+
+	UFUNCTION()
+		void MonsterDieToRemove();
 };

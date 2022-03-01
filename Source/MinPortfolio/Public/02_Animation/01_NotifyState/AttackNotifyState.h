@@ -18,6 +18,12 @@ protected:
 	UPROPERTY()
 		class APlayerCharacter* owner;
 
+	UPROPERTY(EditAnywhere)
+		bool bUsingSkill = false;
+
+	UPROPERTY(EditAnywhere)
+		float damage;
+
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };

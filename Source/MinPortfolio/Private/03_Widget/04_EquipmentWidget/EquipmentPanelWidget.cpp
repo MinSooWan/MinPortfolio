@@ -3,13 +3,18 @@
 
 #include "03_Widget/04_EquipmentWidget/EquipmentPanelWidget.h"
 
+#include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "00_Character/99_Component/InventoryComponent.h"
 #include "01_Item/ItemActor.h"
 #include "01_Item/ItemType.h"
+#include "03_Widget/MainWidget.h"
+#include "03_Widget/03_KeyImage/KeySettingWidget.h"
 #include "Components/VerticalBox.h"
 #include "03_Widget/04_EquipmentWidget/EquipmentPartsWidget.h"
 #include "03_Widget/04_EquipmentWidget/EquipmentButtonWidget.h"
+#include "Components/CanvasPanel.h"
 #include "Components/HorizontalBox.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void UEquipmentPanelWidget::NativeConstruct()
 {
@@ -20,6 +25,7 @@ void UEquipmentPanelWidget::NativeConstruct()
 
 void UEquipmentPanelWidget::OnEquipmentWidgetEvent(UInventoryComponent* inventoryComp, FName equipmentType)
 {
+
 	if(equipmentType.IsEqual("Weapon"))
 	{
 		ShowWeapon(inventoryComp);
@@ -55,15 +61,18 @@ void UEquipmentPanelWidget::ShowWeapon(UInventoryComponent* inventoryComp)
 					}
 					auto button = CreateWidget<UEquipmentButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
-					const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-					button->SetUpButton(info);
-					button->SetPadding(30);
-					button->bIsFocusable = true;
+					if (button != nullptr) {
 
-					horizontalBox->GetHorizontalBox_Parts()->AddChild(button);
-					//Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
+						button->SetUpButton(Cast<AItemActor>(iter));
+						button->SetPadding(30);
+						button->bIsFocusable = true;
+						button->SetVisibility(ESlateVisibility::Visible);
 
-					buttons.Add(button);
+						horizontalBox->GetHorizontalBox_Parts()->AddChild(button);
+						//Cast<UHorizontalBoxSlot>(button->Slot)->SetSize(ESlateSizeRule::Fill);
+
+						buttons.Add(button);
+					}
 
 					index++;
 
@@ -95,8 +104,7 @@ void UEquipmentPanelWidget::ShowArmor(UInventoryComponent* inventoryComp)
 						}
 						auto button = CreateWidget<UEquipmentButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
-						const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-						button->SetUpButton(info);
+						button->SetUpButton(Cast<AItemActor>(iter));
 						button->SetPadding(30);
 						button->bIsFocusable = true;
 
@@ -136,8 +144,7 @@ void UEquipmentPanelWidget::ShowPants(UInventoryComponent* inventoryComp)
 						}
 						auto button = CreateWidget<UEquipmentButtonWidget>(GetOwningPlayer(), buttonWidgetClass);
 
-						const FIteminfo* info = Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>();
-						button->SetUpButton(info);
+						button->SetUpButton(Cast<AItemActor>(iter));
 						button->SetPadding(30);
 						button->bIsFocusable = true;
 

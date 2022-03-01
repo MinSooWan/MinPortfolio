@@ -14,7 +14,15 @@ class MINPORTFOLIO_API ARecoveryConsumeActor : public AItemActor
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY(EditAnywhere)
+		TArray<EAddOptionsType_RecoveryItem> addOption;
+
 public:
+	UFUNCTION(BlueprintCallable)
+		virtual void AddOption(EAddOptionsType_RecoveryItem option);
 
 	virtual void UseItem(class ABaseCharacter* owner) override;
+
+	TArray<EAddOptionsType_RecoveryItem> GetAddOption() { return addOption; }
 };

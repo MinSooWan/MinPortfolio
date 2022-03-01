@@ -122,4 +122,6 @@ public:
 	void RemoveStat(const FCharacterStat& statToRemove);
 
 	void SetAll(ABaseCharacter* target);
+
+	void StatusInit() { characterStat.HP = characterStat.MaxHP; }
 };

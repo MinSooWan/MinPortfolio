@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "01_Item/ItemType.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "UseItemCheckWidget.generated.h"
@@ -22,7 +23,7 @@ protected:
 		class UTexture2D* hoveredImage;
 
 	UPROPERTY()
-		FName item_code = NAME_None;
+		class AItemActor* item;
 
 	UPROPERTY()
 		class UButton* nowButton;
@@ -44,5 +45,5 @@ public:
 
 	void ChangeButton();
 
-	void SetItemCode(FName code) { nowButton = Button_Yes; nowButton->WidgetStyle.Normal.SetResourceObject(hoveredImage); item_code = code; }
+	void SetItemCode(AItemActor* value) { nowButton = Button_Yes; nowButton->WidgetStyle.Normal.SetResourceObject(hoveredImage); item = value; }
 };

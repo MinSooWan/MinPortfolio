@@ -60,7 +60,11 @@ void UDebuffObject::GiveDamageDebuff(const float cool)
 		switch (debuff)
 		{
 		case EDebuffState::GIVE_BURN:
-			Target->GetStatusComponent()->SetHP(Target->GetStatusComponent()->GetHP() - effect_value);
+			Target->GiveDamage(effect_value);
+			break;
+		case EDebuffState::GIVE_FROZEN:
+			break;
+		case EDebuffState::GIVE_SHOCK:
 			break;
 		}
 		

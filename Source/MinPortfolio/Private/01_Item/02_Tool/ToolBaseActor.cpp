@@ -53,9 +53,11 @@ void AToolBaseActor::UseItem(ABaseCharacter* owner)
 		if (info != nullptr) {
 			AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
 
-			if (!player->GetToolComp()->GetToolActor()->GetItemInfo<FIteminfo>()->item_Code.IsEqual(info->item_Code)) {
-				ToolChange(player, spawnItem);
-			}			
+			if (player->GetToolComp()->GetToolActor() != nullptr) {
+				if (!player->GetToolComp()->GetToolActor()->GetItemInfo<FIteminfo>()->item_Code.IsEqual(info->item_Code)) {
+					ToolChange(player, spawnItem);
+				}
+			}
 			spawnItem->Destroy();
 		}
 	}

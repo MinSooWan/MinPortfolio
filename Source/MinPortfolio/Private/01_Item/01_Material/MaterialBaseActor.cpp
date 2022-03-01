@@ -2,9 +2,44 @@
 
 
 #include "01_Item/01_Material/MaterialBaseActor.h"
+
+#include "98_Instance/MyGameInstance.h"
+#include "99_GameMode/SaveState.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+
+void AMaterialBaseActor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if(GetGameInstance<UMyGameInstance>()->materialActors.Num() > 0)
+	{
+		for(auto iter: GetGameInstance<UMyGameInstance>()->materialActors)
+		{
+			if(GetActorLocation() == iter.Key)
+			{
+				for(auto i : iter.Value.options)
+				{
+					AddOption(i);
+				}
+
+				itemStat = iter.Value.stat;
+				SetActorHiddenInGame(iter.Value.bIsHidden);
+			}
+		}
+	}
+	else {
+		RandomAddOption();
+	}
+}
+
+void AMaterialBaseActor::AddOption(EAddOptionsType_Material option)
+{
+	addOption.Add(option);
+}
 
 AMaterialBaseActor::AMaterialBaseActor()
 {
@@ -30,4 +65,19 @@ AMaterialBaseActor::AMaterialBaseActor()
 void AMaterialBaseActor::HiddenMesh()
 {
 	materialMesh->SetVisibility(false);
+}
+
+void AMaterialBaseActor::RandomAddOption()
+{
+	int32 cnt = FMath::RandRange(0, 3);
+
+	for (auto i = 0; i < cnt; i++)
+	{
+		auto option = EAddOptionsType_Material(rand() % 17);
+		AddOption(option);
+	}
+	itemStat.HP += FMath::RandRange(0, 20);
+	itemStat.ATC += FMath::RandRange(0, 20);
+	itemStat.DEF += FMath::RandRange(0, 20);
+	itemStat.DEX += FMath::RandRange(0, 20);
 }

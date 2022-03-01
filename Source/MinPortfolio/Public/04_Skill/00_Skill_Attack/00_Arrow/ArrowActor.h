@@ -42,6 +42,8 @@ protected:
 	UFUNCTION()
 		virtual void OnActorHitEvent(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 
+	UPROPERTY(BlueprintReadOnly)
+		float damage;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -51,4 +53,6 @@ public:
 
 	float GetLifeTiem() { return lifeTiem; }
 	float GetSpeed() { return speed; }
+
+	void SetDamage(float value) { damage = value; }
 };

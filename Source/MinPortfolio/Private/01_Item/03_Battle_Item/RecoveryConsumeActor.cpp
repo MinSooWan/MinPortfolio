@@ -7,6 +7,11 @@
 #include "00_Character/99_Component/BuffComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+void ARecoveryConsumeActor::AddOption(EAddOptionsType_RecoveryItem option)
+{
+	addOption.Add(option);
+}
+
 void ARecoveryConsumeActor::UseItem(ABaseCharacter* owner)
 {
 	Super::UseItem(owner);
@@ -20,7 +25,7 @@ void ARecoveryConsumeActor::UseItem(ABaseCharacter* owner)
 
 		UGameplayStatics::SpawnEmitterAtLocation(player, GetItemInfo<FRecovery_Consume>()->useParticle, player->GetActorLocation());
 
-		for(auto iter : GetItemInfo<FRecovery_Consume>()->addOption)
+		for(auto iter : addOption)
 		{
 			switch (iter)
 			{

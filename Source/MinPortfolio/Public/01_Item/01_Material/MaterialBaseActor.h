@@ -33,7 +33,14 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		class UParticleSystem* pickUpParticle;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TArray<EAddOptionsType_Material> addOption;
 public:
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+		virtual void AddOption(EAddOptionsType_Material option);
 
 	AMaterialBaseActor();
 
@@ -44,4 +51,8 @@ public:
 	virtual void HiddenMesh() override;
 
 	class UParticleSystem* GetPickUpParticle() { return pickUpParticle; }
+
+	TArray<EAddOptionsType_Material> GetAddOption() { return addOption; }
+
+	void RandomAddOption();
 };

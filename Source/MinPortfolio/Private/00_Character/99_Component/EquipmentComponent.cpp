@@ -6,7 +6,9 @@
 #include "01_Item/ItemType.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "01_Item/00_Equipment/EquipmentActor.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "00_Character/00_Player/00_Controller/CustomController.h"
 
 // Sets default values for this component's properties
 UEquipmentComponent::UEquipmentComponent()
@@ -45,48 +47,51 @@ void UEquipmentComponent::EquipmentCompInit()
 	AItemActor* spawnDouble = GetWorld()->SpawnActor<AItemActor>(defaultDoubleSwordActorClass);
 	AItemActor* spawnPants = GetWorld()->SpawnActor<AItemActor>(defaultShoesActorClass);
 
-	GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->SetChildActorClass(defaultDoubleSwordActorClass);
-	Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor())->
-		GetStaticMesh()->SetStaticMesh(spawnDouble->GetItemInfo<FWeapon>()->mesh);
+	
 
 	if (spawnWeapon != nullptr && spawnArmor != nullptr && spawnPants != nullptr) {
-		defaultWeaponActor = spawnWeapon;
-		defaultArmorActor = spawnArmor;
-		defaultDoubleSwordActor = Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor());
-		defaultShoesActor = spawnPants;
+		if (CheckInven(spawnWeapon) && CheckInven(spawnArmor) && CheckInven(spawnPants)) {
+			GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->SetChildActorClass(defaultDoubleSwordActorClass);
+			Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor())->
+				GetStaticMesh()->SetStaticMesh(spawnDouble->GetItemInfo<FWeapon>()->mesh);
 
-		weaponActor = defaultWeaponActor;
-		armorActor = defaultArmorActor;
-		shoesActor = defaultShoesActor;
+			defaultDoubleSwordActor = Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor());
 
-		if (weaponActor != nullptr) {
-			weaponActor->SetEquipped(true);
+			weaponActor = spawnWeapon;
+			armorActor = spawnArmor;
+			shoesActor = spawnPants;
+
+			if (weaponActor != nullptr) {
+				Cast<AEquipmentActor>(spawnWeapon)->SetEquipped(true);
+			}
+
+			if (armorActor != nullptr) {
+				Cast<AEquipmentActor>(spawnArmor)->SetEquipped(true);
+			}
+
+			if (defaultDoubleSwordActor != nullptr)
+			{
+
+			}
+
+			if (shoesActor != nullptr)
+			{
+				Cast<AEquipmentActor>(spawnPants)->SetEquipped(true);
+			}
 		}
-
-		if (armorActor != nullptr) {
-			armorActor->SetEquipped(true);
-		}
-
-		if(defaultDoubleSwordActor != nullptr)
+		else
 		{
-			
+			spawnWeapon->Destroy();
+			spawnArmor->Destroy();
+			spawnPants->Destroy();
 		}
-
-		if(shoesActor != nullptr)
-		{
-			shoesActor->SetEquipped(true);
-		}
-
-		spawnWeapon->SetActorHiddenInGame(true);
-		spawnArmor->SetActorHiddenInGame(true);
-		spawnPants->SetActorHiddenInGame(true);
 	}
 }
 
 void UEquipmentComponent::SetWeaponActor(const FIteminfo& itemInfo, AItemActor* item)
 {
 	if (item != nullptr) {
-		item->SetEquipped(true);
+		Cast<AEquipmentActor>(item)->SetEquipped(true);
 		weaponActor = item;
 	}
 }
@@ -94,7 +99,7 @@ void UEquipmentComponent::SetWeaponActor(const FIteminfo& itemInfo, AItemActor* 
 void UEquipmentComponent::SetArmorActor(const FIteminfo& itemInfo, AItemActor* item)
 {
 	if (item != nullptr) {
-		item->SetEquipped(true);
+		Cast<AEquipmentActor>(item)->SetEquipped(true);
 		armorActor = item;
 	}
 }
@@ -103,8 +108,24 @@ void UEquipmentComponent::SetShoesActor(const FIteminfo& itemInfo, AItemActor* i
 {
 	if(item != nullptr)
 	{
-		item->SetEquipped(true);
+		Cast<AEquipmentActor>(item)->SetEquipped(true);
 		shoesActor = item;
 	}
 }
 
+bool UEquipmentComponent::CheckInven(AItemActor* item)
+{
+	if(GetOwner<APlayerCharacter>()->GetInventoryComp()->GetItemArray().Contains(item))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void UEquipmentComponent::EquipmentItemAddToInven()
+{
+	GetOwner<APlayerCharacter>()->GetInventoryComp()->AddItem(weaponActor);
+	GetOwner<APlayerCharacter>()->GetInventoryComp()->AddItem(armorActor);
+	GetOwner<APlayerCharacter>()->GetInventoryComp()->AddItem(shoesActor);
+}

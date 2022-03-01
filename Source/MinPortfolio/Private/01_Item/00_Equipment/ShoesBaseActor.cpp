@@ -17,6 +17,8 @@ void AShoesBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* inf
 
 		player->GetEquipmentComp()->GetShoesActor()->Destroy();
 
+		Cast<AEquipmentActor>(item)->SetEquipped(true);
+
 		player->GetEquipmentComp()->SetShoesActor(*info, item);
 
 		if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_ArmorDefUp"))
@@ -24,7 +26,7 @@ void AShoesBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* inf
 			player->GetStatusComponent()->AddDEF(30);
 		}
 
-		AddStat(player, info->equipmentStat);
+		AddStat(player, itemStat);
 	}
 }
 
@@ -42,9 +44,12 @@ void AShoesBaseActor::ItemChange_Default(APlayerCharacter* player, const FEquipm
 		{
 			player->GetStatusComponent()->SetDEF(player->GetStatusComponent()->GetDEF() - 30);
 		}
-
-		player->GetEquipmentComp()->SetShoesActor(*info, player->GetEquipmentComp()->GetDefaultShoesActor());
 	}
+}
+
+void AShoesBaseActor::AddOption(EAddOptionsType_Equipment option)
+{
+	Super::AddOption(option);
 }
 
 void AShoesBaseActor::UseItem(ABaseCharacter* owner)
@@ -56,26 +61,13 @@ void AShoesBaseActor::UseItem(ABaseCharacter* owner)
 		const FArmor* info = GetItemInfo<FArmor>();
 
 		if (info != nullptr) {
-			AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
-			if (player->GetEquipmentComp()->GetShoesActor()->GetItemInfo<FArmor>()->item_Code.IsEqual("item_Equipment_NoShoes")) {
+			AItemActor* spawnItem = Cast<AItemActor>(player->GetInventoryComp()->FindItem(this));
+			if (spawnItem != nullptr) {
+
+				Cast<AEquipmentActor>(player->GetEquipmentComp()->GetShoesActor())->SetEquipped(false);
+				RemoveStat(player, player->GetEquipmentComp()->GetShoesActor()->GetItemStat());
 				ItemChange(player, spawnItem->GetItemInfo<FArmor>(), spawnItem);
 			}
-			else {
-				if (player->GetEquipmentComp()->GetShoesActor()->GetItemInfo<FArmor>()->item_Code.IsEqual(info->item_Code)) {
-					RemoveStat(player, info->equipmentStat);
-					ItemChange_Default(player, player->GetEquipmentComp()->GetDefaultShoesActor()->GetItemInfo<FArmor>(), player->GetEquipmentComp()->GetDefaultShoesActor());
-				}
-				else {
-					if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_ArmorDefUp"))
-					{
-						player->GetStatusComponent()->SetDEF(player->GetStatusComponent()->GetDEF() - 30);
-					}
-					RemoveStat(player, player->GetEquipmentComp()->GetShoesActor()->GetItemInfo<FArmor>()->equipmentStat);
-					ItemChange(player, spawnItem->GetItemInfo<FArmor>(), spawnItem);
-				}
-			}
-
-			spawnItem->Destroy();
 		}
 	}
 }

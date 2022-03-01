@@ -26,4 +26,8 @@ protected:
 public:
 
 	virtual void UseSkill(class ABaseCharacter* target, class ABaseCharacter* owner) override;
+
+	virtual void EndDynamicFunction() override;
+
+	virtual void EndAnimFunction() override;
 };

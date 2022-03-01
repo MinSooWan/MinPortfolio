@@ -5,6 +5,7 @@
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "00_Character/99_Component/InventoryComponent.h"
+#include "01_Item/ItemActor.h"
 #include "03_Widget/EquippedItemWidget.h"
 #include "03_Widget/MainWidget.h"
 #include "03_Widget/MenuWidget.h"
@@ -56,7 +57,7 @@ void UUseItemCheckWidget::UseItemEvent()
 	//UE_LOG(LogTemp, Log, TEXT("UseItem"));
 
 	SetVisibility(ESlateVisibility::Hidden);
-	GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp()->UseItem(item_code);
+	GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp()->UseItem(item);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetInventoryWidget()->SetVisibility(ESlateVisibility::Hidden);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetVisibility(ESlateVisibility::Hidden);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackgroundBlur_Image()->SetVisibility(ESlateVisibility::Hidden);

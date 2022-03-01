@@ -10,6 +10,15 @@ void ASkill_WeaknessShotActor::UseSkill(ABaseCharacter* target, ABaseCharacter* 
 {
 	Super::UseSkill(target, owner);
 
-	Super::UseSkill(target, owner);
-	owner->PlayAnimMontage(GetSkillInfo<FSkill>()->useSkillMontage);
+	FTimerDelegate timeDel;
+	timeDel.BindUFunction(this, "EndAnimFunction");
+
+	GetWorld()->GetTimerManager().SetTimer(endSkillHandle, timeDel, owner->GetMesh()->GetAnimInstance()->Montage_Play(GetSkillInfo<FSkill>()->useSkillMontage), false);
+}
+
+void ASkill_WeaknessShotActor::EndAnimFunction()
+{
+	Super::EndAnimFunction();
+
+	skillOwner->NormalActionState(EActionState::NORMAL);
 }

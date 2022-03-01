@@ -3,6 +3,7 @@
 
 #include "04_Skill/00_Skill_Attack/FireArrowShotActor.h"
 #include "00_Character/00_Player/BaseCharacter.h"
+#include "00_Character/00_Player/PlayerCharacter.h"
 #include "04_Skill/SkillInfomation.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
@@ -10,5 +11,23 @@ void AFireArrowShotActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner
 {
 	Super::UseSkill(target, owner);
 
-	owner->PlayAnimMontage(GetSkillInfo<FSkill>()->useSkillMontage);
+	FTimerDelegate timeDel;
+	timeDel.BindUFunction(this, FName("EndAnimFunction"));
+	
+	GetWorld()->GetTimerManager().SetTimer(endSkillHandle, timeDel,
+		owner->PlayAnimMontage(GetSkillInfo<FSkill>()->useSkillMontage),
+		false);
+}
+
+void AFireArrowShotActor::EndAnimFunction()
+{
+	Super::EndAnimFunction();
+
+	auto num = FMath::RandRange(0, 101);
+	if (num >= 40) {
+		Cast<APlayerCharacter>(skillOwner)->SetMoveToStatrLocation(true);
+		skillTarget->AddDebuffStateCharacter(EDebuffState::GIVE_BURN, 5, 4, EDebuffType::DURATION);
+	}
+
+	skillOwner->NormalActionState(EActionState::NORMAL);
 }

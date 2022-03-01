@@ -3,6 +3,8 @@
 
 #include "04_Skill/00_Skill_Attack/00_Arrow/ArrowActor.h"
 
+#include "00_Character/00_Player/BaseCharacter.h"
+#include "00_Character/01_Monster/MonsterCharacter.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -43,9 +45,13 @@ void AArrowActor::PostInitializeComponents()
 
 void AArrowActor::OnActorHitEvent(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if(hitParticle != nullptr)
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(this, hitParticle, Hit.Location);
+	if (OtherActor->IsA<ABaseCharacter>()) {
+		if (hitParticle != nullptr)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, hitParticle, Hit.Location);
+		}
+
+		Cast<ABaseCharacter>(OtherActor)->GiveDamage(damage);
 	}
 	SelfActor->Destroy();
 }

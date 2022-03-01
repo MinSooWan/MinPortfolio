@@ -5,6 +5,9 @@
 
 #include "GameplayTasksComponent.h"
 #include "00_Character/00_Player/BaseCharacter.h"
+#include "00_Character/00_Player/PlayerCharacter.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 UCharacterTurnGameplayTask::UCharacterTurnGameplayTask(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

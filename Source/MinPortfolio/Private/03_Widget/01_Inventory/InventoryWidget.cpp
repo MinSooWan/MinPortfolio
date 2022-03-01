@@ -8,6 +8,12 @@
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "00_Character/99_Component/InventoryComponent.h"
+#include "01_Item/ItemActor.h"
+#include "01_Item/00_Equipment/EquipmentActor.h"
+#include "01_Item/00_Weapon/WeaponBaseActor.h"
+#include "01_Item/01_Material/MaterialBaseActor.h"
+#include "01_Item/03_Battle_Item/BattleItemActor.h"
+#include "01_Item/03_Battle_Item/RecoveryConsumeActor.h"
 #include "03_Widget/MainWidget.h"
 #include "03_Widget/MenuWidget.h"
 #include "03_Widget/01_Inventory/InventoryButtonWidget.h"
@@ -227,17 +233,17 @@ FReply UInventoryWidget::NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEv
 {
 	Super::NativeOnKeyUp(InGeometry, InKeyEvent);
 	//EKeys::Daydream_Right_Trackpad_Y
-	if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Bottom))
+	if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Bottom) || InKeyEvent.GetKey() == FKey(EKeys::SpaceBar))
 	{
 		if (nowItemButton != nullptr) {
-			if(nowItemButton->item_info->item_Type != EItemType::MATERIAL)
+			if(nowItemButton->GetItem()->GetItemInfo<FIteminfo>()->item_Type != EItemType::MATERIAL)
 			{
-				if (nowItemButton->item_info->item_Type != EItemType::BATTLE_ITEM) {
+				if (nowItemButton->GetItem()->GetItemInfo<FIteminfo>()->item_Type != EItemType::BATTLE_ITEM) {
 					nowItemButton->GetButton_item()->OnReleased.Broadcast();
 				}
 				else
 				{
-					if(((FBattleItem*)(nowItemButton->item_info))->battleItemType == EBattleItemType::RECOVERY_CONSUME)
+					if(nowItemButton->GetItem()->GetItemInfo<FBattleItem>()->battleItemType == EBattleItemType::RECOVERY_CONSUME)
 					{
 						nowItemButton->GetButton_item()->OnReleased.Broadcast();
 					}
@@ -269,81 +275,90 @@ FReply UInventoryWidget::NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEv
 	return FReply::Handled();
 }
 
-void UInventoryWidget::SetItemInfo(FIteminfo* info)
+void UInventoryWidget::SetItemInfo(AItemActor* item)
 {
-	TextBlock_ItemName->SetText(FText::FromName(info->item_Name));
+	TextBlock_ItemName->SetText(FText::FromName(item->GetItemInfo<FIteminfo>()->item_Name));
 	Item_Image->SetBrushTintColor(FSlateColor(FLinearColor(0, 0, 0, 1)));
 	Item_Type->SetBrushTintColor(FSlateColor(FLinearColor(0, 0, 0, 1)));
 
-	Item_Image->SetBrushFromTexture(info->item_Image);
-	Item_Type->SetBrushFromTexture(SetItemTypeImage(info->item_Type));
+	Item_Image->SetBrushFromTexture(item->GetItemInfo<FIteminfo>()->item_Image);
+	Item_Type->SetBrushFromTexture(SetItemTypeImage(item->GetItemInfo<FIteminfo>()->item_Type));
 
 	FString str = "";
-	switch (info->item_Type)
+	switch (item->GetItemInfo<FIteminfo>()->item_Type)
 	{
 	case EItemType::EQUIPMENT:
-		if (((FEquipment*)(info))->equipment_Type == EEquipmentType::WEAPON) {
-			str = TEXT("체력 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.HP) + "\n" +
-				TEXT("공격력 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.ATC) + "\n" +
-				TEXT("민첩성 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEX);
+		if (item->GetItemInfo<FEquipment>()->equipment_Type == EEquipmentType::WEAPON) {
+			str = TEXT("체력 : ") + FString::FromInt(item->GetItemStat().HP) + "\n" +
+				TEXT("공격력 : ") + FString::FromInt(item->GetItemStat().ATC) + "\n" +
+				TEXT("민첩성 : ") + FString::FromInt(item->GetItemStat().DEX);
 		}
 		else {
-			str = TEXT("체력 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.HP) + "\n" +
-				TEXT("방어력 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEF) + "\n" +
-				TEXT("민첩성 : ") + FString::FromInt(((FEquipment*)(info))->equipmentStat.DEX);
+			str = TEXT("체력 : ") + FString::FromInt(item->GetItemStat().HP) + "\n" +
+				TEXT("방어력 : ") + FString::FromInt(item->GetItemStat().DEF) + "\n" +
+				TEXT("민첩성 : ") + FString::FromInt(item->GetItemStat().DEX);
 		}
 		break;
 	case EItemType::MATERIAL:
 	
-		str = TEXT("체력 : ") + FString::SanitizeFloat(((FItemMaterial*)(info))->materialStat.HP) + "\n" +
-			TEXT("공격력 : ") + FString::SanitizeFloat(((FItemMaterial*)(info))->materialStat.ATC) + "\n" +
-			TEXT("방어력 : ") + FString::SanitizeFloat(((FItemMaterial*)(info))->materialStat.DEF) + "\n" +
-			TEXT("민첩성 : ") + FString::SanitizeFloat(((FItemMaterial*)(info))->materialStat.DEX);
+		str = TEXT("체력 : ") + FString::SanitizeFloat(item->GetItemStat().HP) + "\n" +
+			TEXT("공격력 : ") + FString::SanitizeFloat(item->GetItemStat().ATC) + "\n" +
+			TEXT("방어력 : ") + FString::SanitizeFloat(item->GetItemStat().DEF) + "\n" +
+			TEXT("민첩성 : ") + FString::SanitizeFloat(item->GetItemStat().DEX);
 			
 		
 		break;
 	}
 	TextBlock_ItemStat->SetText(FText::FromString(str));
 
-	TextBlock_Description->SetText(FText::FromString(info->item_Description));
+	TextBlock_Description->SetText(FText::FromString(item->GetItemInfo<FIteminfo>()->item_Description));
 
 	str = "";
-	switch (info->item_Type)
+	switch (item->GetItemInfo<FIteminfo>()->item_Type)
 	{
 	case EItemType::EQUIPMENT:
-
-		if (((FEquipment*)(info))->addOption.Num() != 0) {
-			for (auto iter : ((FEquipment*)(info))->addOption)
-			{
-				str += GetAddOptionDescription_Equipment(iter) + "\n";
-			}
-		}
-		break;
-
-	case EItemType::BATTLE_ITEM:
-		if (((FBattleItem*)(info))->battleItemType == EBattleItemType::BATTLE_CONSUME) {
-			if (((FBattle_Consume*)(info))->addOption.Num() != 0) {
-				for (auto iter : ((FBattle_Consume*)(info))->addOption)
+		if (item->GetItemInfo<FEquipment>()->equipment_Type == EEquipmentType::ARMOR) {
+			if (Cast<AEquipmentActor>(item)->GetAddOption().Num() != 0) {
+				for (auto iter : Cast<AEquipmentActor>(item)->GetAddOption())
 				{
-					str += GetAddOptionDescription_BattleItem(iter) + "\n";
+					str += GetAddOptionDescription_Equipment(iter) + "\n";
 				}
 			}
 		}
 		else
 		{
-			if (((FRecovery_Consume*)(info))->addOption.Num() != 0) {
-				for (auto iter : ((FRecovery_Consume*)(info))->addOption)
+			if (Cast<AWeaponBaseActor>(item)->GetAddOption().Num() != 0) {
+				for (auto iter : Cast<AWeaponBaseActor>(item)->GetAddOption())
 				{
 					str += GetAddOptionDescription_RecoveryItem(iter) + "\n";
 				}
 			}
 		}
 		break;
+	case EItemType::BATTLE_ITEM:
+		if (item->GetItemInfo<FBattleItem>()->battleItemType == EBattleItemType::RECOVERY_CONSUME) {
+			if (Cast<ARecoveryConsumeActor>(item)->GetAddOption().Num() != 0) {
+				for (auto iter : Cast<ARecoveryConsumeActor>(item)->GetAddOption())
+				{
+					str += GetAddOptionDescription_RecoveryItem(iter) + "\n";
+				}
+			}
+		}
+		else
+		{
+			if (Cast<ABattleItemActor>(item)->GetAddOption().Num() != 0) {
+				for (auto iter : Cast<ABattleItemActor>(item)->GetAddOption())
+				{
+					str += GetAddOptionDescription_BattleItem(iter) + "\n";
+				}
+			}
+		}
+		break;
 
 	case EItemType::MATERIAL:
-		
-		if (((FItemMaterial*)(info))->addOption.Num() != 0) {
-			for (auto iter : ((FItemMaterial*)(info))->addOption)
+		//FItemMaterial
+		if (Cast<AMaterialBaseActor>(item)->GetAddOption().Num() != 0) {
+			for (auto iter : Cast<AMaterialBaseActor>(item)->GetAddOption())
 			{
 				str += GetAddOptionDescription_Material(iter) + "\n";
 			}
@@ -361,22 +376,22 @@ FString UInventoryWidget::GetAddOptionDescription_Equipment(EAddOptionsType_Equi
 	switch (option)
 	{
 	case EAddOptionsType_Equipment::ADD_ATC:
-		str = "공격력 강화";
+		str = TEXT("공격력 강화");
 		return str;
 	case EAddOptionsType_Equipment::ADD_DEX:
-		str = "민첩성 강화";
+		str = TEXT("민첩성 강화");
 		return str;
 	case EAddOptionsType_Equipment::ADD_HP:
-		str = "체력 강화";
+		str = TEXT("체력 강화");
 		return str;
 	case EAddOptionsType_Equipment::ADD_DEF:
-		str = "방어력 강화";
+		str = TEXT("방어력 강화");
 		return str;
 	case EAddOptionsType_Equipment::ADD_EXP:
-		str = "빠른 성장";
+		str = TEXT("빠른 성장");
 		return str;
 	case EAddOptionsType_Equipment::ADD_ITEM:
-		str = "더 많이!";
+		str = TEXT("더 많이!");
 		return str;
 	}return str;
 }
@@ -387,46 +402,46 @@ FString UInventoryWidget::GetAddOptionDescription_Material(EAddOptionsType_Mater
 	switch (option)
 	{
 	case EAddOptionsType_Material::ADD_ATC:
-		str = "공격력 강화";
+		str = TEXT("공격력 강화");
 		return str;
 	case EAddOptionsType_Material::ADD_DEF:
-		str = "방어력 강화";
+		str = TEXT("방어력 강화");
 		return str;
 	case EAddOptionsType_Material::ADD_DEX:
-		str = "민첩성 강화";
+		str = TEXT("민첩성 강화");
 		return str;
 	case EAddOptionsType_Material::ADD_EXP:
-		str = "빠른 성장";
+		str = TEXT("빠른 성장");
 		return str;
 	case EAddOptionsType_Material::ADD_HP:
-		str = "체력 강화";
+		str = TEXT("체력 강화");
 		return str;
 	case EAddOptionsType_Material::ADD_ITEM:
-		str = "더 많이!";
+		str = TEXT("더 많이!");
 		return str;
 	case EAddOptionsType_Material::GIVE_ATC_DOWN:
-		str = "무력의 저주";
+		str = TEXT("무력의 저주");
 		return str;
 	case EAddOptionsType_Material::GIVE_BURN:
-		str = "광열의 연기";
+		str = TEXT("광열의 열기");
 		return str;
 	case EAddOptionsType_Material::GIVE_DAMAGE:
-		str = "강력한 파괴력";
+		str = TEXT("강력한 파괴력");
 		return str;
 	case EAddOptionsType_Material::GIVE_DEF_DOWN:
-		str = "방어의 저주";
+		str = TEXT("방어의 저주");
 		return str;
 	case EAddOptionsType_Material::GIVE_FROZEN:
-		str = "빙괴의 반향";
+		str = TEXT("빙괴의 반향");
 		return str;
 	case EAddOptionsType_Material::GIVE_SHOCK:
-		str = "봉뢰의 마찰";
+		str = TEXT("봉뢰의 마찰");
 		return str;
 	case EAddOptionsType_Material::GIVE_SLOW:
-		str = "속도의 저주";
+		str = TEXT("속도의 저주");
 		return str;
 	case EAddOptionsType_Material::RECOVERY_HP:
-		str = "강력한 회복력";
+		str = TEXT("강력한 회복력");
 		return str;
 	}return str;
 }
@@ -437,25 +452,25 @@ FString UInventoryWidget::GetAddOptionDescription_BattleItem(EAddOptionsType_Bat
 	switch (option)
 	{
 	case EAddOptionsType_BattleItem::GIVE_ATC_DOWN:
-		str = "무력의 저주";
+		str = TEXT("무력의 저주");
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_BURN:
-		str = "광열의 연기";
+		str = TEXT("광열의 열기");
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_DAMAGE:
-		str = "강력한 파괴력";
+		str = TEXT("강력한 파괴력");
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_DEF_DOWN:
-		str = "방어의 저주";
+		str = TEXT("방어의 저주");
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_FROZEN:
-		str = "빙괴의 반향";
+		str = TEXT("빙괴의 반향");
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_SHOCK:
-		str = "봉뢰의 마찰";
+		str = TEXT("봉뢰의 마찰");
 		return str;
 	case EAddOptionsType_BattleItem::GIVE_SLOW:
-		str = "속도의 저주";
+		str = TEXT("속도의 저주");
 		return str;
 	}return str;
 }
@@ -466,23 +481,66 @@ FString UInventoryWidget::GetAddOptionDescription_RecoveryItem(EAddOptionsType_R
 	switch (option)
 	{
 	case EAddOptionsType_RecoveryItem::ADD_ATC_TIME:
-		str = "힘의 축복";
+		str = TEXT("힘의 축복");
 		return str;
 	case EAddOptionsType_RecoveryItem::RECOVERY_HP:
-		str = "강력한 회복력";
+		str = TEXT("강력한 회복력");
 		return str;
 	case EAddOptionsType_RecoveryItem::ADD_DEF_TIME:
-		str = "수호의 축복";
+		str = TEXT("수호의 축복");
 		return str;
 	case EAddOptionsType_RecoveryItem::ADD_DEX_TIME:
-		str = "질풍의 축복";
+		str = TEXT("질풍의 축복");
 		return str;
 	case EAddOptionsType_RecoveryItem::ADD_HP_TIME:
-		str = "생명의 축복";
+		str = TEXT("생명의 축복");
 		return str;
 	}
 	return str;
 }
+
+FString UInventoryWidget::GetAddOptionDescription_RecoveryItem(EAddOptionsType_Equipment_Weapon option)
+{
+	FString str;
+	switch (option)
+	{
+	case EAddOptionsType_Equipment_Weapon::GIVE_BURN:
+		str = TEXT("광열의 열기");
+		return str;
+	case EAddOptionsType_Equipment_Weapon::GIVE_FROZEN:
+		str = TEXT("빙괴의 반향");
+		return str;
+	case EAddOptionsType_Equipment_Weapon::GIVE_SHOCK:
+		str = TEXT("봉뢰의 마찰");
+		return str;
+	case EAddOptionsType_Equipment_Weapon::GIVE_DAMAGE:
+		str = TEXT("강력한 파괴력");
+		return str;
+	case EAddOptionsType_Equipment_Weapon::GIVE_SLOW:
+		str = TEXT("속도의 저주");
+		return str;
+	case EAddOptionsType_Equipment_Weapon::ADD_DEF:
+		str = TEXT("방어력 강화");
+		return str;
+	case EAddOptionsType_Equipment_Weapon::ADD_DEX:
+		str = TEXT("민첩성 강화");
+		return str;
+	case EAddOptionsType_Equipment_Weapon::ADD_HP:
+		str = TEXT("체력 강화");
+		return str;
+	case EAddOptionsType_Equipment_Weapon::ADD_ITEM:
+		str = TEXT("더 많이!");
+		return str;
+	case EAddOptionsType_Equipment_Weapon::ADD_EXP:
+		str = TEXT("빠른 성장");
+		return str;;
+	case EAddOptionsType_Equipment_Weapon::ADD_ATC:
+		str = TEXT("공격력 강화");
+		return str;
+	}
+	return str;
+}
+
 
 void UInventoryWidget::PressedNextButton_Type()
 {
@@ -519,7 +577,7 @@ void UInventoryWidget::PressedNextButton_Type()
 			nextItemButton = UMG_InvnetoryPanel->GetButtons()[1];
 		}
 		
-		SetItemInfo(nowItemButton->item_info);
+		SetItemInfo(nowItemButton->GetItem());
 	}
 	else
 	{
@@ -566,7 +624,7 @@ void UInventoryWidget::PressedPreviousButton_Type()
 		if (UMG_InvnetoryPanel->GetButtons().Num() >= 2) {
 			nextItemButton = UMG_InvnetoryPanel->GetButtons()[1];
 		}
-		SetItemInfo(nowItemButton->item_info);
+		SetItemInfo(nowItemButton->GetItem());
 	}
 	else
 	{
@@ -582,7 +640,20 @@ void UInventoryWidget::PressedPreviousButton_Type()
 void UInventoryWidget::PressedNextButton_Item()
 {
 	if (UMG_InvnetoryPanel->GetButtons().Num() >= 1) {
-		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		if (nowItemButton->GetItem()->GetItemInfo<FIteminfo>()->item_Type == EItemType::EQUIPMENT)
+		{
+			if(Cast<AEquipmentActor>(nowItemButton->GetItem())->GetEquipped() == true)
+			{
+				nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetEquippedImage());
+			}
+			else
+			{
+				nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+			}
+		}
+		else {
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		}
 		previousItemButton = nowItemButton;
 		nowItemButton = nextItemButton;
 
@@ -597,14 +668,27 @@ void UInventoryWidget::PressedNextButton_Item()
 		}
 
 		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
-		SetItemInfo(nowItemButton->item_info);
+		SetItemInfo(nowItemButton->GetItem());
 	}
 }
 
 void UInventoryWidget::PressedPreviousButton_Item()
 {
 	if (UMG_InvnetoryPanel->GetButtons().Num() >= 1) {
-		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		if (nowItemButton->GetItem()->GetItemInfo<FIteminfo>()->item_Type == EItemType::EQUIPMENT)
+		{
+			if (Cast<AEquipmentActor>(nowItemButton->GetItem())->GetEquipped() == true)
+			{
+				nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetEquippedImage());
+			}
+			else
+			{
+				nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+			}
+		}
+		else {
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		}
 		nextItemButton = nowItemButton;
 		nowItemButton = previousItemButton;
 
@@ -619,14 +703,27 @@ void UInventoryWidget::PressedPreviousButton_Item()
 		}
 
 		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
-		SetItemInfo(nowItemButton->item_info);
+		SetItemInfo(nowItemButton->GetItem());
 	}
 }
 
 void UInventoryWidget::PressedUpButton_Item()
 {
 	if (UMG_InvnetoryPanel->GetButtons().Num() >= 7) {
-		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		if (nowItemButton->GetItem()->GetItemInfo<FIteminfo>()->item_Type == EItemType::EQUIPMENT)
+		{
+			if (Cast<AEquipmentActor>(nowItemButton->GetItem())->GetEquipped() == true)
+			{
+				nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetEquippedImage());
+			}
+			else
+			{
+				nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+			}
+		}
+		else {
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		}
 
 		//현재 아이템 버튼을 설정
 		if(UMG_InvnetoryPanel->GetButtons().Find(nowItemButton) >= 6)
@@ -670,14 +767,27 @@ void UInventoryWidget::PressedUpButton_Item()
 		}
 
 		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
-		SetItemInfo(nowItemButton->item_info);
+		SetItemInfo(nowItemButton->GetItem());
 	}
 }
 
 void UInventoryWidget::PressedDownButton_Item()
 {
 	if (UMG_InvnetoryPanel->GetButtons().Num() >= 7) {
-		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		if (nowItemButton->GetItem()->GetItemInfo<FIteminfo>()->item_Type == EItemType::EQUIPMENT)
+		{
+			if (Cast<AEquipmentActor>(nowItemButton->GetItem())->GetEquipped() == true)
+			{
+				nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetEquippedImage());
+			}
+			else
+			{
+				nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+			}
+		}
+		else {
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		}
 
 		int32 index = UMG_InvnetoryPanel->GetButtons().Find(nowItemButton);
 		int32 lastIndex = UMG_InvnetoryPanel->GetButtons().Find(UMG_InvnetoryPanel->GetButtons().Last());
@@ -720,7 +830,7 @@ void UInventoryWidget::PressedDownButton_Item()
 		}
 
 		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
-		SetItemInfo(nowItemButton->item_info);
+		SetItemInfo(nowItemButton->GetItem());
 	}
 }
 
@@ -745,7 +855,7 @@ void UInventoryWidget::OnInventoryWidget()
 			nextItemButton = UMG_InvnetoryPanel->GetButtons()[1];
 		}
 		//const FIteminfo* temp =nowItemButton->GetButtonItemInfo();
-		SetItemInfo(nowItemButton->item_info);
+		SetItemInfo(nowItemButton->GetItem());
 	}
 	else
 	{

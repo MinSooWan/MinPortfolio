@@ -10,5 +10,15 @@ void ASkill_StrongArrowShotActor::UseSkill(ABaseCharacter* target, ABaseCharacte
 {
 	Super::UseSkill(target, owner);
 
-	owner->PlayAnimMontage(GetSkillInfo<FSkill>()->useSkillMontage);
+	FTimerDelegate timeDel;
+	timeDel.BindUFunction(this, "EndAnimFunction");
+
+	GetWorld()->GetTimerManager().SetTimer(endSkillHandle, timeDel, owner->GetMesh()->GetAnimInstance()->Montage_Play(GetSkillInfo<FSkill>()->useSkillMontage), false);
+}
+
+void ASkill_StrongArrowShotActor::EndAnimFunction()
+{
+	Super::EndAnimFunction();
+
+	skillOwner->NormalActionState(EActionState::NORMAL);
 }

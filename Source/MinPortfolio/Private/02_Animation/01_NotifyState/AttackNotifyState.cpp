@@ -4,6 +4,7 @@
 #include "02_Animation/01_NotifyState/AttackNotifyState.h"
 
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "00_Character/01_Monster/MonsterCharacter.h"
 #include "00_Character/99_Component/EquipmentComponent.h"
 #include "01_Item/00_Weapon/WeaponBaseActor.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -17,13 +18,21 @@ void UAttackNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequ
 		owner = MeshComp->GetOwner<APlayerCharacter>();
 
 		if (owner != nullptr) {
-			Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetWeaponActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("Weapon"));
-			if(owner->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->bIsSword == true)
-			{
-				if(owner->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->swordType == ESwordType::DOUBLE_SWORD)
+			if (bUsingSkill == false) {
+				Cast<AWeaponBaseActor>(owner->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("Weapon"));
+				if (owner->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->bIsSword == true)
 				{
-					Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetDefaultDoubleSwordActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("Weapon"));
+					if (owner->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->swordType == ESwordType::DOUBLE_SWORD)
+					{
+						Cast<AWeaponBaseActor>(owner->GetDoubleSwordChild()->GetChildActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("Weapon"));
+					}
 				}
+			}
+			else
+			{
+				auto pa = Cast<AWeaponBaseActor>(owner->GetDoubleSwordChild()->GetChildActor())->GetAttackParticle();
+				UGameplayStatics::SpawnEmitterAtLocation(owner, pa, owner->target->GetActorLocation(), FRotator::ZeroRotator, true);
+				Cast<ABaseCharacter>(owner->target)->GiveDamage(damage + owner->GetStatusComponent()->GetATC());
 			}
 		}
 	}
@@ -32,14 +41,14 @@ void UAttackNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequ
 void UAttackNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
 	if (owner != nullptr) {
-		Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetWeaponActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("NoCollision"));
-		Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetWeaponActor())->ClearHitArray();
+		Cast<AWeaponBaseActor>(owner->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+		Cast<AWeaponBaseActor>(owner->GetWeaponChildActor()->GetChildActor())->ClearHitArray();
 		if (owner->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->bIsSword == true)
 		{
 			if (owner->GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->swordType == ESwordType::DOUBLE_SWORD)
 			{
-				Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetDefaultDoubleSwordActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("NoCollision"));
-				Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetDefaultDoubleSwordActor())->ClearHitArray();
+				Cast<AWeaponBaseActor>(owner->GetDoubleSwordChild()->GetChildActor())->GetStaticMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+				Cast<AWeaponBaseActor>(owner->GetDoubleSwordChild()->GetChildActor())->ClearHitArray();
 			}
 		}
 	}

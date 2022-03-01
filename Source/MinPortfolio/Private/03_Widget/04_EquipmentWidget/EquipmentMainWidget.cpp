@@ -12,10 +12,12 @@
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/99_Component/EquipmentComponent.h"
 #include "01_Item/ItemActor.h"
+#include "01_Item/00_Equipment/EquipmentActor.h"
 #include "03_Widget/04_EquipmentWidget/EquipmentButtonWidget.h"
 #include "03_Widget/04_EquipmentWidget/EquipmentPanelWidget.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
+#include "Kismet/KismetInputLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 void UEquipmentMainWidget::NativeConstruct()
@@ -31,12 +33,13 @@ FReply UEquipmentMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, const 
 {
 	Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->ChangeKeyImage(UKismetInputLibrary::Key_IsGamepadKey(InKeyEvent.GetKey()));
+
 	if (InKeyEvent.GetKey() == FKey(EKeys::E) || InKeyEvent.GetKey() == FKey(EKeys::Gamepad_RightShoulder))
 	{
 		if (nowButton->Navigation->Next.Widget != nullptr)
 		{
 			nowButton->WidgetStyle.Normal.SetResourceObject(normalTexture);
-			nowButton->Navigation->Next.Widget->SetFocus();
 			nowButton = Cast<UButton>(nowButton->Navigation->Next.Widget.Get());
 			nowButton->WidgetStyle.Normal.SetResourceObject(hoveredTexture);
 		}
@@ -46,7 +49,6 @@ FReply UEquipmentMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, const 
 		if (nowButton->Navigation->Previous.Widget != nullptr)
 		{
 			nowButton->WidgetStyle.Normal.SetResourceObject(normalTexture);
-			nowButton->Navigation->Previous.Widget->SetFocus();
 			nowButton = Cast<UButton>(nowButton->Navigation->Previous.Widget.Get());
 			nowButton->WidgetStyle.Normal.SetResourceObject(hoveredTexture);
 		}
@@ -77,14 +79,20 @@ FReply UEquipmentMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, const 
 	}
 	else if(InKeyEvent.GetKey() == FKey(EKeys::Escape) || InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Right))
 	{
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackgroundBlur_Image()->SetVisibility(ESlateVisibility::Hidden);
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetVisibility(ESlateVisibility::Visible);
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetTextBlock_MenuName()->SetText(FText::FromString(TEXT("Menu")));
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetEquipmentButton()->SetFocus();
-		nowButton->WidgetStyle.Normal.SetResourceObject(normalTexture);
-		SetVisibility(ESlateVisibility::Hidden);
+		if(CanvasPanel->Visibility == ESlateVisibility::Visible)
+		{
+			CanvasPanel->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else {
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackgroundBlur_Image()->SetVisibility(ESlateVisibility::Hidden);
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->SetVisibility(ESlateVisibility::Visible);
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetTextBlock_MenuName()->SetText(FText::FromString(TEXT("Menu")));
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->GetMenuWidget()->GetEquipmentButton()->SetFocus();
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->OffEquipment();
+			nowButton->WidgetStyle.Normal.SetResourceObject(normalTexture);
+			SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
-	/*
 	else if(InKeyEvent.GetKey() == FKey(EKeys::SpaceBar) || InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Bottom))
 	{
 		if(CanvasPanel->Visibility == ESlateVisibility::Visible)
@@ -96,7 +104,9 @@ FReply UEquipmentMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, const 
 			nowButton->OnPressed.Broadcast();
 		}
 	}
-	*/
+
+	
+	
 	 return FReply::Handled();
 }
 
@@ -106,42 +116,66 @@ void UEquipmentMainWidget::WidgetFocus(UButton* widget)
 
 void UEquipmentMainWidget::OnClickButton_Weapon()
 {
-	UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Click Button to Weapon");
 	CanvasPanel->SetVisibility(ESlateVisibility::Visible);
 	UMG_EquipmentPanel->OnEquipmentWidget.Broadcast(GetOwningPlayer()->GetPawn<APlayerCharacter>()->
 		GetInventoryComp(), "Weapon");
 	if (UMG_EquipmentPanel->GetButtons().Num() > 0) {
 		nowItemButton = UMG_EquipmentPanel->GetButtons()[0];
+		nowItemButton->GetButton_item()->OnHovered.Broadcast();
+
+		if (UMG_EquipmentPanel->GetButtons().Num() > 1)
+		{
+			nextItemButton = UMG_EquipmentPanel->GetButtons()[1];
+			previousItemButton = UMG_EquipmentPanel->GetButtons()[UMG_EquipmentPanel->GetButtons().Num() - 1];
+		}
 	}
 }
 
 
 void UEquipmentMainWidget::OnClickButton_Armor()
 {
-	UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Click Button to Armor");
 	CanvasPanel->SetVisibility(ESlateVisibility::Visible);
 	UMG_EquipmentPanel->OnEquipmentWidget.Broadcast(GetOwningPlayer()->GetPawn<APlayerCharacter>()->
 		GetInventoryComp(), "Armor");
 	if (UMG_EquipmentPanel->GetButtons().Num() > 0) {
 		nowItemButton = UMG_EquipmentPanel->GetButtons()[0];
+		nowItemButton->GetButton_item()->OnHovered.Broadcast();
+
+		if(UMG_EquipmentPanel->GetButtons().Num() > 1)
+		{
+			nextItemButton = UMG_EquipmentPanel->GetButtons()[1];
+			previousItemButton = UMG_EquipmentPanel->GetButtons()[UMG_EquipmentPanel->GetButtons().Num() - 1];
+		}
 	}
 }
 
 void UEquipmentMainWidget::OnClickButton_Shoes()
 {
-	UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Click Button to Shoes");
 	CanvasPanel->SetVisibility(ESlateVisibility::Visible);
 	UMG_EquipmentPanel->OnEquipmentWidget.Broadcast(GetOwningPlayer()->GetPawn<APlayerCharacter>()->
 		GetInventoryComp(), "Pants");
 	if (UMG_EquipmentPanel->GetButtons().Num() > 0) {
 		nowItemButton = UMG_EquipmentPanel->GetButtons()[0];
+		nowItemButton->GetButton_item()->OnHovered.Broadcast();
+	}
+
+	if (UMG_EquipmentPanel->GetButtons().Num() > 1)
+	{
+		nextItemButton = UMG_EquipmentPanel->GetButtons()[1];
+		previousItemButton = UMG_EquipmentPanel->GetButtons()[UMG_EquipmentPanel->GetButtons().Num() - 1];
 	}
 }
 
 void UEquipmentMainWidget::PressedNextButton_Item()
 {
-	if (UMG_EquipmentPanel->GetButtons().Num() >= 1) {
-		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+	if (UMG_EquipmentPanel->GetButtons().Num() > 1) {
+		if(Cast<AEquipmentActor>(nowItemButton->GetEquipmentItem())->GetEquipped() == true)
+		{
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetEquippedImage());
+		}
+		else {
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		}
 		previousItemButton = nowItemButton;
 		nowItemButton = nextItemButton;
 
@@ -155,14 +189,22 @@ void UEquipmentMainWidget::PressedNextButton_Item()
 			nextItemButton = UMG_EquipmentPanel->GetButtons()[0];
 		}
 
-		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
+		if (nowItemButton != nullptr) {
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetHoveredImage());
+		}
 	}
 }
 
 void UEquipmentMainWidget::PressedPreviousButton_Item()
 {
-	if (UMG_EquipmentPanel->GetButtons().Num() >= 1) {
-		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+	if (UMG_EquipmentPanel->GetButtons().Num() > 1) {
+		if (Cast<AEquipmentActor>(nowItemButton->GetEquipmentItem())->GetEquipped() == true)
+		{
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetEquippedImage());
+		}
+		else {
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		}
 		nextItemButton = nowItemButton;
 		nowItemButton = previousItemButton;
 
@@ -183,7 +225,13 @@ void UEquipmentMainWidget::PressedPreviousButton_Item()
 void UEquipmentMainWidget::PressedUpButton_Item()
 {
 	if (UMG_EquipmentPanel->GetButtons().Num() >= 7) {
-		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		if (Cast<AEquipmentActor>(nowItemButton->GetEquipmentItem())->GetEquipped() == true)
+		{
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetEquippedImage());
+		}
+		else {
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		}
 
 		//현재 아이템 버튼을 설정
 		if (UMG_EquipmentPanel->GetButtons().Find(nowItemButton) >= 6)
@@ -233,7 +281,13 @@ void UEquipmentMainWidget::PressedUpButton_Item()
 void UEquipmentMainWidget::PressedDownButton_Item()
 {
 	if (UMG_EquipmentPanel->GetButtons().Num() >= 7) {
-		nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		if (Cast<AEquipmentActor>(nowItemButton->GetEquipmentItem())->GetEquipped() == true)
+		{
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetEquippedImage());
+		}
+		else {
+			nowItemButton->GetImage_button()->SetBrushFromTexture(nowItemButton->GetDefaultImage());
+		}
 
 		int32 index = UMG_EquipmentPanel->GetButtons().Find(nowItemButton);
 		int32 lastIndex = UMG_EquipmentPanel->GetButtons().Find(UMG_EquipmentPanel->GetButtons().Last());
@@ -283,7 +337,7 @@ void UEquipmentMainWidget::OnEquipmentWidget()
 {
 	SetVisibility(ESlateVisibility::Visible);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackgroundBlur_Image()->SetVisibility(ESlateVisibility::Visible);
-	Button_Weapon->SetFocus();
+	SetFocus();
 	nowButton = Button_Weapon;
 	nowButton->WidgetStyle.Normal.SetResourceObject(hoveredTexture);
 

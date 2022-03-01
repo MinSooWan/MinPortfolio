@@ -30,8 +30,16 @@ protected:
 	UPROPERTY(EditAnywhere)
 		FName SocketName;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TArray<EAddOptionsType_Equipment_Weapon> addOption;
+
 public:
+
+	void AddOption_Weapon(EAddOptionsType_Equipment_Weapon option);
+
 	virtual void UseItem(class ABaseCharacter* owner) override;
+
+	TArray<EAddOptionsType_Equipment_Weapon> GetAddOption() { return addOption; }
 
 	AWeaponBaseActor();
 
@@ -40,5 +48,4 @@ public:
 	void ClearHitArray() { hitArray.Empty(); }
 
 	FName GetSocketName() { return SocketName; }
-
 };

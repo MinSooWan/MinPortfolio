@@ -16,13 +16,20 @@ class MINPORTFOLIO_API ABattleController : public APlayerController
 
 protected: 
 
-	UPROPERTY(EditAnywhere)
-		TMap<FKey, class UImage*> keyImage;
-
 	virtual void SetupInputComponent() override;
 
 	virtual void OnPossess(APawn* aPawn) override;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UMainWidget> mainWidgetClass;
+
+	UPROPERTY(BlueprintReadOnly)
+		class UMainWidget* mainWidget;
+
 public:
-	const TMap<FKey, class UImage*> GetKeyImage() { return keyImage; }
+
+	class UMainWidget* GetMainWidget() { return mainWidget; }
+
+	void OnPreesedSkillList();
+	void OnPreesedInvenList();
 };

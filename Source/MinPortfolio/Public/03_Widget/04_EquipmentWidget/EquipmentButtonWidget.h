@@ -20,6 +20,8 @@ protected:
 		class UTexture2D* defaultImage;
 	UPROPERTY(EditAnywhere)
 		class UTexture2D* hoveredImage;
+	UPROPERTY(EditAnywhere)
+		class UTexture2D* equippedImage;
 
 	UPROPERTY()
 		class UButton* Button_item;
@@ -31,8 +33,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		FName item_code = NAME_None;
 
+	UPROPERTY()
+		class UTextBlock* TextBlock_Equipped;
+
 public:
-	FIteminfo* item_info;
+	UPROPERTY()
+		class AItemActor* equipmentItem;
 
 	UFUNCTION()
 		void OnPressedEvnet();
@@ -48,9 +54,12 @@ public:
 	class UImage* GetImage_button() { return Image_Button; };
 	class UTexture2D* GetHoveredImage() { return hoveredImage; };
 	class UTexture2D* GetDefaultImage() { return defaultImage; }
+	class UTexture2D* GetEquippedImage() { return equippedImage; }
 
-	void SetUpButton(const struct FIteminfo* info);
+	void SetUpButton(class AItemActor* item);
 
 	virtual void NativeConstruct() override;
+
+	class AItemActor* GetEquipmentItem() { return equipmentItem; }
 
 };

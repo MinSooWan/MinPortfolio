@@ -17,5 +17,7 @@ class MINPORTFOLIO_API AFireArrowShotActor : public ASkillAttackActor
 public:
 
 	virtual void UseSkill(class ABaseCharacter* target, class ABaseCharacter* owner) override;
+
+	virtual void EndAnimFunction() override;
 	
 };

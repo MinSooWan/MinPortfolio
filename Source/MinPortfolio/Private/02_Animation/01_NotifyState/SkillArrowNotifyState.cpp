@@ -3,7 +3,10 @@
 
 #include "02_Animation/01_NotifyState/SkillArrowNotifyState.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "00_Character/01_Monster/MonsterCharacter.h"
+#include "00_Character/01_Monster/00_Controller/Battle_AIController.h"
 #include "04_Skill/00_Skill_Attack/00_Arrow/ArrowActor.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -11,12 +14,12 @@ void USkillArrowNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 
-	player = MeshComp->GetOwner<APlayerCharacter>();
-	if (player != nullptr) {
+	owner = MeshComp->GetOwner<ABaseCharacter>();
+	if (owner != nullptr) {
 		if (arrowClass != nullptr) {
-			auto location = player->GetMesh()->GetSocketLocation(socketName);
-			auto rotation = player->GetMesh()->GetSocketRotation(socketName);
-			spawnArrow = player->GetWorld()->SpawnActor<AArrowActor>(arrowClass, location, rotation);
+			auto location = owner->GetMesh()->GetSocketLocation(socketName);
+			auto rotation = owner->GetMesh()->GetSocketRotation(socketName);
+			spawnArrow = owner->GetWorld()->SpawnActor<AArrowActor>(arrowClass, location, rotation);
 		}
 	}
 }
@@ -25,12 +28,12 @@ void USkillArrowNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime);
 
-	if(player != nullptr)
+	if(owner != nullptr)
 	{
 		if(spawnArrow != nullptr)
 		{
-			spawnArrow->SetActorLocation(player->GetMesh()->GetSocketLocation(socketName));
-			spawnArrow->SetActorRotation(player->GetMesh()->GetSocketRotation(socketName));
+			spawnArrow->SetActorLocation(owner->GetMesh()->GetSocketLocation(socketName));
+			spawnArrow->SetActorRotation(owner->GetMesh()->GetSocketRotation(socketName));
 		}
 	}
 }
@@ -39,10 +42,17 @@ void USkillArrowNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSe
 {
 	Super::NotifyEnd(MeshComp, Animation);
 
-	if (player != nullptr) {
+	if (owner != nullptr) {
 		if (spawnArrow != nullptr) {
-			
-			spawnArrow->GetProjectilMovementComp()->Velocity = (MeshComp->GetOwner<APlayerCharacter>()->target->GetActorLocation() - MeshComp->GetOwner<APlayerCharacter>()->GetActorLocation()) * Speed;
+			spawnArrow->SetDamage(damage  + owner->GetStatusComponent()->GetATC());
+			if (owner->IsA<APlayerCharacter>()) {
+				spawnArrow->GetProjectilMovementComp()->Velocity = (MeshComp->GetOwner<APlayerCharacter>()->target->GetActorLocation() - MeshComp->GetOwner<APlayerCharacter>()->GetActorLocation()) * Speed;
+			}
+			else if(owner->IsA<AMonsterCharacter>())
+			{
+				auto lot = Cast<APlayerCharacter>(MeshComp->GetOwner<AMonsterCharacter>()->GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->GetActorLocation();
+				spawnArrow->GetProjectilMovementComp()->Velocity = (lot - MeshComp->GetOwner<AMonsterCharacter>()->GetActorLocation()) * Speed;
+			}
 		}
 	}
 }

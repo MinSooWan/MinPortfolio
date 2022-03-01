@@ -26,9 +26,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FName itemCode;
 
-	UPROPERTY()
-		bool bEquipped = false;
-
 	//조합품 여부
 	UPROPERTY(EditAnywhere)
 		bool bCombined = false;
@@ -36,8 +33,11 @@ protected:
 	UPROPERTY()
 		int32 itemCount = 1;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		FIteminfo tempinfo;
+	UPROPERTY()
+		class ABaseCharacter* UsingItemOwner;
+
+	UPROPERTY(EditAnywhere)
+		FCharacterStat itemStat;
 
 public:	
 	// Called every frame
@@ -49,10 +49,7 @@ public:
 	FName GetItemCode() { return itemCode; }
 
 	UFUNCTION(BlueprintCallable)
-		virtual void UseItem(class ABaseCharacter* itemOwner) { };
-
-	bool GetEquipped() { return bEquipped; }
-	void SetEquipped(bool equipped) { bEquipped = equipped; }
+		virtual void UseItem(class ABaseCharacter* itemOwner) { UsingItemOwner = itemOwner; }
 
 	bool GetCombined() { return bCombined; }
 	void SetCombined(bool combined) { bCombined = combined; }
@@ -61,6 +58,9 @@ public:
 	void AddItemCount(int32 value) { itemCount += value; }
 
 	virtual void HiddenMesh(){ }
+
+	FCharacterStat GetItemStat() { return itemStat; }
+	void SetItemStat(FCharacterStat value) { itemStat = value; }
 };
 
 template <typename T>

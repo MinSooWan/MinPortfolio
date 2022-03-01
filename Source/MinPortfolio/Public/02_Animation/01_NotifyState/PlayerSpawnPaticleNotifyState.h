@@ -6,6 +6,13 @@
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "PlayerSpawnPaticleNotifyState.generated.h"
 
+UENUM(BlueprintType)
+enum class EUseType : uint8
+{
+	OWNER_TO_OWNER,
+	OWNER_TO_TARGET
+};
+
 /**
  * 
  */
@@ -21,6 +28,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		float value;
+
+	UPROPERTY(EditAnywhere)
+		EUseType useType;
 
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;
 };

@@ -45,5 +45,6 @@ void ASkillBaseActor::Tick(float DeltaTime)
 
 void ASkillBaseActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)
 {
-	
+	skillOwner = owner;
+	skillTarget = target;
 }

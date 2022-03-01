@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "01_Item/ItemType.h"
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
@@ -29,11 +30,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void AddItem(AActor* item);
-	UFUNCTION(BlueprintCallable)
-		void UseItem(FName itemCode);
+
+	void UseItem(AActor* item);
+
+	AActor* FindItem(AActor* item);
 
 	TArray<AActor*> GetItemArray() { return itemArray; }
 
 	void SetItemArray(TArray<AActor*> value) { itemArray = value; }
-
 };

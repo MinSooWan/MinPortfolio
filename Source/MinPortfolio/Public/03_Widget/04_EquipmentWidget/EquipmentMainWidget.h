@@ -71,6 +71,10 @@ protected:
 
 public:
 
+	class UImage* GetImage_Weapon() { return Image_Weapon; }
+	class UImage* GetImage_Armor() { return Image_Armor; }
+	class UImage* GetImage_Shoes() { return Image_Shoes; }
+
 	class UCanvasPanel* GetCanvasPanel() { return CanvasPanel; }
 
 	void OnEquipmentWidget();
