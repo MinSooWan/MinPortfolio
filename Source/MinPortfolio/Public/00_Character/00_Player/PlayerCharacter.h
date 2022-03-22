@@ -133,6 +133,20 @@ protected:
 	UPROPERTY()
 		bool bInputKeyisPad = false;
 
+	UPROPERTY()
+		class ATeleportZone* nextLevel;
+
+	UPROPERTY()
+		int32 MyGold = 0;
+
+	UPROPERTY()
+		class ANPCCharacter* npc;
+
+	UPROPERTY()
+		bool bLevelUp = false;
+
+	UPROPERTY()
+		class ACombinationActor* Com;
 public:
 	UPROPERTY()
 		FLoadTransform LoadTransform;
@@ -177,6 +191,14 @@ public:
 	EActionState GetTempAction() { return TempAction; }
 
 	bool GetInputKeyisPad() { return bInputKeyisPad; }
+	
+	int32 GetMyGold() { return MyGold; }
+
+	void SetMyGold(int32 value) { MyGold = value; }
+
+	class ATeleportZone* GetNextLevel() { return nextLevel; }
+
+	class ANPCCharacter* GetNpc() { return npc; }
 
 	virtual void NormalActionState(const EActionState state) override;
 
@@ -185,24 +207,33 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 public:
-	void PresedRunStart();
-	void PresedRunStop();
+	UFUNCTION()
+		void PresedRunStart();
+	UFUNCTION()
+		void PresedRunStop();
 
-	void PresedRoll();
+	UFUNCTION()
+		void PresedRoll();
 
-	void PresedAttack();
+	UFUNCTION()
+		void PresedAttack();
 
-	void PresedOnMenu();
+	UFUNCTION()
+		void PresedOnMenu();
 
-	void PressedBattle_Attack();
+	UFUNCTION()
+		void PressedBattle_Attack();
 
-	void PressedAnyKey();
+	UFUNCTION()
+		void PressedAnyKey();
 
 	virtual void ActionChange() override;
 	virtual void ActionChange(float cool) override;
 
 	virtual void ActionChange_Able() override;
 	virtual void ActionChange_Impossible() override;
+
+	virtual void GiveDamage(float Damage) override;
 protected:
 
 	UFUNCTION()
@@ -219,4 +250,7 @@ protected:
 
 	UFUNCTION()
 		void LoadLocationEvent(FVector val, FRotator valrot);
+
+	UFUNCTION()
+		void OnEndDieAnimation();
 };

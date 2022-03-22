@@ -23,11 +23,13 @@ void UAttackInputNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 
 		if(owner != nullptr)
 		{
-			bContinue = false;
+			if (nextSection != "End") {
+				bContinue = false;
 
-			owner->GetController<ABattleController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Battle()->SetVisibility(ESlateVisibility::Visible);
-			owner->GetController<ABattleController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Battle_Skill()->SetVisibility(ESlateVisibility::Hidden);
-			owner->GetController<ABattleController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Item()->SetVisibility(ESlateVisibility::Hidden);
+				owner->GetController<ABattleController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Battle()->SetVisibility(ESlateVisibility::Visible);
+				owner->GetController<ABattleController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Battle_Skill()->SetVisibility(ESlateVisibility::Hidden);
+				owner->GetController<ABattleController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Item()->SetVisibility(ESlateVisibility::Hidden);
+			}
 		}
 	}
 }

@@ -34,7 +34,6 @@ void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
 				SocketName);
 
 			player->GetToolChildActor()->SetChildActorClass(info->itemActorClass);
-			player->GetToolComp()->SetToolActor(Cast<AItemActor>(player->GetToolChildActor()->GetChildActor()));
 			Cast<AToolBaseActor>(player->GetToolChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(staticMesh->GetStaticMesh());
 
 			player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FGatheringTool>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
@@ -51,7 +50,7 @@ void AToolBaseActor::UseItem(ABaseCharacter* owner)
 		const FGatheringTool* info = GetItemInfo<FGatheringTool>();
 
 		if (info != nullptr) {
-			AItemActor* spawnItem = GetWorld()->SpawnActor<AItemActor>(info->itemActorClass);
+			AItemActor* spawnItem = Cast<AItemActor>(this);
 
 			if (player->GetToolComp()->GetToolActor() != nullptr) {
 				if (!player->GetToolComp()->GetToolActor()->GetItemInfo<FIteminfo>()->item_Code.IsEqual(info->item_Code)) {

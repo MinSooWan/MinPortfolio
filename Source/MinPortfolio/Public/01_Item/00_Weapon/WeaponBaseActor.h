@@ -38,6 +38,7 @@ public:
 	void AddOption_Weapon(EAddOptionsType_Equipment_Weapon option);
 
 	virtual void UseItem(class ABaseCharacter* owner) override;
+	void ReleaseItem(class ABaseCharacter* owner);
 
 	TArray<EAddOptionsType_Equipment_Weapon> GetAddOption() { return addOption; }
 
@@ -48,4 +49,6 @@ public:
 	void ClearHitArray() { hitArray.Empty(); }
 
 	FName GetSocketName() { return SocketName; }
+
+	void ClearAddOption();
 };

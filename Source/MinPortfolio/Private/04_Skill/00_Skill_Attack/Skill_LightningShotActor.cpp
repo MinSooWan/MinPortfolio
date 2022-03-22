@@ -19,19 +19,21 @@ void ASkill_LightningShotActor::PostInitializeComponents()
 void ASkill_LightningShotActor::OnActorHitEvent(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse,
 	const FHitResult& Hit)
 {
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Cast<ASkill_LightningShotActor>(SelfActor)->GetHitParticle(), Hit.Location,
-		FRotator::ZeroRotator);
-	skillTarget->GiveDamage(GetSkillInfo<FSkill_Attack>()->damage + skillOwner->GetStatusComponent()->GetATC());
+	if (OtherActor->IsA<AMonsterCharacter>()) {
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Cast<ASkill_LightningShotActor>(SelfActor)->GetHitParticle(), Hit.Location,
+			FRotator::ZeroRotator);
+		skillTarget->GiveDamage(GetSkillInfo<FSkill_Attack>()->damage + skillOwner->GetStatusComponent()->GetATC());
 
-	auto num = FMath::RandRange(0, 101);
-	if (num >= 40) {
-		Cast<APlayerCharacter>(skillOwner)->SetMoveToStatrLocation(true);
-		skillTarget->AddDebuffStateCharacter(EDebuffState::GIVE_FROZEN, 0, 9, EDebuffType::DURATION);
+		auto num = FMath::RandRange(0, 101);
+		if (num >= 40) {
+			Cast<APlayerCharacter>(skillOwner)->SetMoveToStatrLocation(true);
+			skillTarget->AddDebuffStateCharacter(EDebuffState::GIVE_FROZEN, 0, 9, EDebuffType::DURATION);
+		}
+
+		skillOwner->NormalActionState(EActionState::NORMAL);
+
+		SelfActor->Destroy();
 	}
-
-	skillOwner->NormalActionState(EActionState::NORMAL);
-
-	SelfActor->Destroy();
 }
 
 void ASkill_LightningShotActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)

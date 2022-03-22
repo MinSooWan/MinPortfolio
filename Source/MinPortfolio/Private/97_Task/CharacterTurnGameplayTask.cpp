@@ -6,6 +6,7 @@
 #include "GameplayTasksComponent.h"
 #include "00_Character/00_Player/BaseCharacter.h"
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "00_Character/01_Monster/MonsterCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -56,12 +57,12 @@ void UCharacterTurnGameplayTask::TickTask(float DeltaTime)
 	Super::TickTask(DeltaTime);
 
 	if (owner != nullptr && target != nullptr) {
-		FRotator rot = (target->GetActorLocation() - owner->GetActorLocation()).Rotation();
+		FRotator rot = (Cast<AMonsterCharacter>(target)->GetHomeLocation() - owner->GetActorLocation()).Rotation();
 
 		rot.Roll = 0;
 		rot.Pitch = 0;
 
-		float Yaw = ((target->GetActorLocation() - owner->GetActorLocation()).Rotation() - owner->GetActorRotation()).Yaw;
+		float Yaw = ((Cast<AMonsterCharacter>(target)->GetHomeLocation() - owner->GetActorLocation()).Rotation() - owner->GetActorRotation()).Yaw;
 		if (Yaw > 180) {
 			Yaw -= 360;
 		}
@@ -71,7 +72,7 @@ void UCharacterTurnGameplayTask::TickTask(float DeltaTime)
 
 		if (0 < Yaw) {
 			rot.Yaw = 5;
-			if (((target->GetActorLocation() - owner->GetActorLocation()).Rotation().Yaw - owner->GetActorRotation().Yaw) < 5)
+			if (((Cast<AMonsterCharacter>(target)->GetHomeLocation() - owner->GetActorLocation()).Rotation().Yaw - owner->GetActorRotation().Yaw) < 5)
 			{
 				EndTask();
 			}
@@ -82,7 +83,7 @@ void UCharacterTurnGameplayTask::TickTask(float DeltaTime)
 		}
 		else if (Yaw < 0) {
 			rot.Yaw = -5;
-			if (((target->GetActorLocation() - owner->GetActorLocation()).Rotation().Yaw - owner->GetActorRotation().Yaw) > 5)
+			if (((Cast<AMonsterCharacter>(target)->GetHomeLocation() - owner->GetActorLocation()).Rotation().Yaw - owner->GetActorRotation().Yaw) > 5)
 			{
 				EndTask();
 			}

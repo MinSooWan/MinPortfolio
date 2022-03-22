@@ -42,18 +42,19 @@ void UBattle_SkillButtonWidget::OnPressedEvent()
 
 	if(owner != nullptr)
 	{
-		GetOwningPlayer<ABattleController>()->GetMainWidget()->GetUMG_BattleSkillMain()->SetVisibility(ESlateVisibility::Hidden);
-		GetOwningPlayer<ABattleController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Battle()->SetVisibility(ESlateVisibility::Visible);
-		GetOwningPlayer<ABattleController>()->SetInputMode(FInputModeGameOnly());
-		SetUserFocus(GetOwningPlayer());
+		if (owner->GetStatusComponent()->GetActionsPoint() >= skill->GetSkillInfo<FSkill>()->needAP) {
+			GetOwningPlayer<ABattleController>()->GetMainWidget()->GetUMG_BattleSkillMain()->SetVisibility(ESlateVisibility::Hidden);
+			GetOwningPlayer<ABattleController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Battle()->SetVisibility(ESlateVisibility::Visible);
+			GetOwningPlayer<ABattleController>()->SetInputMode(FInputModeGameOnly());
+			SetUserFocus(GetOwningPlayer());
 
-		UGameplayStatics::SetGamePaused(GetOwningPlayer(), false);
+			UGameplayStatics::SetGamePaused(GetOwningPlayer(), false);
 
-		owner->ActionChange_Impossible();
+			owner->GetSkillComp()->UseSkill(skill->GetSkillInfo<FSkill>()->skill_code);
+			owner->GetStatusComponent()->SetActionsPoint(owner->GetStatusComponent()->GetActionsPoint() - skill->GetSkillInfo<FSkill>()->needAP);
 
-		owner->GetSkillComp()->UseSkill(skill->GetSkillInfo<FSkill>()->skill_code);
-
-		owner->ActionChange_Impossible();
+			owner->ActionChange_Impossible();
+		}
 	}
 }
 

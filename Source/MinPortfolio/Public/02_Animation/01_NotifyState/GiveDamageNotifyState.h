@@ -16,6 +16,8 @@ class MINPORTFOLIO_API UGiveDamageNotifyState : public UAnimNotifyState
 protected:
 	UPROPERTY(EditAnywhere)
 		float damage;
+	UPROPERTY(EditAnywhere)
+		bool bIsDefaultAttack = false;
 
 public:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;

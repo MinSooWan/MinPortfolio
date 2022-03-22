@@ -25,21 +25,23 @@ void ASkill_FireBallActor::PostInitializeComponents()
 
 void ASkill_FireBallActor::OnActorHitEvent(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Cast<ASkill_FireBallActor>(SelfActor)->GetHitParticle(), Hit.Location,
-		FRotator::ZeroRotator);
-	if (skillTarget != nullptr) {
-		skillTarget->GiveDamage(GetSkillInfo<FSkill_Attack>()->damage + skillOwner->GetStatusComponent()->GetATC());
+	if (OtherActor->IsA<AMonsterCharacter>()) {
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Cast<ASkill_FireBallActor>(SelfActor)->GetHitParticle(), Hit.Location,
+			FRotator::ZeroRotator);
+		if (skillTarget != nullptr) {
+			skillTarget->GiveDamage(GetSkillInfo<FSkill_Attack>()->damage + skillOwner->GetStatusComponent()->GetATC());
+		}
+
+		auto num = FMath::RandRange(0, 101);
+		if (num >= 40) {
+			Cast<APlayerCharacter>(skillOwner)->SetMoveToStatrLocation(true);
+			skillTarget->AddDebuffStateCharacter(EDebuffState::GIVE_BURN, 5, 4, EDebuffType::DURATION);
+		}
+
+		skillOwner->NormalActionState(EActionState::NORMAL);
+
+		SelfActor->Destroy();
 	}
-
-	auto num = FMath::RandRange(0, 101);
-	if (num >= 40) {
-		Cast<APlayerCharacter>(skillOwner)->SetMoveToStatrLocation(true);
-		skillTarget->AddDebuffStateCharacter(EDebuffState::GIVE_BURN, 5, 4, EDebuffType::DURATION);
-	}
-
-	skillOwner->NormalActionState(EActionState::NORMAL);
-
-	SelfActor->Destroy();
 }
 
 void ASkill_FireBallActor::UseSkill(ABaseCharacter* target, ABaseCharacter* owner)

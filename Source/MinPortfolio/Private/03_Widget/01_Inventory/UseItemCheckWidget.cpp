@@ -13,6 +13,7 @@
 #include "Components/BackgroundBlur.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "Kismet/GameplayStatics.h"
 
 void UUseItemCheckWidget::NativeConstruct()
 {
@@ -64,6 +65,7 @@ void UUseItemCheckWidget::UseItemEvent()
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackGroundImage()->SetVisibility(ESlateVisibility::Hidden);
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetEquippedItemWidget()->InitImage();
 	GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeGameOnly());
+	UGameplayStatics::SetGamePaused(GetOwningPlayer(), false);
 }
 
 void UUseItemCheckWidget::NotUseItemEvent()

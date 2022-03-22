@@ -28,6 +28,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		int32 SkillPoint;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		int32 Character_Level;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		int32 EXP;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		int32 MaxEXP;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		int32 ActionPoint;
+
 	FCharacterStat& operator+=(const FCharacterStat& Add) {
 		this->HP += Add.HP;
 		this->MaxHP += Add.MaxHP;
@@ -35,6 +47,10 @@ public:
 		this->DEF += Add.DEF;
 		this->DEX += Add.DEX;
 		this->SkillPoint += Add.SkillPoint;
+		this->Character_Level += Add.Character_Level;
+		this->EXP += Add.EXP;
+		this->MaxEXP += Add.MaxEXP;
+		this->ActionPoint += Add.ActionPoint;
 		return *this;
 	}
 
@@ -45,6 +61,9 @@ public:
 		this->DEF += Add.DEF;
 		this->DEX += Add.DEX;
 		this->SkillPoint += Add.SkillPoint;
+		this->EXP += Add.EXP;
+		this->MaxEXP += Add.MaxEXP;
+		this->ActionPoint += Add.ActionPoint;
 		return *this;
 	}
 
@@ -55,6 +74,9 @@ public:
 		this->DEF -= Add.DEF;
 		this->DEX -= Add.DEX;
 		this->SkillPoint -= Add.SkillPoint;
+		this->EXP -= Add.EXP;
+		this->MaxEXP -= Add.MaxEXP;
+		this->ActionPoint -= Add.ActionPoint;
 		return *this;
 	}
 
@@ -65,6 +87,9 @@ public:
 		this->DEF -= Add.DEF;
 		this->DEX -= Add.DEX;
 		this->SkillPoint -= Add.SkillPoint;
+		this->EXP -= Add.EXP;
+		this->MaxEXP -= Add.MaxEXP;
+		this->ActionPoint -= Add.ActionPoint;
 		return *this;
 	}
 };
@@ -98,11 +123,15 @@ public:
 	virtual void InitializeComponent() override;
 
 	float GetHP() { return characterStat.HP; }
-	float GetMaxHP() { return  characterStat.HP; }
+	float GetMaxHP() { return  characterStat.MaxHP; }
 	float GetATC() { return characterStat.ATC; }
 	float GetDEF() { return characterStat.DEF; }
 	float GetDEX() { return characterStat.DEX; }
 	int32 GetSP() { return characterStat.SkillPoint; }
+	int32 GetCharacterLevel() { return characterStat.Character_Level; }
+	int32 GetEXP() { return characterStat.EXP; }
+	int32 GetMaxEXP() { return characterStat.MaxEXP; }
+	int32 GetActionsPoint() { return characterStat.ActionPoint; }
 
 	void AddHP(const float value);
 	void AddMaxHP(const float value);
@@ -110,6 +139,10 @@ public:
 	void AddDEF(const float value);
 	void AddDEX(const float value);
 	void AddSP(const int32 value);
+	void AddCharacterLevel();
+	void AddEXP(int32 value);
+	void AddMaxEXP(const int32 value);
+	void AddActionsPoint(const int32 value);
 
 	void SetHP(const float value);
 	void SetMaxHP(const float value);
@@ -117,6 +150,10 @@ public:
 	void SetDEF(const float value);
 	void SetDEX(const float value);
 	void SetSP(const int32 value);
+	void SetCharacterLevel(const int32 value);
+	void SetEXP(const int32 value);
+	void SetMaxEXP(const int32 value);
+	void SetActionsPoint(const int32 value);
 
 	void AddStat(const FCharacterStat& statToAdd);
 	void RemoveStat(const FCharacterStat& statToRemove);
@@ -124,4 +161,6 @@ public:
 	void SetAll(ABaseCharacter* target);
 
 	void StatusInit() { characterStat.HP = characterStat.MaxHP; }
+
+	void RandomStat();
 };

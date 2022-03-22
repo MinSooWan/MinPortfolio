@@ -10,6 +10,7 @@
 #include "00_Character/01_Monster/00_Controller/MonsterController.h"
 #include "01_Item/ItemActor.h"
 #include "01_Item/01_Material/MaterialBaseActor.h"
+#include "03_Widget/05_Battle/UMG_TimeAndHP/TimeAndHpWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
@@ -18,6 +19,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "97_Task/MoveToTarget_Battle_Task.h"
 #include "98_Instance/MyGameInstance.h"
+#include "Components/ProgressBar.h"
 
 AMonsterCharacter::AMonsterCharacter()
 {
@@ -35,6 +37,10 @@ AMonsterCharacter::AMonsterCharacter()
 	widgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("widget"));
 	widgetComp->SetupAttachment(RootComponent);
 	widgetComp->SetVisibility(false);
+
+	widgetTimeAndHpComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("time and hp"));
+	widgetTimeAndHpComp->SetupAttachment(RootComponent);
+	widgetTimeAndHpComp->SetVisibility(false);
 }
 
 void AMonsterCharacter::BeginPlay()
@@ -44,9 +50,37 @@ void AMonsterCharacter::BeginPlay()
 	moveZone = GetWorld()->SpawnActor<ATriggerSphere>(triggerClass, GetActorLocation(), FRotator::ZeroRotator);
 	if(!GetGameInstance<UMyGameInstance>()->monInfo.monLoc.IsZero())
 	{
-		if(GetGameInstance<UMyGameInstance>()->monInfo.monLoc == homeLocation && GetGameInstance<UMyGameInstance>()->monInfo.monHp == 0)
+		if(GetGameInstance<UMyGameInstance>()->monInfo.monLoc == homeLocation && GetGameInstance<UMyGameInstance>()->monInfo.stat.HP == 0)
 		{
-			Destroy();
+			GetController<AAIController>()->BrainComponent->StopLogic("Dead");
+			GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+			GetMesh()->SetCollisionProfileName("NoCollision");
+			SetActorHiddenInGame(true);
+		}
+		if(GetGameInstance<UMyGameInstance>()->allMonInfo.Num() > 0)
+		{
+			if (GetGameInstance<UMyGameInstance>()->bInBattle == false) {
+				for (auto iter : GetGameInstance<UMyGameInstance>()->allMonInfo)
+				{
+					if (iter.Key == homeLocation)
+					{
+						if (iter.Value.bIsDestroy == true)
+						{
+							GetController<AAIController>()->BrainComponent->StopLogic("Dead");
+							GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+							GetMesh()->SetCollisionProfileName("NoCollision");
+							SetActorHiddenInGame(true);
+							break;
+						}
+						else {
+							statComp->SetAll(this);
+							SetActorLocation(iter.Value.monLoc);
+							SetActorRotation(iter.Value.monRot);
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -100,19 +134,25 @@ void AMonsterCharacter::Tick(float DeltaTime)
 
 void AMonsterCharacter::OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)
 {
-	if(OtherActor == moveZone)
-	{
-		auto target = GetController<AMonsterController>()->GetBlackboardComponent()->GetValueAsObject("Target");
-		if (target != nullptr) {
-			if (Cast<APlayerCharacter>(target)->GetController()->IsA<ABattleController>()) {
-
-			}
-			else
+	if (OtherActor != nullptr) {
+		if (GetController() != nullptr) {
+			if (OtherActor == moveZone)
 			{
-				SetActionState(EActionState::NORMAL);
-				GetController<AMonsterController>()->GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
-				bMoving = true;
-				GetController<AMonsterController>()->GetBrainComponent()->StopLogic("qer");
+				if (GetController()->IsA<AMonsterController>()) {
+					auto target = GetController<AMonsterController>()->GetBlackboardComponent()->GetValueAsObject("Target");
+					if (target != nullptr) {
+						if (Cast<APlayerCharacter>(target)->GetController()->IsA<ABattleController>()) {
+
+						}
+						else
+						{
+							SetActionState(EActionState::NORMAL);
+							GetController<AMonsterController>()->GetBlackboardComponent()->SetValueAsObject("Target", nullptr);
+							bMoving = true;
+							GetController<AMonsterController>()->GetBrainComponent()->StopLogic("qer");
+						}
+					}
+				}
 			}
 		}
 	}
@@ -128,6 +168,7 @@ void AMonsterCharacter::ActionChange()
 		FTimerDelegate timeDel;
 		timeDel.BindUFunction(this, FName("ActionChange_Able"));
 
+		Cast<UTimeAndHpWidget>(widgetTimeAndHpComp->GetWidget())->InitTime(9);
 		GetWorld()->GetTimerManager().SetTimer(AbleAction, timeDel, 9, false);
 	}
 	else
@@ -245,6 +286,8 @@ void AMonsterCharacter::DropItem()
 {
 	int32 dropItemCnt = FMath::FRandRange(0, 3);
 
+	UKismetSystemLibrary::PrintString(this, FString::FromInt(dropItemCnt));
+
 	TArray<FDropToType*> dropList;
 	dropTable->GetAllRows<FDropToType>("", dropList);
 
@@ -273,5 +316,65 @@ void AMonsterCharacter::DropItem()
 			totalVal += item->dropPercent;
 		}
 		totalVal = 0;
+	}
+}
+
+void AMonsterCharacter::GiveDamage(float Damage)
+{
+	Super::GiveDamage(Damage);
+
+	Cast<UTimeAndHpWidget>(widgetTimeAndHpComp->GetWidget())->GetProgressBar_HP()->SetPercent(statComp->GetHP() / statComp->GetMaxHP());
+
+	if (statComp->GetHP() <= 0) {
+		Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->GetMesh()->GetAnimInstance()->StopAllMontages(0);
+
+		//비헤이비어트리 정지
+		GetController<ABattle_AIController>()->BrainComponent->StopLogic("Dead");
+		GetWorld()->GetTimerManager().ClearTimer(AbleAction);
+		GetWorld()->GetTimerManager().ClearTimer(ImpossibleAction);
+
+		if (Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->targets.Num() > 1)
+		{
+			Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->target = nullptr;
+
+			Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->SetMoveToStart(true);
+
+			/*
+			UMoveToTarget_Battle_Task::MoveToTarget_Battle_Task(Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target")), this,
+				Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->GetMoveToTarget(),
+				Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->GetMoveToStatrLocation(),
+				hitMontage);
+				*/
+			FTimerHandle saveHandle;
+
+			FTimerDelegate saveDel;
+			saveDel.BindUFunction(this, "MonsterDieToRemove");
+
+			Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->targets.Remove(Cast<AMonsterCharacter>(this));
+
+			Cast<AMonsterCharacter>(this)->DropItem();
+			GetWorld()->GetTimerManager().SetTimer(saveHandle, saveDel, GetMesh()->GetAnimInstance()->Montage_Play(Cast<AMonsterCharacter>(this)->GetDieMontage()), false);
+		}
+		else {
+			FTimerHandle saveHandle;
+
+			FTimerDelegate saveDel;
+			saveDel.BindUFunction(this, "LoadToLevel");
+
+			Cast<AMonsterCharacter>(this)->DropItem();
+
+			Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->
+				GetStatusComponent()->AddEXP(statComp->GetCharacterLevel() * 10);
+
+			GetGameInstance<UMyGameInstance>()->stat = Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->GetStatusComponent()->GetCharacterStat();
+
+			GetWorld()->GetTimerManager().SetTimer(saveHandle, saveDel, GetMesh()->GetAnimInstance()->Montage_Play(Cast<AMonsterCharacter>(this)->GetDieMontage()), false);
+		}
+	}
+	else
+	{
+		if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying()) {
+			GetMesh()->GetAnimInstance()->Montage_Play(hitMontage);
+		}
 	}
 }

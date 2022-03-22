@@ -68,23 +68,37 @@ void UMoveToTarget_Battle_Task::TickTask(float DeltaTime)
 		//UKismetSystemLibrary::PrintString(this, targetLocation.ToString());
 		if (target->GetDistanceTo(owner) <= owner->GetDistanceValue())
 		{
-			bMoveStart = true;
-			bMoveTarget = false;
-			owner->SetMoveToTarget(false);
 			if (owner->IsA<APlayerCharacter>()) {
+				bMoveStart = true;
+				bMoveTarget = false;
+				owner->SetMoveToTarget(false);
 				Cast<APlayerCharacter>(owner)->Battle_SetActionState(EActionState::ATTACK);
 			}
-			else if(owner->IsA<AMonsterCharacter>())
+			else if (owner->IsA<AMonsterCharacter>())
 			{
-				FTimerDelegate timeDel;
-				timeDel.BindUFunction(Cast<AMonsterCharacter>(owner), FName("ActionChange_Impossible"));
+				if (target->GetActionState() == EActionState::NORMAL) {
+					bMoveStart = true;
+					bMoveTarget = false;
+					owner->SetMoveToTarget(false);
+					FTimerDelegate timeDel;
+					timeDel.BindUFunction(Cast<AMonsterCharacter>(owner), FName("ActionChange_Impossible"));
 
-				owner->GetWorld()->GetTimerManager().SetTimer(owner->GetImpossibleActionHandle(), timeDel, owner->GetMesh()->GetAnimInstance()->Montage_Play(montage), false);
-				
-			};
+					owner->GetWorld()->GetTimerManager().SetTimer(owner->GetImpossibleActionHandle(), timeDel, owner->GetMesh()->GetAnimInstance()->Montage_Play(montage), false);
+				}
+			}
 		}
 		else {
-			owner->AddMovementInput(targetLocation);
+			if(owner->IsA<AMonsterCharacter>())
+			{
+				if(target->GetActionState() == EActionState::NORMAL)
+				{
+					owner->AddMovementInput(targetLocation);
+				}
+			}
+			else
+			{
+				owner->AddMovementInput(targetLocation);
+			}
 		}
 
 		//GetMovementComponent()->Velocity = (target->GetActorLocation() - GetActorLocation());
@@ -106,6 +120,7 @@ void UMoveToTarget_Battle_Task::TickTask(float DeltaTime)
 					if(Cast<APlayerCharacter>(owner)->target == nullptr)
 					{
 						Cast<APlayerCharacter>(owner)->targetChange_right();
+						
 						Cast<APlayerCharacter>(owner)->ActionChange_Impossible();
 					}
 					else {
@@ -129,7 +144,7 @@ void UMoveToTarget_Battle_Task::TickTask(float DeltaTime)
 				owner->SetMoveToStart(false);
 				if (target != nullptr)
 				{
-					owner->SetActorRotation((target->GetActorLocation() - owner->GetActorLocation()).Rotation());
+					owner->SetActorRotation((Cast<APlayerCharacter>(target)->GetStartLocation() - owner->GetActorLocation()).Rotation());
 					Cast<AMonsterCharacter>(owner)->SetBattleState(EActionState::NORMAL);
 					EndTask();
 				}

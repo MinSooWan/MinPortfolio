@@ -65,6 +65,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		class UWidgetComponent* widgetComp;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+		class UWidgetComponent* widgetTimeAndHpComp;
+
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY()
@@ -94,6 +97,13 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 		class UDataTable* dropTable;
+	//UTimeAndHpWidget
+
+	UPROPERTY(EditAnywhere)
+		int32 MinLevel;
+
+	UPROPERTY(EditAnywhere)
+		int32 MaxLevel;
 
 public:
 	UPROPERTY()
@@ -131,4 +141,11 @@ public:
 	class UAnimMontage* GetDieMontage() { return dieMontage; }
 
 	void DropItem();
+
+	class UWidgetComponent* GetwidgetTimeAndHpComp() { return widgetTimeAndHpComp;  }
+
+	virtual void GiveDamage(float Damage) override;
+
+	const int32 GetMinLevel() { return MinLevel; }
+	const int32 GetMaxLevel() { return MaxLevel; }
 };

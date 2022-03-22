@@ -330,7 +330,7 @@ void UInventoryWidget::SetItemInfo(AItemActor* item)
 			if (Cast<AWeaponBaseActor>(item)->GetAddOption().Num() != 0) {
 				for (auto iter : Cast<AWeaponBaseActor>(item)->GetAddOption())
 				{
-					str += GetAddOptionDescription_RecoveryItem(iter) + "\n";
+					str += GetAddOptionDescription_WeaponItem(iter) + "\n";
 				}
 			}
 		}
@@ -443,6 +443,18 @@ FString UInventoryWidget::GetAddOptionDescription_Material(EAddOptionsType_Mater
 	case EAddOptionsType_Material::RECOVERY_HP:
 		str = TEXT("강력한 회복력");
 		return str;
+	case EAddOptionsType_Material::ADD_ATC_TIME:
+		str = TEXT("익스클루시브 스펠");
+		return str;
+	case EAddOptionsType_Material::ADD_DEF_TIME:
+		str = TEXT("강력한 회복력");
+		return str;
+	case EAddOptionsType_Material::ADD_DEX_TIME:
+		str = TEXT("아이언 바디");
+		return str;
+	case EAddOptionsType_Material::ADD_HP_TIME:
+		str = TEXT("리스토네이션");
+		return str;
 	}return str;
 }
 
@@ -499,7 +511,7 @@ FString UInventoryWidget::GetAddOptionDescription_RecoveryItem(EAddOptionsType_R
 	return str;
 }
 
-FString UInventoryWidget::GetAddOptionDescription_RecoveryItem(EAddOptionsType_Equipment_Weapon option)
+FString UInventoryWidget::GetAddOptionDescription_WeaponItem(EAddOptionsType_Equipment_Weapon option)
 {
 	FString str;
 	switch (option)

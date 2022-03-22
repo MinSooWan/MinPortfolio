@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "00_Character/00_Player/PlayerCharacter.h"
@@ -20,6 +20,7 @@
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "00_Character/01_Monster/MonsterCharacter.h"
 #include "00_Character/01_Monster/00_Controller/Battle_AIController.h"
+#include "00_Character/02_NPC/NPCCharacter.h"
 #include "01_Item/ItemType.h"
 #include "00_Character/99_Component/InventoryComponent.h"
 #include "00_Character/99_Component/SkillComponent.h"
@@ -33,8 +34,18 @@
 #include "01_Item/03_Battle_Item/BattleItemActor.h"
 #include "01_Item/03_Battle_Item/RecoveryConsumeActor.h"
 #include "03_Widget/MainWidget.h"
+#include "03_Widget/02_Skill/SkillButtonWidget.h"
+#include "03_Widget/02_Skill/SkillMainWidget.h"
+#include "03_Widget/02_Skill/SkillTreeWidget.h"
 #include "03_Widget/03_KeyImage/KeySettingWidget.h"
+#include "03_Widget/05_Battle/UMG_TimeAndHP/TimeAndHpWidget.h"
+#include "03_Widget/06_Shop/ShopMainWidget.h"
+#include "03_Widget/07_Reinforce/ReinforceWidget.h"
+#include "03_Widget/08_Talk/NPC_TalkWidget.h"
+#include "03_Widget/09_Combination/CombinationMainWidget.h"
 #include "04_Skill/SkillBaseActor.h"
+#include "05_Combination/CombinationActor.h"
+#include "95_Zone/TeleportZone.h"
 #include "96_Save/BattleSaveGame.h"
 #include "98_Instance/MyGameInstance.h"
 #include "Components/SphereComponent.h"
@@ -46,6 +57,8 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "Kismet/KismetInputLibrary.h"
 #include "97_Task/MoveToTarget_Battle_Task.h"
+#include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 
 #define ORIGINAL_WALK_SPPED 600;
 
@@ -185,11 +198,16 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::InitStat()
 {
-	statComp->SetHP(GetGameInstance<UMyGameInstance>()->Getstat().HP);
-	statComp->SetATC(GetGameInstance<UMyGameInstance>()->Getstat().ATC);
-	statComp->SetDEF(GetGameInstance<UMyGameInstance>()->Getstat().DEF);
-	statComp->SetDEX(GetGameInstance<UMyGameInstance>()->Getstat().DEX);
-	statComp->SetMaxHP(GetGameInstance<UMyGameInstance>()->Getstat().MaxHP);
+	statComp->SetHP(GetGameInstance<UMyGameInstance>()->stat.HP);
+	statComp->SetATC(GetGameInstance<UMyGameInstance>()->stat.ATC);
+	statComp->SetDEF(GetGameInstance<UMyGameInstance>()->stat.DEF);
+	statComp->SetDEX(GetGameInstance<UMyGameInstance>()->stat.DEX);
+	statComp->SetMaxHP(GetGameInstance<UMyGameInstance>()->stat.MaxHP);
+	statComp->SetEXP(GetGameInstance<UMyGameInstance>()->stat.EXP);
+	statComp->SetMaxEXP(GetGameInstance<UMyGameInstance>()->stat.MaxEXP);
+	statComp->SetSP(GetGameInstance<UMyGameInstance>()->stat.SkillPoint);
+	statComp->SetCharacterLevel(GetGameInstance<UMyGameInstance>()->stat.Character_Level);
+	statComp->SetSP(GetGameInstance<UMyGameInstance>()->stat.SkillPoint);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -209,13 +227,12 @@ void APlayerCharacter::BeginPlay()
 		}
 		else 
 		{
-			//¿ßƒ°
+			//ÏúÑÏπò
 			if (!GetGameInstance<UMyGameInstance>()->GetPlayerLocation().IsZero()) {
 				LoadTransform.Broadcast(GetGameInstance<UMyGameInstance>()->GetPlayerLocation(), GetGameInstance<UMyGameInstance>()->GetPlayerRotation());
 			}
-
 			
-			//¿Œ∫•
+			//Ïù∏Î≤§
 			for (auto i = 0; i < GetGameInstance<UMyGameInstance>()->GetInven().Num(); i++)
 			{
 				auto item = GetWorld()->SpawnActor<AItemActor>(GetGameInstance<UMyGameInstance>()->GetInven()[i]);
@@ -263,12 +280,15 @@ void APlayerCharacter::BeginPlay()
 					}
 					item->SetItemStat(GetGameInstance<UMyGameInstance>()->haveItems[i].stat);
 					break;
+				case EItemType::GATHERING_TOOL:
+					item->SetItemStat(GetGameInstance<UMyGameInstance>()->haveItems[i].stat);
+					break;
 				}
 
 				inventoryComp->AddItem(item);
 			}
 
-			//¿Â∫Ò
+			//Ïû•ÎπÑ
 			for (auto i = 0; i < inventoryComp->GetItemArray().Num(); i++)
 			{
 				AItemActor* item = Cast<AItemActor>(inventoryComp->GetItemArray()[i]);
@@ -279,6 +299,38 @@ void APlayerCharacter::BeginPlay()
 						item->UseItem(this);
 					}
 				}
+				else if(item->GetItemInfo<FIteminfo>()->item_Type == EItemType::GATHERING_TOOL)
+				{
+					if (GetGameInstance<UMyGameInstance>()->GetHaveItems()[i].bEquipped == true)
+					{
+						item->UseItem(this);
+					}
+				}
+			}
+
+			//Ïä§ÌÇ¨
+			for (auto iter : GetGameInstance<UMyGameInstance>()->GetSkill())
+			{
+				auto skill = GetWorld()->SpawnActor<ASkillBaseActor>(iter);
+				skill->SetActorHiddenInGame(true);
+
+				skillComp->AddSkill(skill);
+			}
+
+			for (auto iter : skillComp->GetSkills()) {
+				for (auto i : GetController<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetButtons())
+				{
+					if (Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skill_code.IsEqual(i->skillInfo->skill_code))
+					{
+						i->NormalAvailableSkill();
+					}
+				}
+			}
+
+			//Ïä§ÌÖü
+			InitStat();
+			if (statComp->GetEXP() >= statComp->GetMaxEXP()) {
+				bLevelUp = true;
 			}
 		}
 	}
@@ -290,12 +342,12 @@ void APlayerCharacter::BeginPlay()
 		//UKismetSystemLibrary::PrintString(this, "This BattleController");
 		if(GetGameInstance<UMyGameInstance>()->GetWeapon() != nullptr)
 		{
-			//¿ßƒ°
+			//ÏúÑÏπò
 			startLocation = GetActorLocation();
 
 			Battle_SetActionState(EActionState::NORMAL);
 
-			//¿Œ∫•
+			//Ïù∏Î≤§
 			for (auto i = 0; i < GetGameInstance<UMyGameInstance>()->GetInven().Num(); i++)
 			{
 				auto item = GetWorld()->SpawnActor<AItemActor>(GetGameInstance<UMyGameInstance>()->GetInven()[i]);
@@ -344,12 +396,14 @@ void APlayerCharacter::BeginPlay()
 
 					item->SetItemStat(GetGameInstance<UMyGameInstance>()->haveItems[i].stat);
 					break;
+				case EItemType::GATHERING_TOOL:
+					item->SetItemStat(GetGameInstance<UMyGameInstance>()->haveItems[i].stat);
+					break;
 				}
-
 				inventoryComp->AddItem(item);
 			}
 
-			//¿Â∫Ò
+			//Ïû•ÎπÑ
 			for (auto i = 0; i < inventoryComp->GetItemArray().Num(); i++)
 			{
 				AItemActor* item = Cast<AItemActor>(inventoryComp->GetItemArray()[i]);
@@ -361,120 +415,95 @@ void APlayerCharacter::BeginPlay()
 						if(item->GetItemInfo<FEquipment>()->equipment_Type == EEquipmentType::WEAPON)
 						{
 							WeaponChild->SetVisibility(true);
-							GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 						}
 					}
 				}
-			}
-
-			//√§¡˝ µµ±∏
-			auto tool = GetWorld()->SpawnActor<AToolBaseActor>(GetGameInstance<UMyGameInstance>()->GetTool());
-			if(tool != nullptr)
-			{
-				tool->UseItem(this);
-				ToolChild->SetVisibility(false);
-				tool->SetActorHiddenInGame(true);
-			}
-
-			/*
-			//∞©ø 
-			auto armor = inventoryComp->FindItem();
-			if(armor != nullptr)
-			{
-
-				armor->UseItem(this);
-				armor->SetActorHiddenInGame(true);
-			}
-
-			//π´±‚
-			auto weapon = GetWorld()->SpawnActor<AWeaponBaseActor>(GetGameInstance<UMyGameInstance>()->GetWeapon());
-			if (weapon != nullptr) {
-
-				weapon->UseItem(this);
-				WeaponChild->SetVisibility(true);
-				if(weapon->GetItemInfo<FWeapon>()->swordType == ESwordType::DOUBLE_SWORD)
+				else if (item->GetItemInfo<FIteminfo>()->item_Type == EItemType::GATHERING_TOOL)
 				{
-					DoubleSwordChild->SetVisibility(true);
-				}
-
-				GetMesh()->SetAnimInstanceClass(weapon->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
-
-				weapon->SetActorHiddenInGame(true);
-			}
-
-			//Ω≈πﬂ
-			auto shoes = GetWorld()->SpawnActor<AShoesBaseActor>(GetGameInstance<UMyGameInstance>()->GetShoes());
-			if(shoes != nullptr)
-			{
-				if (GetGameInstance<UMyGameInstance>()->GetShoesAddOption().Num() > 0) {
-					for (auto iter : GetGameInstance<UMyGameInstance>()->GetShoesAddOption())
+					if (GetGameInstance<UMyGameInstance>()->GetHaveItems()[i].bEquipped == true)
 					{
-						shoes->AddOption(iter);
+						item->UseItem(this);
+						ToolChild->SetVisibility(false);
+						item->SetActorHiddenInGame(true);
 					}
 				}
-
-				shoes->UseItem(this);
-				shoes->SetActorHiddenInGame(true);
 			}
-			*/
 
-			//∏ÛΩ∫≈Õ
-			//
-			int32 cnt = FMath::RandRange(1, 3);
+			GetMesh()->SetAnimInstanceClass(GetEquipmentComp()->GetWeaponActor()->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
+
+			//Î™¨Ïä§ÌÑ∞
+			//FMath::RandRange(1, 3)
+			int32 cnt = 1;
 			auto monster = GetWorld()->SpawnActor<AMonsterCharacter>(GetGameInstance<UMyGameInstance>()->GetTarget(),
 				GetGameInstance<UMyGameInstance>()->GetTargetPoint()[0]);
 
-			monster->AIControllerClass = monster->GetBattle_Controller();
+			if (monster != nullptr) {
+				monster->AIControllerClass = monster->GetBattle_Controller();
 
-			monster->SpawnDefaultController();
+				monster->SpawnDefaultController();
 
-			monster->GetController<AAIController>()->GetBlackboardComponent()->SetValueAsObject("Target", this);
-			monster->GetController<AAIController>()->GetBlackboardComponent()->SetValueAsVector("TargetLocation", GetActorLocation());
+				monster->GetController<AAIController>()->GetBlackboardComponent()->SetValueAsObject("Target", this);
+				monster->GetController<AAIController>()->GetBlackboardComponent()->SetValueAsVector("TargetLocation", GetActorLocation());
 
-			monster->GetStatusComponent()->StatusInit();
+				monster->GetStatusComponent()->StatusInit();
 
-			monster->SetActionState(EActionState::RUN);
-			monster->GetCharacterMovement()->MaxWalkSpeed = 800;
+				monster->SetActionState(EActionState::RUN);
+				monster->GetCharacterMovement()->MaxWalkSpeed = 800;
 
-			target = monster;
-
-			SetActorRotation((target->GetActorLocation() - GetActorLocation()).Rotation());
-
-			targets.Add(monster);
-			targetNum = 0;
-
-			//UKismetSystemLibrary::PrintString(this, FString::FromInt(cnt));
-
-			if (cnt > 0) {
-				for (int32 i = 1; i < cnt; i++)
+				int32 level;
+				if (statComp->GetCharacterLevel() > 10) {
+					level = FMath::RandRange(statComp->GetCharacterLevel() - 10, statComp->GetCharacterLevel() + 10);
+				}
+				else
 				{
-					monster = GetWorld()->SpawnActor<AMonsterCharacter>(GetGameInstance<UMyGameInstance>()->GetTarget(),
-						GetGameInstance<UMyGameInstance>()->GetTargetPoint()[i]);
+					level = statComp->GetCharacterLevel();
+				}
+				monster->GetStatusComponent()->SetCharacterLevel(level);
+				monster->GetStatusComponent()->RandomStat();
 
-					monster->AIControllerClass = monster->GetBattle_Controller();
+				target = monster;
 
-					monster->SpawnDefaultController();
+				SetActorRotation((target->GetActorLocation() - GetActorLocation()).Rotation());
 
-					monster->GetController<AAIController>()->GetBlackboardComponent()->SetValueAsObject("Target", this);
-					monster->GetController<AAIController>()->GetBlackboardComponent()->SetValueAsVector("TargetLocation", GetActorLocation());
-					
-					monster->GetStatusComponent()->StatusInit();
+				targets.Add(monster);
+				targetNum = 0;
 
-					monster->SetActionState(EActionState::RUN);
-					monster->GetCharacterMovement()->MaxWalkSpeed = 800;
+				//UKismetSystemLibrary::PrintString(this, FString::FromInt(cnt));
 
-					targets.Add(monster);
+				if (cnt > 0) {
+					for (int32 i = 1; i < cnt; i++)
+					{
+						monster = GetWorld()->SpawnActor<AMonsterCharacter>(GetGameInstance<UMyGameInstance>()->GetTarget(),
+							GetGameInstance<UMyGameInstance>()->GetTargetPoint()[i]);
+
+						monster->AIControllerClass = monster->GetBattle_Controller();
+
+						monster->SpawnDefaultController();
+
+						monster->GetController<AAIController>()->GetBlackboardComponent()->SetValueAsObject("Target", this);
+						monster->GetController<AAIController>()->GetBlackboardComponent()->SetValueAsVector("TargetLocation", GetActorLocation());
+
+						monster->GetStatusComponent()->StatusInit();
+
+						monster->SetActionState(EActionState::RUN);
+						monster->GetCharacterMovement()->MaxWalkSpeed = 800;
+
+						monster->GetStatusComponent()->SetCharacterLevel(level);
+						monster->GetStatusComponent()->RandomStat();
+
+						targets.Add(monster);
+					}
 				}
 			}
 
-			//Ω∫≈≥
+			//Ïä§ÌÇ¨
 			for(auto iter : GetGameInstance<UMyGameInstance>()->GetSkill())
 			{
 				auto skill = GetWorld()->SpawnActor<ASkillBaseActor>(iter);
 				skillComp->AddSkill(skill);
 			}
 
-			//Ω∫≈»
+			//Ïä§ÌÉØ
 			InitStat();
 
 			//auto FVector(110,160,20)transform = FTransform(FRotator(0,0,-20),);
@@ -482,6 +511,9 @@ void APlayerCharacter::BeginPlay()
 			FollowCamera->SetRelativeRotation(FRotator(0, -20,0));
 
 			auto num = FMath::RandRange(3, 5);
+
+			GetController<ABattleController>()->GetMainWidget()->GetUMG_TimeAndHp_Player()->InitTime(num);
+			GetController<ABattleController>()->GetMainWidget()->GetUMG_TimeAndHp_Player()->GetProgressBar_HP()->SetPercent(statComp->GetHP() / statComp->GetMaxHP());
 			ActionChange(num);
 		}
 	}
@@ -491,24 +523,41 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
+	if (bLevelUp == true) {
+		statComp->AddCharacterLevel();
+		statComp->SetCharacterLevel(statComp->GetCharacterLevel() + 1);
+		statComp->SetMaxEXP(statComp->GetMaxEXP() * 1.2);
+		if(statComp->GetEXP() <= statComp->GetMaxEXP())
+		{
+			bLevelUp = false;
+		}
+	}
 }
 
 void APlayerCharacter::targetChange_right()
 {
 	if (actionState == EActionState::NORMAL && bMoveToTarget == false && bMoveToStatrLocation == false) {
-		if (targets.Num() > 1)
+		if (target != nullptr) {
+			if (targets.Num() > 1)
+			{
+				if (targets.Num() - 1 == targetNum)
+				{
+					targetNum = 0;
+					target = targets[targetNum];
+				}
+				else
+				{
+					targetNum++;
+					target = targets[targetNum];
+				}
+				UCharacterTurnGameplayTask::CharacterTurnGameplayTask(this, Cast<AMonsterCharacter>(target))->ReadyForActivation();
+			}
+		}
+		else
 		{
-			if (targets.Num() - 1 == targetNum)
-			{
-				targetNum = 0;
-				target = targets[targetNum];
-			}
-			else
-			{
-				targetNum++;
-				target = targets[targetNum];
-			}
+			targetNum = 0;
+			target = targets[targetNum];
+
 			UCharacterTurnGameplayTask::CharacterTurnGameplayTask(this, Cast<AMonsterCharacter>(target))->ReadyForActivation();
 		}
 	}
@@ -541,13 +590,44 @@ void APlayerCharacter::TargetChange_Left()
 
 void APlayerCharacter::Jump()
 {
-	
-	if (bJumping == false && actionState != EActionState::ROLL &&
-		actionState != EActionState::ATTACK) {
-		TempAction = actionState;
-		Super::Jump();
-		SetActionState(EActionState::JUMP);
-		bJumping = true;
+	if (nextLevel == nullptr && npc == nullptr && Com == nullptr) {
+		if (bJumping == false && actionState != EActionState::ROLL &&
+			actionState != EActionState::ATTACK) {
+			TempAction = actionState;
+			Super::Jump();
+			SetActionState(EActionState::JUMP);
+			bJumping = true;
+		}
+	}
+	else
+	{
+		if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() && actionState != EActionState::JUMP && actionState != EActionState::ROLL && actionState != EActionState::ATTACK) {
+			if (nextLevel != nullptr) {
+				GetController<ACustomController>()->GoingToNextLevel(nextLevel);
+				OnActorEndOverlap.Clear();
+
+				UGameplayStatics::OpenLevel(this, nextLevel->GetOpenLevelName());
+			}
+			else if (npc != nullptr)
+			{
+				switch (npc->GetNpcType())
+				{
+				case ENPCType::TALK:
+					GetController<ACustomController>()->GetMainWidget()->GetUMG_TalkWidget()->OnNPCTalk();
+					break;
+				case ENPCType::SHOP:
+					GetController<ACustomController>()->GetMainWidget()->GetUMG_ShopWidget()->OnShopWidget();
+					break;
+				case ENPCType::REINFORCE:
+					GetController<ACustomController>()->GetMainWidget()->GetUMG_ReinforceWidget()->OnReinforceWidget();
+					break;
+				}
+			}
+			else if(Com != nullptr)
+			{
+				GetController<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->OnCombination();
+			}
+		}
 	}
 }
 
@@ -616,7 +696,7 @@ void APlayerCharacter::SetActionState(const EActionState state)
 				timeDel.BindUFunction(this, FName("OnNormalEndAnimation"), TempAction);
 
 				GetWorld()->GetTimerManager().SetTimer(pickUpAnimEndTimerHandle, timeDel,
-					GetMesh()->GetAnimInstance()->Montage_Play(GetToolComp()->GetToolActor()->GetItemInfo<FGatheringTool>()->useToolAnim),
+					GetMesh()->GetAnimInstance()->Montage_Play(Cast<AItemActor>(GetToolChildActor()->GetChildActor())->GetItemInfo<FGatheringTool>()->useToolAnim),
 					false);
 			}
 			else
@@ -708,7 +788,9 @@ void APlayerCharacter::PresedAttack()
 
 void APlayerCharacter::PresedOnMenu()
 {
-	GetController<ACustomController>()->GetMainWidget()->OnMenuWidget.Broadcast();
+	if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying() && actionState != EActionState::JUMP && actionState != EActionState::ROLL && actionState != EActionState::ATTACK) {
+		GetController<ACustomController>()->GetMainWidget()->OnMenuWidget.Broadcast();
+	}
 }
 
 void APlayerCharacter::PressedBattle_Attack()
@@ -791,30 +873,101 @@ void APlayerCharacter::ActionChange_Impossible()
 	FTimerDelegate timeDel;
 	timeDel.BindUFunction(this, FName("ActionChange_Able"));
 
-	GetWorld()->GetTimerManager().SetTimer(ImpossibleAction, timeDel, 9, false);
+	float num = 9 - statComp->GetDEX() * 0.001;
+	GetController<ABattleController>()->GetMainWidget()->GetUMG_TimeAndHp_Player()->InitTime(FMath::Floor(num));
+	GetWorld()->GetTimerManager().SetTimer(ImpossibleAction, timeDel, FMath::Floor(num), false);
+}
+
+void APlayerCharacter::GiveDamage(float Damage)
+{
+	Super::GiveDamage(Damage);
+
+	GetController<ABattleController>()->GetMainWidget()->GetUMG_TimeAndHp_Player()->GetProgressBar_HP()->SetPercent(statComp->GetHP() / statComp->GetMaxHP());
+
+	if (statComp->GetHP() <= 0) {
+		//Home_Level
+		statComp->SetHP(statComp->GetMaxHP());
+		GetWorld()->GetTimerManager().ClearTimer(AbleAction);
+		GetWorld()->GetTimerManager().ClearTimer(ImpossibleAction);
+
+		GetMesh()->GetAnimInstance()->StopAllMontages(0);
+
+		FTimerHandle dieTimerHandle;
+		FTimerDelegate dieTimerDel;
+
+		dieTimerDel.BindUFunction(this, "OnEndDieAnimation");
+		GetWorld()->GetTimerManager().SetTimer(dieTimerHandle, dieTimerDel, GetMesh()->GetAnimInstance()->Montage_Play(equipmentComp->GetWeaponActor()->GetItemInfo<FWeapon>()->dieMontage),
+			false);
+
+	}
+	else
+	{
+		if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying()) {
+			GetMesh()->GetAnimInstance()->Montage_Play(equipmentComp->GetWeaponActor()->GetItemInfo<FWeapon>()->hitMontage);
+		}
+	}
 }
 
 void APlayerCharacter::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)
 {
-	if (GetController()->IsA<ACustomController>()) {
-		if (OtherActor->IsA<AMaterialBaseActor>() && OtherActor->IsValidLowLevel()) {
-			Cast<AMaterialBaseActor>(OtherActor)->GetPickUpWidget()->SetVisibility(true);
+	if (GetController() != nullptr) {
+		if (GetController()->IsA<ACustomController>()) {
+			if (OtherActor->IsA<AMaterialBaseActor>() && OtherActor->IsValidLowLevel()) {
+				GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_PickUp()->SetVisibility(ESlateVisibility::Visible);
 
-			overlapMaterial = OtherActor;
-		}
+				overlapMaterial = OtherActor;
+			}
 
-		if (target == nullptr) {
-			if (OtherActor->IsA<AMonsterCharacter>() && OtherActor->IsValidLowLevel())
+			if (target == nullptr) {
+				if (OtherActor->IsA<AMonsterCharacter>() && OtherActor->IsValidLowLevel())
+				{
+					GetGameInstance<UMyGameInstance>()->ClearArrays();
+
+					target = OtherActor;
+					GetGameInstance<UMyGameInstance>()->SetTarget(Cast<AMonsterCharacter>(OtherActor)->GetClass());
+
+					target->SetActorHiddenInGame(true);
+					Cast<AMonsterCharacter>(target)->GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+					Cast<AMonsterCharacter>(target)->GetMesh()->SetCollisionProfileName("NoCollision");
+
+					GetGameInstance<UMyGameInstance>()->monInfo.monLoc = Cast<AMonsterCharacter>(target)->GetHomeLocation();
+					GetGameInstance<UMyGameInstance>()->monInfo.stat = Cast<AMonsterCharacter>(target)->GetStatusComponent()->GetCharacterStat();
+
+					GetController<ACustomController>()->ChangeBattleLevel();
+				}
+			}
+
+			if (OtherActor->IsA<ATeleportZone>())
 			{
-				target = OtherActor;
-				GetGameInstance<UMyGameInstance>()->SetTarget(Cast<AMonsterCharacter>(OtherActor)->GetClass());
-				Cast<AMonsterCharacter>(target)->GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
-				Cast<AMonsterCharacter>(target)->GetMesh()->SetCollisionProfileName("NoCollision");
+				nextLevel = Cast<ATeleportZone>(OtherActor);
+				GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetTextBlock_Going()->SetText(FText::FromString(TEXT("ÏûÖÏû•")));
+				GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Visible);
+			}
 
-				GetGameInstance<UMyGameInstance>()->monInfo.monLoc = Cast<AMonsterCharacter>(target)->GetHomeLocation();
-				GetGameInstance<UMyGameInstance>()->monInfo.monHp = Cast<AMonsterCharacter>(target)->GetStatusComponent()->GetHP();
+			if(OtherActor->IsA<ANPCCharacter>())
+			{
+				npc = Cast<ANPCCharacter>(OtherActor);
+				if (npc->GetNpcType() == ENPCType::SHOP) {
+					GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetTextBlock_Going()->SetText(FText::FromString(TEXT("ÏÉÅÏ†ê")));
+					GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Visible);
+				}
+				else if(npc->GetNpcType() == ENPCType::REINFORCE)
+				{
+					GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetTextBlock_Going()->SetText(FText::FromString(TEXT("Í∞ïÌôî")));
+					GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Visible);
+				}
+				else if(npc->GetNpcType() == ENPCType::TALK)
+				{
+					GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetTextBlock_Going()->SetText(FText::FromString(TEXT("ÎåÄÌôî")));
+					GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Visible);
+				}
+			}
 
-				GetController<ACustomController>()->ChangeBattleLevel();
+			if(OtherActor->IsA<ACombinationActor>())
+			{
+				Com = Cast<ACombinationActor>(OtherActor);
+				GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetTextBlock_Going()->SetText(FText::FromString(TEXT("Ï°∞Ìï©")));
+				GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Visible);
 			}
 		}
 	}
@@ -823,9 +976,21 @@ void APlayerCharacter::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor*
 void APlayerCharacter::OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)
 {
 	if (overlapMaterial == OtherActor && OtherActor->IsValidLowLevel() && overlapMaterial->IsValidLowLevel()) {
-		Cast<AMaterialBaseActor>(OtherActor)->GetPickUpWidget()->SetVisibility(false);
+		GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_PickUp()->SetVisibility(ESlateVisibility::Hidden);
 
 		overlapMaterial = nullptr;
+	}
+
+	if(OtherActor->IsA<ATeleportZone>())
+	{
+		nextLevel = nullptr;
+		GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (OtherActor->IsA<ANPCCharacter>())
+	{
+		npc = nullptr;
+		GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -849,4 +1014,10 @@ void APlayerCharacter::LoadLocationEvent(FVector val, FRotator valrot)
 {
 	SetActorLocation(val);
 	SetActorRotation(valrot);
+}
+
+void APlayerCharacter::OnEndDieAnimation()
+{
+	GetController<ABattleController>()->GoingToHome();
+	UGameplayStatics::OpenLevel(this, "Home_Level");
 }

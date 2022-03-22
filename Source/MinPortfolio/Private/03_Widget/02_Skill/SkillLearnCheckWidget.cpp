@@ -70,19 +70,19 @@ FReply USkillLearnCheckWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 {
 	Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 
-	if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_DPad_Right))
+	if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_DPad_Right) || InKeyEvent.GetKey() == FKey(EKeys::E))
 	{
 		ChangeNowButton();
 	}
-	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_DPad_Left))
+	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_DPad_Left) || InKeyEvent.GetKey() == FKey(EKeys::Q))
 	{
 		ChangeNowButton();
 	}
-	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Bottom))
+	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Bottom) || InKeyEvent.GetKey() == FKey(EKeys::SpaceBar))
 	{
 		nowButton->OnClicked.Broadcast();
 	}
-	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Right))
+	else if(InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Right) || InKeyEvent.GetKey() == FKey(EKeys::Escape))
 	{
 		SetVisibility(ESlateVisibility::Hidden);
 		bOnLearnWidget = false;

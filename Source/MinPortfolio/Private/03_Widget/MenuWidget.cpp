@@ -18,6 +18,7 @@
 #include "03_Widget/03_KeyImage/KeySettingWidget.h"
 #include "03_Widget/04_EquipmentWidget/EquipmentMainWidget.h"
 #include "Components/CanvasPanel.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetInputLibrary.h"
 
 void UMenuWidget::NativeConstruct()
@@ -222,6 +223,7 @@ FReply UMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 		SetVisibility(ESlateVisibility::Hidden);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackGroundImage()->SetVisibility(ESlateVisibility::Hidden);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->OffMenu();
+		UGameplayStatics::SetGamePaused(GetOwningPlayer(), false);
 	}
 	else if(InKeyEvent.GetKey() == FKey(EKeys::Escape))
 	{
@@ -229,6 +231,7 @@ FReply UMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent
 		SetVisibility(ESlateVisibility::Hidden);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetBackGroundImage()->SetVisibility(ESlateVisibility::Hidden);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->OffMenu();
+		UGameplayStatics::SetGamePaused(GetOwningPlayer(), false);
 	}
 
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->ChangeKeyImage(UKismetInputLibrary::Key_IsGamepadKey(InKeyEvent.GetKey()));

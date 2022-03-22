@@ -45,6 +45,28 @@ protected:
 	UPROPERTY()
 		class UCanvasPanel* CanvasPanel_Item;
 
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_Going;
+
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_Shop;
+
+	UPROPERTY()
+		class UTextBlock* TextBlock_Going;
+
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_PickUp;
+
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_Reinforce;
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_Reinforceinfo;
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_ReinforceAfter;
+
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_NPCTalk;
+
 public:
 
 	class UCanvasPanel* GetCanvasPanel_Main() { return CanvasPanel_Main; }
@@ -56,4 +78,12 @@ public:
 	class UCanvasPanel* GetCanvasPanel_Attack() { return CanvasPanel_Attack; }
 	class UCanvasPanel* GetCanvasPanel_Battle_Skill() { return CanvasPanel_Battle_Skill; }
 	class UCanvasPanel* GetCanvasPanel_Item() { return CanvasPanel_Item; }
+	class UCanvasPanel* GetCanvasPanel_Going() { return CanvasPanel_Going; }
+	class UCanvasPanel* GetCanvasPanel_Shop() { return CanvasPanel_Shop; }
+	class UTextBlock* GetTextBlock_Going() { return TextBlock_Going; }
+	class UCanvasPanel* GetCanvasPanel_PickUp() { return CanvasPanel_PickUp; }
+	class UCanvasPanel* GetCanvasPanel_Reinforce() { return CanvasPanel_Reinforce; }
+	class UCanvasPanel* GetCanvasPanel_Reinforceinfo() { return CanvasPanel_Reinforceinfo; }
+	class UCanvasPanel* GetCanvasPanel_ReinforceAfter() { return CanvasPanel_ReinforceAfter; }
+	class UCanvasPanel* GetCanvasPanel_NPCTalk() { return CanvasPanel_NPCTalk; }
 };

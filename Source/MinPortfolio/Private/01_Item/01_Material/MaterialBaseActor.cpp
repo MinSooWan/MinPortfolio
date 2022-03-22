@@ -21,13 +21,18 @@ void AMaterialBaseActor::BeginPlay()
 		{
 			if(GetActorLocation() == iter.Key)
 			{
-				for(auto i : iter.Value.options)
-				{
-					AddOption(i);
+				if (iter.Value.bIsHidden == false) {
+					for (auto i : iter.Value.options)
+					{
+						AddOption(i);
+					}
+					itemStat = iter.Value.stat;
 				}
-
-				itemStat = iter.Value.stat;
-				SetActorHiddenInGame(iter.Value.bIsHidden);
+				else
+				{
+					SetActorHiddenInGame(true);
+				}
+				break;
 			}
 		}
 	}
@@ -80,4 +85,5 @@ void AMaterialBaseActor::RandomAddOption()
 	itemStat.ATC += FMath::RandRange(0, 20);
 	itemStat.DEF += FMath::RandRange(0, 20);
 	itemStat.DEX += FMath::RandRange(0, 20);
+	itemStat.MaxHP = itemStat.HP;
 }

@@ -15,6 +15,7 @@
 #include "97_Task/MoveToTarget_Battle_Task.h"
 #include "98_Instance/MyGameInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -112,50 +113,6 @@ void ABaseCharacter::GiveDamage(float Damage)
 {
 	float value = statComp->GetHP() - (Damage - GetStatusComponent()->GetDEF() * 0.5);
 	statComp->SetHP(FMath::Clamp(value, 0.f, statComp->GetMaxHP()));
-
-	if (statComp->GetHP() <= 0) {
-		if (IsA<AMonsterCharacter>())
-		{
-			Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->GetMesh()->GetAnimInstance()->StopAllMontages(0);
-
-			//비헤이비어트리 정지
-			GetController<ABattle_AIController>()->BrainComponent->StopLogic("Dead");
-
-			if(Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->targets.Num() > 1)
-			{
-				Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->target = nullptr;
-
-				Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->SetMoveToStart(true);
-
-				/*
-				UMoveToTarget_Battle_Task::MoveToTarget_Battle_Task(Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target")), this,
-					Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->GetMoveToTarget(),
-					Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->GetMoveToStatrLocation(),
-					hitMontage);
-					*/
-				FTimerHandle saveHandle;
-
-				FTimerDelegate saveDel;
-				saveDel.BindUFunction(this, "MonsterDieToRemove");
-
-				Cast<AMonsterCharacter>(this)->DropItem();
-				GetWorld()->GetTimerManager().SetTimer(saveHandle, saveDel, GetMesh()->GetAnimInstance()->Montage_Play(Cast<AMonsterCharacter>(this)->GetDieMontage()), false);
-			}
-			else {
-				FTimerHandle saveHandle;
-
-				FTimerDelegate saveDel;
-				saveDel.BindUFunction(this, "LoadToLevel");
-
-				Cast<AMonsterCharacter>(this)->DropItem();
-				GetWorld()->GetTimerManager().SetTimer(saveHandle, saveDel, GetMesh()->GetAnimInstance()->Montage_Play(Cast<AMonsterCharacter>(this)->GetDieMontage()), false);
-			}
-		}
-	}
-	else
-	{
-		GetMesh()->GetAnimInstance()->Montage_Play(hitMontage);
-	}
 }
 
 void ABaseCharacter::ActionChange()
@@ -189,6 +146,8 @@ void ABaseCharacter::LoadToLevel()
 
 		if (player != nullptr) {
 
+			GetGameInstance<UMyGameInstance>()->bInBattle = false;
+
 			UGameplayStatics::OpenLevel(this, FName(Cast<UBattleSaveGame>(SaverSubClass)->levelName));
 		}
 	}
@@ -196,7 +155,9 @@ void ABaseCharacter::LoadToLevel()
 
 void ABaseCharacter::MonsterDieToRemove()
 {
-	Cast<APlayerCharacter>(GetController<ABattle_AIController>()->GetBlackboardComponent()->GetValueAsObject("Target"))->targets.Remove(Cast<AMonsterCharacter>(this));
-	Destroy();
+	GetWorld()->GetTimerManager().ClearTimer(AbleAction);
+	GetWorld()->GetTimerManager().ClearTimer(ImpossibleAction);
+	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+	GetMesh()->SetCollisionProfileName("NoCollision");
+	SetActorHiddenInGame(true);
 }
-

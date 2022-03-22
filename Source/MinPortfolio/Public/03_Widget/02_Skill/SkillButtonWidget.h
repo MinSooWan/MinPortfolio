@@ -61,5 +61,7 @@ public:
 
 	bool Checking();
 	void ReturnFoucs();
+
+	void NormalAvailableSkill();
 };
 

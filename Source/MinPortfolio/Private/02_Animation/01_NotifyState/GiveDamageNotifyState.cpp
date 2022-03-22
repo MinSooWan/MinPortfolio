@@ -6,6 +6,8 @@
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/01_Monster/MonsterCharacter.h"
 #include "00_Character/01_Monster/00_Controller/Battle_AIController.h"
+#include "00_Character/99_Component/EquipmentComponent.h"
+#include "01_Item/ItemActor.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 void UGiveDamageNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
@@ -15,7 +17,14 @@ void UGiveDamageNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 
 	if (MeshComp->GetOwner()->IsA<APlayerCharacter>())
 	{
-		Cast<ABaseCharacter>(MeshComp->GetOwner<APlayerCharacter>()->target)->GiveDamage(damage + MeshComp->GetOwner<ABaseCharacter>()->GetStatusComponent()->GetATC());
+		if (bIsDefaultAttack == false) {
+			Cast<ABaseCharacter>(MeshComp->GetOwner<APlayerCharacter>()->target)->GiveDamage(damage + MeshComp->GetOwner<ABaseCharacter>()->GetStatusComponent()->GetATC());
+		}
+		else
+		{
+			Cast<ABaseCharacter>(MeshComp->GetOwner<APlayerCharacter>()->target)->GiveDamage(MeshComp->GetOwner<APlayerCharacter>()->GetEquipmentComp()->GetWeaponActor()->GetItemStat().ATC
+				+ MeshComp->GetOwner<ABaseCharacter>()->GetStatusComponent()->GetATC());
+		}
 	}
 	else if(MeshComp->GetOwner()->IsA<AMonsterCharacter>())
 	{

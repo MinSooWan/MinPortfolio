@@ -29,4 +29,6 @@ public:
 	class UMainWidget* GetMainWidget() { return mainWidget; }
 
 	void ChangeBattleLevel();
+
+	void GoingToNextLevel(class ATeleportZone* zoen);
 };

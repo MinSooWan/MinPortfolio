@@ -5,6 +5,8 @@
 #include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/01_Monster/MonsterCharacter.h"
 #include "00_Character/01_Monster/00_Controller/Battle_AIController.h"
+#include "00_Character/99_Component/EquipmentComponent.h"
+#include "01_Item/ItemActor.h"
 #include "04_Skill/00_Skill_Attack/00_Arrow/ArrowActor.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -46,6 +48,7 @@ void USkillArrowNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSe
 		if (spawnArrow != nullptr) {
 			spawnArrow->SetDamage(damage  + owner->GetStatusComponent()->GetATC());
 			if (owner->IsA<APlayerCharacter>()) {
+				spawnArrow->SetDamage(Cast<APlayerCharacter>(owner)->GetEquipmentComp()->GetWeaponActor()->GetItemStat().ATC + owner->GetStatusComponent()->GetATC());
 				spawnArrow->GetProjectilMovementComp()->Velocity = (MeshComp->GetOwner<APlayerCharacter>()->target->GetActorLocation() - MeshComp->GetOwner<APlayerCharacter>()->GetActorLocation()) * Speed;
 			}
 			else if(owner->IsA<AMonsterCharacter>())

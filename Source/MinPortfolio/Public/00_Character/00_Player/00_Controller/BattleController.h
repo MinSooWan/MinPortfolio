@@ -32,4 +32,6 @@ public:
 
 	void OnPreesedSkillList();
 	void OnPreesedInvenList();
+
+	void GoingToHome();
 };

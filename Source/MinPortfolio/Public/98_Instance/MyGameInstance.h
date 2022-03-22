@@ -25,8 +25,10 @@ struct FMonsterInfo
 	GENERATED_BODY()
 public:
 
+	bool bIsDestroy = false;
 	FVector monLoc;
-	float monHp;
+	FCharacterStat stat;
+	FRotator monRot;
 };
 
 USTRUCT()
@@ -36,6 +38,9 @@ struct FHaveItemInfo
 public:
 	UPROPERTY()
 		bool bEquipped = false;
+
+	UPROPERTY()
+		bool bInInven = false;
 
 	UPROPERTY()
 		FCharacterStat stat;
@@ -88,12 +93,9 @@ protected:
 	UPROPERTY()
 		TArray<TSubclassOf<class AItemActor>> inven;
 	UPROPERTY()
-		FCharacterStat stat;
-	UPROPERTY()
 		FVector playerLoc;
 	UPROPERTY()
 		FRotator playerRot;
-	
 
 public:
 	UPROPERTY()
@@ -102,6 +104,15 @@ public:
 		FMonsterInfo monInfo;
 	UPROPERTY()
 		TArray<FHaveItemInfo> haveItems;
+	UPROPERTY()
+		TMap<FVector, FMonsterInfo> allMonInfo;
+	UPROPERTY()
+		bool bInBattle = false;
+
+	UPROPERTY()
+		FCharacterStat stat;
+
+	void ClearArrays();
 
 	//Set Function
 	void SetTarget(TSubclassOf<class AMonsterCharacter> value) { target = value; }

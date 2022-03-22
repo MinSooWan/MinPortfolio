@@ -139,6 +139,20 @@ enum class EAddOptionsType_RecoveryItem : uint8
 };
 
 USTRUCT(BlueprintType)
+struct FComNeedInfo : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+		class UTexture2D* item_Image_Com;
+	UPROPERTY(EditAnywhere)
+		FName item_Code_Com;
+	UPROPERTY(EditAnywhere)
+		FName item_Name_Com;
+};
+
+USTRUCT(BlueprintType)
 struct FIteminfo : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -166,6 +180,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AItemActor> itemActorClass;
+
+	UPROPERTY(EditAnywhere)
+		TArray<FComNeedInfo> needItems;
 
 public:
 	EItemType GetItemType() { return item_Type; }
@@ -209,6 +226,8 @@ public:
 		class UStaticMesh* mesh;
 	UPROPERTY(EditAnywhere)
 		EEquipmentType equipment_Type;
+	UPROPERTY(EditAnywhere)
+		UUserWidget* CombinationWidget;
 
 public:
 	FEquipment() {
@@ -232,6 +251,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		class UAnimMontage* rollMontage;
+
+	UPROPERTY(EditAnywhere)
+		class UAnimMontage* hitMontage;
+
+	UPROPERTY(EditAnywhere)
+		class UAnimMontage* dieMontage;
 
 	UPROPERTY(EditAnywhere)
 		EWeaponType weaponType;

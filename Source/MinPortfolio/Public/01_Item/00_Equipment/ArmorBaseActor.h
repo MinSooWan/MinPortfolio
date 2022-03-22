@@ -26,4 +26,5 @@ public:
 	virtual void AddOption(EAddOptionsType_Equipment option) override;
 
 	virtual void UseItem(class ABaseCharacter* owner) override;
+	void ClearAddOption();
 };

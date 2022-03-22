@@ -113,7 +113,7 @@ protected:
 	FString GetAddOptionDescription_Material(EAddOptionsType_Material option);
 	FString GetAddOptionDescription_BattleItem(EAddOptionsType_BattleItem option);
 	FString GetAddOptionDescription_RecoveryItem(EAddOptionsType_RecoveryItem option);
-	FString GetAddOptionDescription_RecoveryItem(EAddOptionsType_Equipment_Weapon option);
+	FString GetAddOptionDescription_WeaponItem(EAddOptionsType_Equipment_Weapon option);
 
 	void PressedNextButton_Type();
 	void PressedPreviousButton_Type();

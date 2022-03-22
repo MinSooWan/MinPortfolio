@@ -23,6 +23,7 @@ void ABattle_AIController::OnPossess(APawn* InPawn)
 		{
 			RunBehaviorTree(monster->GetBattle_aiTree());
 			GetBlackboardComponent()->SetValueAsVector("HomeLocation", InPawn->GetActorLocation());
+
 		}
 	}
 }

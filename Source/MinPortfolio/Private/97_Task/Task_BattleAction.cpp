@@ -5,6 +5,10 @@
 
 #include "AIController.h"
 #include "00_Character/01_Monster/MonsterCharacter.h"
+#include "00_Character/99_Component/StatusComponent.h"
+#include "03_Widget/05_Battle/UMG_TimeAndHP/TimeAndHpWidget.h"
+#include "Components/ProgressBar.h"
+#include "Components/WidgetComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 EBTNodeResult::Type UTask_BattleAction::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -12,7 +16,11 @@ EBTNodeResult::Type UTask_BattleAction::ExecuteTask(UBehaviorTreeComponent& Owne
 	auto owner = Cast<AMonsterCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	if(owner != nullptr)
 	{
-		float num = FMath::RandRange(3, 5);
+		float num = FMath::RandRange(3, 9);
+
+		owner->GetwidgetTimeAndHpComp()->SetVisibility(true);
+		Cast<UTimeAndHpWidget>(owner->GetwidgetTimeAndHpComp()->GetWidget())->InitTime(num);
+		Cast<UTimeAndHpWidget>(owner->GetwidgetTimeAndHpComp()->GetWidget())->GetProgressBar_HP()->SetPercent(owner->GetStatusComponent()->GetHP() / owner->GetStatusComponent()->GetMaxHP());
 		owner->ActionChange(num);
 	}
 

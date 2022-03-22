@@ -39,18 +39,21 @@ void UBattle_InvenButtonWidget::OnPressedEvent()
 
 	if (owner != nullptr)
 	{
-		GetOwningPlayer<ABattleController>()->GetMainWidget()->GetUMG_BattleInvenMain()->SetVisibility(ESlateVisibility::Hidden);
-		GetOwningPlayer<ABattleController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Battle()->SetVisibility(ESlateVisibility::Visible);
-		GetOwningPlayer<ABattleController>()->SetInputMode(FInputModeGameOnly());
-		SetUserFocus(GetOwningPlayer());
+		if (owner->GetStatusComponent()->GetActionsPoint() >= item->GetItemInfo<FBattleItem>()->needCP) {
+			GetOwningPlayer<ABattleController>()->GetMainWidget()->GetUMG_BattleInvenMain()->SetVisibility(ESlateVisibility::Hidden);
+			GetOwningPlayer<ABattleController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Battle()->SetVisibility(ESlateVisibility::Visible);
+			GetOwningPlayer<ABattleController>()->SetInputMode(FInputModeGameOnly());
+			SetUserFocus(GetOwningPlayer());
 
-		UGameplayStatics::SetGamePaused(GetOwningPlayer(), false);
+			UGameplayStatics::SetGamePaused(GetOwningPlayer(), false);
 
-		owner->ActionChange_Impossible();
+			owner->ActionChange_Impossible();
 
-		owner->GetInventoryComp()->UseItem(item);
+			owner->GetInventoryComp()->UseItem(item);
+			owner->GetStatusComponent()->SetActionsPoint(owner->GetStatusComponent()->GetActionsPoint() - item->GetItemInfo<FBattleItem>()->needCP);
 
-		owner->ActionChange_Impossible();
+			owner->ActionChange_Impossible();
+		}
 	}
 }
 

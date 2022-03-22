@@ -66,3 +66,8 @@ AActor* UInventoryComponent::FindItem(AActor* item)
 	}
 	return nullptr;
 }
+
+void UInventoryComponent::RemoveItem(AActor* value)
+{
+	itemArray.Remove(value);
+}

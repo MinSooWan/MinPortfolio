@@ -24,7 +24,7 @@ void AWeaponBaseActor::OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor*
 			if (UsingItemOwner != nullptr) {
 				damage = UsingItemOwner->GetStatusComponent()->GetATC() + itemStat.ATC;
 			}
-			Cast<AMonsterCharacter>(OtherActor)->GiveDamage(20);
+			Cast<AMonsterCharacter>(OtherActor)->GiveDamage(damage);
 
 			auto location = Cast<AMonsterCharacter>(OtherActor)->GetMesh()->GetComponentLocation();
 
@@ -92,9 +92,57 @@ void AWeaponBaseActor::UseItem(class ABaseCharacter* owner)
 
 }
 
+void AWeaponBaseActor::ReleaseItem(ABaseCharacter* owner)
+{
+	if (owner != nullptr) {
+		APlayerCharacter* player = Cast<APlayerCharacter>(owner);
+		const FWeapon* info = GetItemInfo<FWeapon>();
+
+		if (info != nullptr) {
+			AItemActor* spawnItem = Cast<AItemActor>(this);
+
+			if (player->GetEquipmentComp()->GetWeaponActor() != nullptr) {
+				RemoveStat(player, spawnItem->GetItemStat());
+				if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_WeaponAtcUp"))
+				{
+					player->GetStatusComponent()->SetATC(player->GetStatusComponent()->GetATC() - 30);
+				}
+
+				if (addOption.Num() > 0)
+				{
+					for (auto iter : addOption)
+					{
+						switch (iter)
+						{
+						case EAddOptionsType_Equipment_Weapon::ADD_ATC:
+							player->GetStatusComponent()->SetATC(player->GetStatusComponent()->GetATC() - 15);
+							break;
+						case EAddOptionsType_Equipment_Weapon::ADD_DEF:
+							player->GetStatusComponent()->SetDEF(player->GetStatusComponent()->GetDEF() - 15);
+							break;
+						case EAddOptionsType_Equipment_Weapon::ADD_DEX:
+							player->GetStatusComponent()->SetDEX(player->GetStatusComponent()->GetDEX() - 15);
+							break;
+						case EAddOptionsType_Equipment_Weapon::ADD_HP:
+							player->GetStatusComponent()->SetMaxHP(player->GetStatusComponent()->GetMaxHP() - 15);
+							player->GetStatusComponent()->SetHP(player->GetStatusComponent()->GetHP() - 15);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 AWeaponBaseActor::AWeaponBaseActor()
 {
 	
+}
+
+void AWeaponBaseActor::ClearAddOption()
+{
+	addOption.Empty();
 }
 
 void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* info, AItemActor* item)
@@ -133,6 +181,29 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* in
 		if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_WeaponAtcUp"))
 		{
 			player->GetStatusComponent()->AddATC(30);
+		}
+
+		if(addOption.Num() > 0)
+		{
+			for(auto iter : addOption)
+			{
+				switch (iter)
+				{
+				case EAddOptionsType_Equipment_Weapon::ADD_ATC:
+					player->GetStatusComponent()->AddATC(15);
+					break;
+				case EAddOptionsType_Equipment_Weapon::ADD_DEF:
+					player->GetStatusComponent()->AddDEF(15);
+					break;
+				case EAddOptionsType_Equipment_Weapon::ADD_DEX:
+					player->GetStatusComponent()->AddDEX(15);
+					break;
+				case EAddOptionsType_Equipment_Weapon::ADD_HP:
+					player->GetStatusComponent()->AddMaxHP(15);
+					player->GetStatusComponent()->AddHP(15);
+					break;
+				}
+			}
 		}
 		AddStat(player, itemStat);
 

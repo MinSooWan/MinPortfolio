@@ -31,6 +31,11 @@ void AArmorBaseActor::UseItem(class ABaseCharacter* owner)
 	}
 }
 
+void AArmorBaseActor::ClearAddOption()
+{
+	addOption.Empty();
+}
+
 void AArmorBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* info, AItemActor* item)
 {
 	Super::ItemChange(player, info, item);
@@ -48,6 +53,29 @@ void AArmorBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* inf
 		if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_ArmorDefUp"))
 		{
 			player->GetStatusComponent()->AddDEF(30);
+		}
+
+		if (addOption.Num() > 0)
+		{
+			for (auto iter : addOption)
+			{
+				switch (iter)
+				{
+				case EAddOptionsType_Equipment::ADD_ATC:
+					player->GetStatusComponent()->AddATC(15);
+					break;
+				case EAddOptionsType_Equipment::ADD_DEF:
+					player->GetStatusComponent()->AddDEF(15);
+					break;
+				case EAddOptionsType_Equipment::ADD_DEX:
+					player->GetStatusComponent()->AddDEX(15);
+					break;
+				case EAddOptionsType_Equipment::ADD_HP:
+					player->GetStatusComponent()->AddMaxHP(15);
+					player->GetStatusComponent()->AddHP(15);
+					break;
+				}
+			}
 		}
 
 		AddStat(player, itemStat);

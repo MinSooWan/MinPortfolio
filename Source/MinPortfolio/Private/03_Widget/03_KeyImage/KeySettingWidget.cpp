@@ -15,6 +15,13 @@ void UKeySettingWidget::NativeConstruct()
 	CanvasPanel_Inven->SetVisibility(ESlateVisibility::Hidden);
 	CanvasPanel_Equipment->SetVisibility(ESlateVisibility::Hidden);
 	CanvasPanel_Battle->SetVisibility(ESlateVisibility::Hidden);
+	CanvasPanel_Going->SetVisibility(ESlateVisibility::Hidden);
+	CanvasPanel_Shop->SetVisibility(ESlateVisibility::Hidden);
+	CanvasPanel_PickUp->SetVisibility(ESlateVisibility::Hidden);
+	CanvasPanel_Reinforce->SetVisibility(ESlateVisibility::Hidden);
+	CanvasPanel_Reinforceinfo->SetVisibility(ESlateVisibility::Hidden);
+	CanvasPanel_ReinforceAfter->SetVisibility(ESlateVisibility::Hidden);
+	CanvasPanel_NPCTalk->SetVisibility(ESlateVisibility::Hidden);
 
 	if(GetOwningPlayer()->IsA<ABattleController>())
 	{

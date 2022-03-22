@@ -31,6 +31,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 		class UDataTable* SkillPassiveTable;
 
+	UPROPERTY(BlueprintReadWrite)
+		TArray<class USkillButtonWidget*> buttons;
+
 public:
 	UFUNCTION(BlueprintCallable)
 		void GetSkillInfo_Attack(FName skill_code, class USkillButtonWidget* widget);
@@ -45,4 +48,6 @@ public:
 
 	class USkillButtonWidget* GetNowButton() { return nowButton; };
 	void SetNowButton(class USkillButtonWidget* widget) { nowButton = widget; }
+
+	TArray<class USkillButtonWidget*> GetButtons() { return buttons; }
 };

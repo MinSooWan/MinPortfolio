@@ -63,6 +63,21 @@ protected:
 	UPROPERTY()
 		class UBattle_InvenMainWidget* UMG_BattleInvenMain;
 
+	UPROPERTY()
+		class UShopMainWidget* UMG_ShopWidget;
+
+	UPROPERTY()
+		class UShopBuyCheckWidget* UMG_BuyItemCheck;
+
+	UPROPERTY()
+		class UNeedGoldCheckWidget* UMG_NeedGoldCheck;
+
+	UPROPERTY()
+		class UReinforceWidget* UMG_ReinforceWidget;
+
+	UPROPERTY()
+		class UNPC_TalkWidget* UMG_TalkWidget;
+
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
@@ -70,8 +85,27 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 		TArray<class UUserWidget*> keyImages_key;
+
 	UPROPERTY(BlueprintReadWrite)
 		TArray<class UUserWidget*> keyImages_pad;
+
+	UPROPERTY()
+		class UReinforceCheckWidget* UMG_ReinforceItemCheck;
+
+	UPROPERTY()
+		class UReinforceAfterWidget* UMG_ReinforceAfterWidget;
+
+	UPROPERTY()
+		class UTimeAndHpWidget* UMG_TimeAndHp_Player;
+
+	UPROPERTY()
+		class UTextBlock* TextBlock_APValue;
+
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_AP;
+
+	UPROPERTY()
+		class UCombinationMainWidget* UMG_ComninationMain;
 
 public:
 	const TMap<FKey, class UTexture2D*> GetKeyImage() { return keyImage; }
@@ -96,6 +130,15 @@ public:
 	void OnEquipment();
 	void OffEquipment();
 
+	void OnShop();
+	void OffShop();
+
+	void OnReinforce();
+	void OffReinforce();
+
+	void OnNPCTalk();
+	void OffNPCTalk();
+
 	class UEquippedItemWidget* GetEquippedItemWidget() { return UMG_EquippedItem; };
 	class UBackgroundBlur* GetBackgroundBlur_Image() { return BackgroundBlur_Image; };
 	class UImage* GetBackGroundImage() { return Image_BackGround; };
@@ -110,7 +153,18 @@ public:
 	class UEquipmentMainWidget* GetEquipmentWidget() { return UMG_EquipmentMain; }
 	class UBattle_SkillMainWidget* GetUMG_BattleSkillMain() { return UMG_BattleSkillMain; }
 	class UBattle_InvenMainWidget* GetUMG_BattleInvenMain() { return UMG_BattleInvenMain; }
+	class UShopMainWidget* GetUMG_ShopWidget() { return UMG_ShopWidget; }
+	class UShopBuyCheckWidget* GetUMG_BuyItemCheck() { return UMG_BuyItemCheck; }
+	class UNeedGoldCheckWidget* GetUMG_NeedGoldCheck() { return UMG_NeedGoldCheck; }
+	class UReinforceWidget* GetUMG_ReinforceWidget() { return UMG_ReinforceWidget; }
+	class UReinforceCheckWidget* GetUMG_ReinforceItemCheck() { return UMG_ReinforceItemCheck; }
+	class UReinforceAfterWidget* GetUMG_ReinforceAfterWidget() { return UMG_ReinforceAfterWidget; }
+	class UNPC_TalkWidget* GetUMG_TalkWidget() { return UMG_TalkWidget; }
+	class UTimeAndHpWidget* GetUMG_TimeAndHp_Player() { return UMG_TimeAndHp_Player; }
+	class UCombinationMainWidget* GetUMG_CombinationMain() { return UMG_ComninationMain; }
 
 	FOnMenuWidget OnMenuWidget;
 	FChangeKeyMode ChangeKeyMode;
+
+	void InitAPValue();
 };

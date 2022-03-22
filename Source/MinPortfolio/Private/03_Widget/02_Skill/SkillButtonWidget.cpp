@@ -19,6 +19,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
 #include "Kismet/KismetInputLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void USkillButtonWidget::SetSkillButton(const FSkill* skill_info)
 {
@@ -75,6 +76,10 @@ void USkillButtonWidget::NativeConstruct()
 	Button_Skill->OnClicked.AddDynamic(this, &USkillButtonWidget::SkillButtonUp);
 	Button_Skill->OnHovered.AddDynamic(this, &USkillButtonWidget::SkillButtonHoveredEvent);
 	Button_Skill->OnUnhovered.AddDynamic(this, &USkillButtonWidget::SkillButtonUnhoveredEvent);
+
+	if (GetOwningPlayer()->IsA<ACustomController>()) {
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetButtons().Add(this);
+	}
 }
 
 FReply USkillButtonWidget::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
@@ -304,4 +309,10 @@ void USkillButtonWidget::ReturnFoucs()
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetNeedSPLack()->GetButton_Ok()->SetFocus();
 		return;
 	}
+}
+
+void USkillButtonWidget::NormalAvailableSkill()
+{
+	bAvailable = true;
+	Button_Skill->WidgetStyle.Normal.SetResourceObject(hoveredImage);
 }

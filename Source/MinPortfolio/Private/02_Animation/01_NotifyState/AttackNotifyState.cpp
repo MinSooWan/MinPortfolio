@@ -30,7 +30,7 @@ void UAttackNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequ
 			}
 			else
 			{
-				auto pa = Cast<AWeaponBaseActor>(owner->GetDoubleSwordChild()->GetChildActor())->GetAttackParticle();
+				auto pa = Cast<AWeaponBaseActor>(owner->GetEquipmentComp()->GetWeaponActor())->GetAttackParticle();
 				UGameplayStatics::SpawnEmitterAtLocation(owner, pa, owner->target->GetActorLocation(), FRotator::ZeroRotator, true);
 				Cast<ABaseCharacter>(owner->target)->GiveDamage(damage + owner->GetStatusComponent()->GetATC());
 			}
