@@ -33,18 +33,23 @@ protected:
 
 	const FComNeedInfo* itemInfo;
 
+	FName need_Code;
+
 	UPROPERTY()
 		class UImage* Image_Button;
 
 	UPROPERTY()
 		bool bApplyItem = false;
+
+	UPROPERTY()
+		class AItemActor* apItem;
 public:
 	void SetItemInfo(const FComNeedInfo* info);
 
 	void SetDefaultImage();
 	void SetHoveredImage();
 
-	void ApplyItem();
+	void ApplyItem(class AItemActor* value);
 	void CancelItem();
 
 	virtual FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;

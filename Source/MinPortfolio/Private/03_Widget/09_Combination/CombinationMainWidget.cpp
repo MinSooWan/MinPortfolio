@@ -3,8 +3,13 @@
 
 #include "03_Widget/09_Combination/CombinationMainWidget.h"
 
+#include "00_Character/00_Player/PlayerCharacter.h"
 #include "00_Character/00_Player/00_Controller/CustomController.h"
+#include "01_Item/00_Equipment/ArmorBaseActor.h"
+#include "01_Item/00_Weapon/WeaponBaseActor.h"
 #include "03_Widget/MainWidget.h"
+#include "03_Widget/09_Combination/Combination_Able_Main.h"
+#include "03_Widget/09_Combination/Combination_Able_OptionButton.h"
 #include "03_Widget/09_Combination/Combination_Inven_PanelWidget.h"
 #include "03_Widget/09_Combination/Combination_List_ButtonWidget.h"
 #include "03_Widget/09_Combination/Combination_List_PanelWidget.h"
@@ -16,6 +21,7 @@
 #include "Components/VerticalBox.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetInputLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void UCombinationMainWidget::OnCombination()
 {
@@ -26,6 +32,7 @@ void UCombinationMainWidget::OnCombination()
 	OnAllEquipment();
 	nowTypeButton = Button_All;
 	nowTypeButton->WidgetStyle.Normal.SetResourceObject(hoveredTypeImage);
+	applyItemList.Empty();
 }
 
 void UCombinationMainWidget::OnAllEquipment()
@@ -100,7 +107,16 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 			}
 			else
 			{
-				MateDown();
+				if (UMG_AbleCom->IsVisible())
+				{
+					if (UMG_AbleCom->GetVerticalBox_AddOption()->GetAllChildren().Num() > 0) {
+						OptionDown();
+					}
+				}
+				else
+				{
+					MateDown();
+				}
 			}
 		}
 	}
@@ -119,11 +135,19 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 			}
 			else
 			{
-				MateUp();
+				if(UMG_AbleCom->IsVisible())
+				{
+					if (UMG_AbleCom->GetVerticalBox_AddOption()->GetAllChildren().Num() > 0) {
+						OPtionUp();
+					}
+				}
+				else {
+					MateUp();
+				}
 			}
 		}
 	}
-	else if(InKeyEvent.GetKey() == FKey(EKeys::SpaceBar) || InKeyEvent.GetKey() == FKey(EKeys::Gamepad_DPad_Down))
+	else if(InKeyEvent.GetKey() == FKey(EKeys::SpaceBar) || InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Bottom))
 	{
 		if(CanvasPanel_List->IsVisible())
 		{
@@ -139,11 +163,26 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 			}
 			else
 			{
-				if (nowMateItem->GetApplyItem() == false) {
-					nowMateItem->Pressed_Mate();
-					if (UMG_Combination_Inven_Panel->GetVerticalBox_Inven()->GetAllChildren().Num() > 0) {
-						nowInvenItem = Cast<UCombination_List_ButtonWidget>(UMG_Combination_Inven_Panel->GetVerticalBox_Inven()->GetAllChildren()[0]);
-						nowInvenItem->SetHoveredImage();
+				if(UMG_AbleCom->IsVisible())
+				{
+					if(applyOptions.Num() < 3)
+					{
+						if (nowOptionButton != nullptr) {
+							if (nowOptionButton->GetIsApplyOption() == false) {
+								nowOptionButton->ApplyOption();
+								applyOptions.Emplace(nowOptionButton->GetAddOption());
+							}
+						}
+					}
+				}
+				else
+				{
+					if (nowMateItem->GetApplyItem() == false) {
+						nowMateItem->Pressed_Mate();
+						if (UMG_Combination_Inven_Panel->GetVerticalBox_Inven()->GetAllChildren().Num() > 0) {
+							nowInvenItem = Cast<UCombination_List_ButtonWidget>(UMG_Combination_Inven_Panel->GetVerticalBox_Inven()->GetAllChildren()[0]);
+							nowInvenItem->SetHoveredImage();
+						}
 					}
 				}
 			}
@@ -162,21 +201,97 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 			if(CanvasPanel_Inven->IsVisible())
 			{
 				CanvasPanel_Inven->SetVisibility(ESlateVisibility::Hidden);
+
 			}
 			else
 			{
-				if(applyItemList.Num() > 0)
+				if(UMG_AbleCom->IsVisible())
 				{
-					if (nowMateItem->GetApplyItem() == true) {
-						nowInvenItem->UnApplyItem();
+					if(applyOptions.Num() > 0)
+					{
+						if (nowOptionButton != nullptr) {
+							if (nowOptionButton->GetIsApplyOption() == true)
+							{
+								nowOptionButton->UnApplyOption();
+								applyOptions.Remove(nowOptionButton->GetAddOption());
+							}
+						}
+					}
+					else
+					{
+						UMG_AbleCom->SetVisibility(ESlateVisibility::Hidden);
+						CanvasPanel_Mate->SetVisibility(ESlateVisibility::Visible);
 					}
 				}
-				else
-				{
-					CanvasPanel_List->SetVisibility(ESlateVisibility::Visible);
-					CanvasPanel_Mate->SetVisibility(ESlateVisibility::Hidden);
+				else {
+					if (applyItemList.Num() > 0)
+					{
+						UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Apply Item List Cnt is Not 0");
+						if (nowMateItem->GetApplyItem() == true) {
+							nowMateItem->CancelItem();
+						}
+						else
+						{
+							UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Not Apply Item");
+						}
+					}
+					else
+					{
+						UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Apply Item List Cnt is B0");
+						CanvasPanel_List->SetVisibility(ESlateVisibility::Visible);
+						CanvasPanel_Mate->SetVisibility(ESlateVisibility::Hidden);
+					}
 				}
 			}
+		}
+	}
+	else if(InKeyEvent.GetKey() == FKey(EKeys::F) || InKeyEvent.GetKey() == FKey(EKeys::Gamepad_FaceButton_Left))
+	{
+		if(CanvasPanel_Mate->IsVisible())
+		{
+			if(UMG_Combination_Mate_Panel->AllApItem() == true)
+			{
+				UMG_AbleCom->OnComAbleWidget(nowItem->GetItemInfo());
+				if (UMG_AbleCom->GetVerticalBox_AddOption()->GetAllChildren().Num() > 0) {
+					nowOptionButton = Cast<UCombination_Able_OptionButton>(UMG_AbleCom->GetVerticalBox_AddOption()->GetAllChildren()[0]);
+					nowOptionButton->OnHoveredButton();
+				}
+
+				applyOptions.Empty();
+				UMG_AbleCom->SetVisibility(ESlateVisibility::Visible);
+				CanvasPanel_Mate->SetVisibility(ESlateVisibility::Hidden);
+				CanvasPanel_Inven->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+		else if(UMG_AbleCom->IsVisible())
+		{
+			GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeGameOnly());
+			UGameplayStatics::SetGamePaused(GetOwningPlayer(), false);
+
+			auto item = GetOwningPlayer()->GetWorld()->SpawnActor<AItemActor>(nowItem->GetItemInfo()->itemActorClass);
+
+			for(auto iter : applyItemList)
+			{
+				item->SetItemStat(item->GetItemStat() + iter->GetItemStat());
+			}
+
+			if(item->IsA<AWeaponBaseActor>())
+			{
+				WeaponAddOption(item);
+			}
+			else if(item->IsA<AArmorBaseActor>())
+			{
+				ArmorAddOption(item);
+			}
+
+			GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp()->AddItem(item);
+
+			for (auto iter : applyItemList) {
+				GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp()->RemoveItem(iter);
+			}
+
+			UMG_AbleCom->SetVisibility(ESlateVisibility::Hidden);
+			SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 
@@ -316,4 +431,119 @@ void UCombinationMainWidget::InvenUp()
 		nowInvenItem = Cast<UCombination_List_ButtonWidget>(ver->GetAllChildren().Last());
 	}
 	nowInvenItem->SetHoveredImage();
+}
+
+void UCombinationMainWidget::OptionDown()
+{
+	nowOptionButton->UnHoveredButton();
+	auto ver = UMG_AbleCom->GetVerticalBox_AddOption();
+	if(ver->GetAllChildren().Last() != nowOptionButton)
+	{
+		auto index = ver->GetAllChildren().Find(nowOptionButton);
+
+		nowOptionButton = Cast<UCombination_Able_OptionButton>(ver->GetAllChildren()[index + 1]);
+	}
+	else
+	{
+		nowOptionButton = Cast<UCombination_Able_OptionButton>(ver->GetAllChildren()[0]);
+	}
+	nowOptionButton->OnHoveredButton();
+}
+
+void UCombinationMainWidget::OPtionUp()
+{
+	nowOptionButton->UnHoveredButton();
+	auto ver = UMG_AbleCom->GetVerticalBox_AddOption();
+	if(ver->GetAllChildren()[0] != nowOptionButton)
+	{
+		auto index = ver->GetAllChildren().Find(nowOptionButton);
+
+		nowOptionButton = Cast<UCombination_Able_OptionButton>(ver->GetAllChildren()[index - 1]);
+	}
+	else
+	{
+		nowOptionButton = Cast<UCombination_Able_OptionButton>(ver->GetAllChildren().Last());
+	}
+	nowOptionButton->OnHoveredButton();
+}
+
+void UCombinationMainWidget::AddApplyItem(AItemActor* value)
+{
+	applyItemList.Emplace(value);
+}
+
+void UCombinationMainWidget::RemoveApplyItem(AItemActor* value)
+{
+	applyItemList.Remove(value);
+}
+
+void UCombinationMainWidget::WeaponAddOption(AItemActor* item)
+{
+	for(auto iter : applyOptions)
+	{
+		switch (iter)
+		{
+		case EAddOptionsType_Material::ADD_ATC:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::ADD_ATC);
+			break;
+		case EAddOptionsType_Material::ADD_DEF:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::ADD_DEF);
+			break;
+		case EAddOptionsType_Material::ADD_DEX:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::ADD_DEX);
+			break;
+		case EAddOptionsType_Material::ADD_HP:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::ADD_HP);
+			break;
+		case EAddOptionsType_Material::ADD_ITEM:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::ADD_ITEM);
+			break;
+		case EAddOptionsType_Material::ADD_EXP:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::ADD_EXP);
+			break;
+		case EAddOptionsType_Material::GIVE_DAMAGE:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::GIVE_DAMAGE);
+			break;
+		case EAddOptionsType_Material::GIVE_BURN:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::GIVE_BURN);
+			break;
+		case EAddOptionsType_Material::GIVE_FROZEN:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::GIVE_FROZEN);
+			break;
+		case EAddOptionsType_Material::GIVE_SHOCK:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::GIVE_SHOCK);
+			break;
+		case EAddOptionsType_Material::GIVE_SLOW:
+			Cast<AWeaponBaseActor>(item)->AddOption_Weapon(EAddOptionsType_Equipment_Weapon::GIVE_SLOW);
+			break;
+		}
+	}
+}
+
+void UCombinationMainWidget::ArmorAddOption(AItemActor* item)
+{
+	for (auto iter : applyOptions)
+	{
+		switch (iter)
+		{
+		case EAddOptionsType_Material::ADD_ATC:
+			Cast<AArmorBaseActor>(item)->AddOption(EAddOptionsType_Equipment::ADD_ATC);
+			break;
+		case EAddOptionsType_Material::ADD_DEF:
+			Cast<AArmorBaseActor>(item)->AddOption(EAddOptionsType_Equipment::ADD_DEF);
+			break;
+		case EAddOptionsType_Material::ADD_DEX:
+			Cast<AArmorBaseActor>(item)->AddOption(EAddOptionsType_Equipment::ADD_DEX);
+			break;
+		case EAddOptionsType_Material::ADD_HP:
+			Cast<AArmorBaseActor>(item)->AddOption(EAddOptionsType_Equipment::ADD_HP);
+			break;
+		case EAddOptionsType_Material::ADD_ITEM:
+			Cast<AArmorBaseActor>(item)->AddOption(EAddOptionsType_Equipment::ADD_ITEM);
+			break;
+		case EAddOptionsType_Material::ADD_EXP:
+			Cast<AArmorBaseActor>(item)->AddOption(EAddOptionsType_Equipment::ADD_EXP);
+			break;
+		}
+	}
 }

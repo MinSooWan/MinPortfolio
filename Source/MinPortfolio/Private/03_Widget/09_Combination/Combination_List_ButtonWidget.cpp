@@ -13,6 +13,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void UCombination_List_ButtonWidget::SetItemInfo(const FIteminfo* info)
 {
@@ -51,10 +52,13 @@ void UCombination_List_ButtonWidget::OnPressed_Inven()
 {
 	if(applyButton != nullptr)
 	{
-		Cast<UCombination_Mate_ButtonWidget>(applyButton)->ApplyItem();
+		Cast<UCombination_Mate_ButtonWidget>(applyButton)->ApplyItem(item);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetCanvasPanel_Inven()->SetVisibility(ESlateVisibility::Hidden);
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetApplyItemList().Add(item);
+
+		UKismetSystemLibrary::PrintString(GetOwningPlayer(),
+			FString::FromInt(GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetApplyItemList().Num()));
 	}
+
 }
 
 void UCombination_List_ButtonWidget::UnApplyItem()
@@ -62,7 +66,8 @@ void UCombination_List_ButtonWidget::UnApplyItem()
 	if (applyButton != nullptr)
 	{
 		Cast<UCombination_Mate_ButtonWidget>(applyButton)->CancelItem();
-		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetApplyItemList().Remove(item);
+		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->RemoveApplyItem(item);
+		
 	}
 }
 

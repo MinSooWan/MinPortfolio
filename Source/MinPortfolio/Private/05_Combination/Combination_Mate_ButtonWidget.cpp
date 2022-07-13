@@ -10,11 +10,13 @@
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void UCombination_Mate_ButtonWidget::SetItemInfo(const FComNeedInfo* info)
 {
 	TextBlock_Name->SetText(FText::FromName(info->item_Name_Com));
 	itemInfo = info;
+	need_Code = info->item_Code_Com;
 }
 
 void UCombination_Mate_ButtonWidget::SetDefaultImage()
@@ -27,16 +29,22 @@ void UCombination_Mate_ButtonWidget::SetHoveredImage()
 	Image_Sel->SetBrushFromTexture(hoveredImage);
 }
 
-void UCombination_Mate_ButtonWidget::ApplyItem()
+void UCombination_Mate_ButtonWidget::ApplyItem(AItemActor* value)
 {
 	Image_Button->SetBrushFromTexture(applyImage_Button);
 	bApplyItem = true;
+	apItem = value;
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->AddApplyItem(apItem);
 }
 
 void UCombination_Mate_ButtonWidget::CancelItem()
 {
 	Image_Button->SetBrushFromTexture(defaultImage_Button);
 	bApplyItem = false;
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->RemoveApplyItem(apItem);
+	UKismetSystemLibrary::PrintString(GetOwningPlayer(),
+		FString::FromInt(GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetApplyItemList().Num()));
+
 }
 
 FReply UCombination_Mate_ButtonWidget::NativeOnFocusReceived(const FGeometry& InGeometry,
@@ -50,6 +58,8 @@ FReply UCombination_Mate_ButtonWidget::NativeOnFocusReceived(const FGeometry& In
 
 void UCombination_Mate_ButtonWidget::Pressed_Mate()
 {
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetUMG_Combination_Inven_Panel()->needInfo = itemInfo;
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetUMG_Combination_Inven_Panel()->needCode = need_Code;
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetCanvasPanel_Inven()->SetVisibility(ESlateVisibility::Visible);
-	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetUMG_Combination_Inven_Panel()->OnInvenList(itemInfo->item_Code_Com);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetUMG_Combination_Inven_Panel()->OnInvenList(this);
 }

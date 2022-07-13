@@ -9,24 +9,36 @@
 #include "Components/VerticalBox.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-void UCombination_Inven_PanelWidget::OnInvenList(FName code)
+void UCombination_Inven_PanelWidget::OnInvenList(UUserWidget* superButton)
 {
 	VerticalBox_Inven->ClearChildren();
-	auto arr = GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp()->GetItemArray();
-	if(arr.Num() > 0)
-	{
-		for(auto iter : arr)
-		{
-			if(Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Code.IsEqual(code))
+	if (needInfo != nullptr) {
+		if (needCode != "") {
+			auto arr = GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp()->GetItemArray();
+			if (arr.Num() > 0)
 			{
-				//UKismetSystemLibrary::PrintString(GetOwningPlayer(), "equal code");
-				auto button = CreateWidget<UCombination_List_ButtonWidget>(GetOwningPlayer(), buttonClass);
-				if(button != nullptr)
+				UKismetSystemLibrary::PrintString(GetOwningPlayer(), needCode.ToString());
+				for (auto iter : arr)
 				{
-					button->SetItemInfo(Cast<AItemActor>(iter), button);
-					VerticalBox_Inven->AddChild(button);
+					if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Code.IsEqual(needCode))
+					{
+						auto button = CreateWidget<UCombination_List_ButtonWidget>(GetOwningPlayer(), buttonClass);
+						if (button != nullptr)
+						{
+							button->SetItemInfo(Cast<AItemActor>(iter), superButton);
+							VerticalBox_Inven->AddChild(button);
+						}
+					}
 				}
 			}
 		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Code Is None");
+		}
+	}
+	else
+	{
+		UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Info Is None");
 	}
 }

@@ -33,6 +33,7 @@
 #include "01_Item/02_Tool/ToolBaseActor.h"
 #include "01_Item/03_Battle_Item/BattleItemActor.h"
 #include "01_Item/03_Battle_Item/RecoveryConsumeActor.h"
+#include "03_Widget/EquippedItemWidget.h"
 #include "03_Widget/MainWidget.h"
 #include "03_Widget/02_Skill/SkillButtonWidget.h"
 #include "03_Widget/02_Skill/SkillMainWidget.h"
@@ -221,8 +222,12 @@ void APlayerCharacter::BeginPlay()
 
 		if(GetGameInstance<UMyGameInstance>()->GetStartGame() == false)
 		{
-			
 			equipmentComp->EquipmentItemAddToInven();
+			auto axe = GetWorld()->SpawnActor<AToolBaseActor>(axeToolClass);
+			auto hand = GetWorld()->SpawnActor<AToolBaseActor>(handToolClass);
+			inventoryComp->AddItem(axe);
+			inventoryComp->AddItem(hand);
+			hand->UseItem(this);
 			GetGameInstance<UMyGameInstance>()->SetStartGame(true);
 		}
 		else 
@@ -332,6 +337,8 @@ void APlayerCharacter::BeginPlay()
 			if (statComp->GetEXP() >= statComp->GetMaxEXP()) {
 				bLevelUp = true;
 			}
+
+			GetController<ACustomController>()->GetMainWidget()->GetEquippedItemWidget()->InitImage();
 		}
 	}
 	else if(GetController()->IsA<ABattleController>())
@@ -990,6 +997,12 @@ void APlayerCharacter::OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* O
 	if (OtherActor->IsA<ANPCCharacter>())
 	{
 		npc = nullptr;
+		GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if(OtherActor->IsA<ACombinationActor>())
+	{
+		Com = nullptr;
 		GetController<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Hidden);
 	}
 }

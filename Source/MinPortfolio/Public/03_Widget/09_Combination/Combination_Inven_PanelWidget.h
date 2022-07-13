@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "01_Item/ItemType.h"
 #include "Blueprint/UserWidget.h"
 #include "Combination_Inven_PanelWidget.generated.h"
 
@@ -22,7 +23,11 @@ protected:
 		TSubclassOf<class UCombination_List_ButtonWidget> buttonClass;
 public:
 
-	void OnInvenList(FName code);
+	void OnInvenList(UUserWidget* superButton);
 
 	class UVerticalBox* GetVerticalBox_Inven() { return VerticalBox_Inven; }
+
+	const FComNeedInfo* needInfo;
+
+	FName needCode;
 };

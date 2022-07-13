@@ -10,12 +10,22 @@
 #include "00_Character/01_Monster/MonsterCharacter.h"
 #include "00_Character/01_Monster/00_Controller/Battle_AIController.h"
 #include "00_Character/99_Component/BuffComponent.h"
+#include "00_Character/99_Component/EquipmentComponent.h"
+#include "00_Character/99_Component/SkillComponent.h"
+#include "00_Character/99_Component/ToolComponent.h"
+#include "01_Item/00_Equipment/EquipmentActor.h"
+#include "01_Item/00_Weapon/WeaponBaseActor.h"
 #include "01_Item/01_Material/MaterialBaseActor.h"
+#include "01_Item/03_Battle_Item/BattleItemActor.h"
+#include "01_Item/03_Battle_Item/RecoveryConsumeActor.h"
+#include "04_Skill/SkillBaseActor.h"
+#include "04_Skill/SkillInfomation.h"
 #include "96_Save/BattleSaveGame.h"
 #include "97_Task/MoveToTarget_Battle_Task.h"
 #include "98_Instance/MyGameInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -147,7 +157,7 @@ void ABaseCharacter::LoadToLevel()
 		if (player != nullptr) {
 
 			GetGameInstance<UMyGameInstance>()->bInBattle = false;
-
+			
 			UGameplayStatics::OpenLevel(this, FName(Cast<UBattleSaveGame>(SaverSubClass)->levelName));
 		}
 	}

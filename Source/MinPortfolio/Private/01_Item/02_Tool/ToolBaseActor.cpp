@@ -25,6 +25,7 @@ void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
 		auto info = item->GetItemInfo<FIteminfo>();
 
 		if (info != nullptr) {
+
 			player->GetToolComp()->GetToolActor()->Destroy();
 
 			player->GetToolComp()->SetToolActor(item);

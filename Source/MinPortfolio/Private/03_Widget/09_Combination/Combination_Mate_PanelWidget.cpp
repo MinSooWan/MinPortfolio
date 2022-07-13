@@ -17,3 +17,15 @@ void UCombination_Mate_PanelWidget::InitMateList(const FIteminfo* value)
 		}
 	}
 }
+
+bool UCombination_Mate_PanelWidget::AllApItem()
+{
+	for(auto iter : VerticalBox_MateList->GetAllChildren())
+	{
+		if(Cast<UCombination_Mate_ButtonWidget>(iter)->GetApplyItem() == false)
+		{
+			return false;
+		}
+	}
+	return true;
+}

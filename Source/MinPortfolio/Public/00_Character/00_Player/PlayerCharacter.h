@@ -147,6 +147,11 @@ protected:
 
 	UPROPERTY()
 		class ACombinationActor* Com;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AToolBaseActor> handToolClass;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AToolBaseActor> axeToolClass;
 public:
 	UPROPERTY()
 		FLoadTransform LoadTransform;

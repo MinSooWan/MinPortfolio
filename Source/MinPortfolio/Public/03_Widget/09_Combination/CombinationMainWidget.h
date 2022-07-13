@@ -48,7 +48,7 @@ protected:
 	UPROPERTY()
 		class UCombination_List_ButtonWidget* nowItem;
 	UPROPERTY()
-		class UButton* nowTypeButton;
+		class UButton* nowTypeButton; 
 
 	UPROPERTY()
 		class UHorizontalBox* HorizontalBox_TypeButtons;
@@ -60,7 +60,16 @@ protected:
 		class UCombination_List_ButtonWidget* nowInvenItem;
 
 	UPROPERTY()
+		class UCombination_Able_OptionButton* nowOptionButton;
+
+	UPROPERTY(EditAnywhere)
 		TArray<AItemActor*> applyItemList;
+
+	UPROPERTY()
+		class UCombination_Able_Main* UMG_AbleCom;
+
+	UPROPERTY()
+		TArray<EAddOptionsType_Material> applyOptions;
 public:
 
 	void OnCombination();
@@ -89,7 +98,12 @@ public:
 	void InvenDown();
 	void InvenUp();
 
+	void OptionDown();
+	void OPtionUp();
+
 	//Get
+	class UCombination_List_ButtonWidget* GetUMG_NowItem() { return nowItem; }
+
 	class UCombination_List_PanelWidget* GetUMG_CombinationPanel() { return UMG_CombinationPanel; }
 	class UCanvasPanel* GetCanvasPanel_List() { return CanvasPanel_List; }
 
@@ -100,4 +114,11 @@ public:
 	class UCanvasPanel* GetCanvasPanel_Inven() { return CanvasPanel_Inven; }
 
 	TArray<AItemActor*> GetApplyItemList() { return applyItemList; }
+
+	void AddApplyItem(AItemActor* value);
+
+	void RemoveApplyItem(AItemActor* value);
+
+	void WeaponAddOption(AItemActor* item);
+	void ArmorAddOption(AItemActor* item);
 };

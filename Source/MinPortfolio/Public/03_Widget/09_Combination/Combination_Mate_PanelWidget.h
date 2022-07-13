@@ -26,4 +26,6 @@ public:
 	class UVerticalBox* GetVerticalBox_MateList() { return VerticalBox_MateList; }
 
 	void InitMateList(const FIteminfo* value);
+
+	bool AllApItem();
 };

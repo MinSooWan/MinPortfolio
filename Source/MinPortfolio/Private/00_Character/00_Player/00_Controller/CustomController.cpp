@@ -39,6 +39,7 @@ void ACustomController::OnPossess(APawn* aPawn)
 		mainWidget = CreateWidget<UMainWidget>(this, mainWidgetClass);
 		if (mainWidget != nullptr) {
 
+
 			player->GetToolComp()->ToolCompInit();
 			player->GetEquipmentComp()->EquipmentCompInit();
 
