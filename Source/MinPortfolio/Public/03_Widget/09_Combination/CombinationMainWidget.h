@@ -70,6 +70,15 @@ protected:
 
 	UPROPERTY()
 		TArray<EAddOptionsType_Material> applyOptions;
+
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_Mate_Info;
+	UPROPERTY()
+		class UImage* Image_Mate_Image;
+	UPROPERTY()
+		class UTextBlock* TextBlock_Mate_Option;
+	UPROPERTY()
+		class UTextBlock* TextBlock_Mate_Stat;
 public:
 
 	void OnCombination();
@@ -101,6 +110,8 @@ public:
 	void OptionDown();
 	void OPtionUp();
 
+	bool IsAddOptionToInList(EAddOptionsType_Material value);
+
 	//Get
 	class UCombination_List_ButtonWidget* GetUMG_NowItem() { return nowItem; }
 
@@ -121,4 +132,9 @@ public:
 
 	void WeaponAddOption(AItemActor* item);
 	void ArmorAddOption(AItemActor* item);
+
+	FString GetAddOptionDescription_Material(EAddOptionsType_Material option);
+
+	void OnMateInfo(AItemActor* value);
+	void InitMateInfo(AItemActor* value);
 };

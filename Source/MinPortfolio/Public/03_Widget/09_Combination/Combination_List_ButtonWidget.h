@@ -49,4 +49,5 @@ public:
 	virtual FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
 
 	const FIteminfo* GetItemInfo() { return itemInfo; }
+	AItemActor* GetItem() { return item; }
 };

@@ -54,9 +54,6 @@ void UCombination_List_ButtonWidget::OnPressed_Inven()
 	{
 		Cast<UCombination_Mate_ButtonWidget>(applyButton)->ApplyItem(item);
 		GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetCanvasPanel_Inven()->SetVisibility(ESlateVisibility::Hidden);
-
-		UKismetSystemLibrary::PrintString(GetOwningPlayer(),
-			FString::FromInt(GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetApplyItemList().Num()));
 	}
 
 }

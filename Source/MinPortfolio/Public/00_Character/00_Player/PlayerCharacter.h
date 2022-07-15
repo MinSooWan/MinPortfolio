@@ -199,6 +199,8 @@ public:
 	
 	int32 GetMyGold() { return MyGold; }
 
+	class ACombinationActor* GetCom() { return Com; }
+
 	void SetMyGold(int32 value) { MyGold = value; }
 
 	class ATeleportZone* GetNextLevel() { return nextLevel; }

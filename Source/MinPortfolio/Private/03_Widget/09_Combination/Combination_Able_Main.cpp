@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "03_Widget/09_Combination/Combination_Able_Main.h"
@@ -16,6 +16,8 @@
 
 void UCombination_Able_Main::OnComAbleWidget(const FIteminfo* info)
 {
+	VerticalBox_AddOption->ClearChildren();
+
 	//image
 	item_image->SetBrushFromTexture(info->item_Image);
 
@@ -33,8 +35,8 @@ void UCombination_Able_Main::OnComAbleWidget(const FIteminfo* info)
 		hp += iter->GetItemStat().MaxHP;
 	}
 
-	str = "Str : " + FString::FromInt(atc) + "\n" + "Def : " + FString::FromInt(def) + "\n" + "Dex : " + FString::FromInt(dex) + "\n" +
-		"HP : " + FString::FromInt(hp) + "\n";
+	str = TEXT("공격력 : ") + FString::FromInt(atc) + "\n" + TEXT("방어력 : ") + FString::FromInt(def) + "\n" + TEXT("민첩성 : ") + FString::FromInt(dex) + "\n" +
+		TEXT("체력 : ") + FString::FromInt(hp) + "\n";
 	TextBlock_ItemStat->SetText(FText::FromString(str));
 
 	//addOption

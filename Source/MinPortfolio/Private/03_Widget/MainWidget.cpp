@@ -101,6 +101,7 @@ void UMainWidget::OnMenu()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainWidget::OffMenu()
@@ -115,6 +116,7 @@ void UMainWidget::OffMenu()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 
 	if (GetOwningPlayerPawn<APlayerCharacter>()->GetNextLevel() != nullptr || GetOwningPlayerPawn<APlayerCharacter>()->GetNpc() != nullptr) {
 		UMG_Key->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Visible);
@@ -133,6 +135,7 @@ void UMainWidget::OnInven()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainWidget::OffInven()
@@ -147,6 +150,7 @@ void UMainWidget::OffInven()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainWidget::OnSkillTree()
@@ -161,6 +165,7 @@ void UMainWidget::OnSkillTree()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainWidget::OffSkillTree()
@@ -175,6 +180,7 @@ void UMainWidget::OffSkillTree()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainWidget::OnEquipment()
@@ -189,6 +195,7 @@ void UMainWidget::OnEquipment()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainWidget::OffEquipment()
@@ -203,6 +210,7 @@ void UMainWidget::OffEquipment()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainWidget::OnShop()
@@ -218,6 +226,7 @@ void UMainWidget::OnShop()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainWidget::OffShop()
@@ -232,6 +241,7 @@ void UMainWidget::OffShop()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 
 	if (GetOwningPlayerPawn<APlayerCharacter>()->GetNextLevel() != nullptr || GetOwningPlayerPawn<APlayerCharacter>()->GetNpc() != nullptr) {
 		UMG_Key->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Visible);
@@ -251,6 +261,7 @@ void UMainWidget::OnReinforce()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainWidget::OffReinforce()
@@ -265,6 +276,7 @@ void UMainWidget::OffReinforce()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 
 	if (GetOwningPlayerPawn<APlayerCharacter>()->GetNextLevel() != nullptr || GetOwningPlayerPawn<APlayerCharacter>()->GetNpc() != nullptr) {
 		UMG_Key->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Visible);
@@ -284,6 +296,7 @@ void UMainWidget::OnNPCTalk()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Visible);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainWidget::OffNPCTalk()
@@ -298,8 +311,47 @@ void UMainWidget::OffNPCTalk()
 	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
 	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
 
-	if (GetOwningPlayerPawn<APlayerCharacter>()->GetNextLevel() != nullptr || GetOwningPlayerPawn<APlayerCharacter>()->GetNpc() != nullptr) {
+	if (GetOwningPlayerPawn<APlayerCharacter>()->GetNextLevel() != nullptr || GetOwningPlayerPawn<APlayerCharacter>()->GetNpc() != nullptr
+		|| GetOwningPlayer<APlayerCharacter>()->GetCom() != nullptr) {
+		UMG_Key->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UMainWidget::OnCom()
+{
+	UMG_Key->GetCanvasPanel_Main()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Menu()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Skill()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Inven()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Equipment()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Shop()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Reinforce()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMainWidget::OffCom()
+{
+	UMG_Key->GetCanvasPanel_Main()->SetVisibility(ESlateVisibility::Visible);
+	UMG_Key->GetCanvasPanel_Menu()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Skill()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Inven()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Equipment()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Shop()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Reinforce()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_ReinforceAfter()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Reinforceinfo()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_NPCTalk()->SetVisibility(ESlateVisibility::Hidden);
+	UMG_Key->GetCanvasPanel_Com()->SetVisibility(ESlateVisibility::Hidden);
+
+	if (GetOwningPlayerPawn<APlayerCharacter>()->GetNextLevel() != nullptr || GetOwningPlayerPawn<APlayerCharacter>()->GetNpc() != nullptr
+		|| GetOwningPlayerPawn<APlayerCharacter>()->GetCom() != nullptr) {
+
 		UMG_Key->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Visible);
 	}
 }

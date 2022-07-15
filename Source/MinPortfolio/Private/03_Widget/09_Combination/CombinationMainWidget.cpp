@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "03_Widget/09_Combination/CombinationMainWidget.h"
@@ -7,7 +7,9 @@
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "01_Item/00_Equipment/ArmorBaseActor.h"
 #include "01_Item/00_Weapon/WeaponBaseActor.h"
+#include "01_Item/01_Material/MaterialBaseActor.h"
 #include "03_Widget/MainWidget.h"
+#include "03_Widget/03_KeyImage/KeySettingWidget.h"
 #include "03_Widget/09_Combination/Combination_Able_Main.h"
 #include "03_Widget/09_Combination/Combination_Able_OptionButton.h"
 #include "03_Widget/09_Combination/Combination_Inven_PanelWidget.h"
@@ -18,6 +20,8 @@
 #include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/HorizontalBox.h"
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetInputLibrary.h"
@@ -27,12 +31,18 @@ void UCombinationMainWidget::OnCombination()
 {
 	GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeUIOnly());
 	UGameplayStatics::SetGamePaused(GetOwningPlayer(), true);
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->OnCom();
+	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_Going()->SetVisibility(ESlateVisibility::Hidden);
 	SetVisibility(ESlateVisibility::Visible);
+	CanvasPanel_List->SetVisibility(ESlateVisibility::Visible);
 	SetFocus();
 	OnAllEquipment();
 	nowTypeButton = Button_All;
 	nowTypeButton->WidgetStyle.Normal.SetResourceObject(hoveredTypeImage);
 	applyItemList.Empty();
+	applyOptions.Empty();
+	UMG_Combination_Inven_Panel->GetVerticalBox_Inven()->ClearChildren();
+	UMG_Combination_Mate_Panel->GetVerticalBox_MateList()->ClearChildren();
 }
 
 void UCombinationMainWidget::OnAllEquipment()
@@ -103,6 +113,7 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 			{
 				if (UMG_Combination_Inven_Panel->GetVerticalBox_Inven()->GetAllChildren().Num() > 0) {
 					InvenDown();
+					InitMateInfo(nowInvenItem->GetItem());
 				}
 			}
 			else
@@ -131,6 +142,7 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 			{
 				if (UMG_Combination_Inven_Panel->GetVerticalBox_Inven()->GetAllChildren().Num() > 0) {
 					InvenUp();
+					InitMateInfo(nowInvenItem->GetItem());
 				}
 			}
 			else
@@ -159,7 +171,16 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 		{
 			if(CanvasPanel_Inven->IsVisible())
 			{
-				nowInvenItem->OnPressed_Inven();
+				if (UMG_Combination_Inven_Panel->GetVerticalBox_Inven()->GetAllChildren().Num() > 0) {
+					nowInvenItem->OnPressed_Inven();
+					CanvasPanel_Mate_Info->SetVisibility(ESlateVisibility::Hidden);
+					if (UMG_Combination_Mate_Panel->AllApItem() == true)
+					{
+						FString str = TEXT("조합");
+						GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetTextBlock_ToCom()->SetText(FText::FromString(str));
+						GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_ToCom()->SetVisibility(ESlateVisibility::Visible);
+					}
+				}
 			}
 			else
 			{
@@ -169,8 +190,10 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 					{
 						if (nowOptionButton != nullptr) {
 							if (nowOptionButton->GetIsApplyOption() == false) {
-								nowOptionButton->ApplyOption();
-								applyOptions.Emplace(nowOptionButton->GetAddOption());
+								if (IsAddOptionToInList(nowOptionButton->GetAddOption()) == false) {
+									nowOptionButton->ApplyOption();
+									applyOptions.Emplace(nowOptionButton->GetAddOption());
+								}
 							}
 						}
 					}
@@ -182,6 +205,7 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 						if (UMG_Combination_Inven_Panel->GetVerticalBox_Inven()->GetAllChildren().Num() > 0) {
 							nowInvenItem = Cast<UCombination_List_ButtonWidget>(UMG_Combination_Inven_Panel->GetVerticalBox_Inven()->GetAllChildren()[0]);
 							nowInvenItem->SetHoveredImage();
+							OnMateInfo(nowInvenItem->GetItem());
 						}
 					}
 				}
@@ -195,13 +219,14 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 			GetOwningPlayer<ACustomController>()->SetInputMode(FInputModeGameOnly());
 			UGameplayStatics::SetGamePaused(GetOwningPlayer(), false);
 			SetVisibility(ESlateVisibility::Hidden);
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->OffCom();
 		}
 		else
 		{
 			if(CanvasPanel_Inven->IsVisible())
 			{
 				CanvasPanel_Inven->SetVisibility(ESlateVisibility::Hidden);
-
+				CanvasPanel_Mate_Info->SetVisibility(ESlateVisibility::Hidden);
 			}
 			else
 			{
@@ -214,6 +239,9 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 							{
 								nowOptionButton->UnApplyOption();
 								applyOptions.Remove(nowOptionButton->GetAddOption());
+								if (GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_ToCom()->IsVisible() == true) {
+									GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_ToCom()->SetVisibility(ESlateVisibility::Hidden);
+								}
 							}
 						}
 					}
@@ -226,18 +254,15 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 				else {
 					if (applyItemList.Num() > 0)
 					{
-						UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Apply Item List Cnt is Not 0");
 						if (nowMateItem->GetApplyItem() == true) {
 							nowMateItem->CancelItem();
-						}
-						else
-						{
-							UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Not Apply Item");
+							if (GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_ToCom()->IsVisible() == true) {
+								GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_ToCom()->SetVisibility(ESlateVisibility::Hidden);
+							}
 						}
 					}
 					else
 					{
-						UKismetSystemLibrary::PrintString(GetOwningPlayer(), "Apply Item List Cnt is B0");
 						CanvasPanel_List->SetVisibility(ESlateVisibility::Visible);
 						CanvasPanel_Mate->SetVisibility(ESlateVisibility::Hidden);
 					}
@@ -292,6 +317,8 @@ FReply UCombinationMainWidget::NativeOnKeyDown(const FGeometry& InGeometry, cons
 
 			UMG_AbleCom->SetVisibility(ESlateVisibility::Hidden);
 			SetVisibility(ESlateVisibility::Hidden);
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->GetKeySetting()->GetCanvasPanel_ToCom()->SetVisibility(ESlateVisibility::Hidden);
+			GetOwningPlayer<ACustomController>()->GetMainWidget()->OffCom();
 		}
 	}
 
@@ -467,6 +494,18 @@ void UCombinationMainWidget::OPtionUp()
 	nowOptionButton->OnHoveredButton();
 }
 
+bool UCombinationMainWidget::IsAddOptionToInList(EAddOptionsType_Material value)
+{
+	for(auto iter : applyOptions)
+	{
+		if(iter == value)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void UCombinationMainWidget::AddApplyItem(AItemActor* value)
 {
 	applyItemList.Emplace(value);
@@ -545,5 +584,111 @@ void UCombinationMainWidget::ArmorAddOption(AItemActor* item)
 			Cast<AArmorBaseActor>(item)->AddOption(EAddOptionsType_Equipment::ADD_EXP);
 			break;
 		}
+	}
+}
+
+FString UCombinationMainWidget::GetAddOptionDescription_Material(EAddOptionsType_Material option)
+{
+	FString str;
+	switch (option)
+	{
+	case EAddOptionsType_Material::ADD_ATC:
+		str = TEXT("공격력 강화");
+		return str;
+	case EAddOptionsType_Material::ADD_DEF:
+		str = TEXT("방어력 강화");
+		return str;
+	case EAddOptionsType_Material::ADD_DEX:
+		str = TEXT("민첩성 강화");
+		return str;
+	case EAddOptionsType_Material::ADD_EXP:
+		str = TEXT("빠른 성장");
+		return str;
+	case EAddOptionsType_Material::ADD_HP:
+		str = TEXT("체력 강화");
+		return str;
+	case EAddOptionsType_Material::ADD_ITEM:
+		str = TEXT("더 많이!");
+		return str;
+	case EAddOptionsType_Material::GIVE_ATC_DOWN:
+		str = TEXT("무력의 저주");
+		return str;
+	case EAddOptionsType_Material::GIVE_BURN:
+		str = TEXT("광열의 열기");
+		return str;
+	case EAddOptionsType_Material::GIVE_DAMAGE:
+		str = TEXT("강력한 파괴력");
+		return str;
+	case EAddOptionsType_Material::GIVE_DEF_DOWN:
+		str = TEXT("방어의 저주");
+		return str;
+	case EAddOptionsType_Material::GIVE_FROZEN:
+		str = TEXT("빙괴의 반향");
+		return str;
+	case EAddOptionsType_Material::GIVE_SHOCK:
+		str = TEXT("봉뢰의 마찰");
+		return str;
+	case EAddOptionsType_Material::GIVE_SLOW:
+		str = TEXT("속도의 저주");
+		return str;
+	case EAddOptionsType_Material::RECOVERY_HP:
+		str = TEXT("강력한 회복력");
+		return str;
+	case EAddOptionsType_Material::ADD_ATC_TIME:
+		str = TEXT("익스클루시브 스펠");
+		return str;
+	case EAddOptionsType_Material::ADD_DEF_TIME:
+		str = TEXT("강력한 회복력");
+		return str;
+	case EAddOptionsType_Material::ADD_DEX_TIME:
+		str = TEXT("아이언 바디");
+		return str;
+	case EAddOptionsType_Material::ADD_HP_TIME:
+		str = TEXT("리스토네이션");
+		return str;
+	}return str;
+}
+
+void UCombinationMainWidget::OnMateInfo(AItemActor* value)
+{
+	if (value != nullptr) {
+		//Image
+		Image_Mate_Image->SetBrushFromTexture(value->GetItemInfo<FIteminfo>()->item_Image);
+
+		//Stat
+		FString str = TEXT("공격력 : ") + FString::FromInt(value->GetItemStat().ATC) + "\n" + TEXT("방어력 : ") + FString::FromInt(value->GetItemStat().DEF) + "\n" +
+			TEXT("민첩성 : ") + FString::FromInt(value->GetItemStat().DEX) + "\n" + TEXT("체력 : ") + FString::FromInt(value->GetItemStat().MaxHP);
+		TextBlock_Mate_Stat->SetText(FText::FromString(str));
+
+		//AddOption
+		FString option;
+		for(auto iter : Cast<AMaterialBaseActor>(value)->GetAddOption())
+		{
+			option += GetAddOptionDescription_Material(iter) + "\n";
+		}
+		TextBlock_Mate_Option->SetText(FText::FromString(option));
+
+		CanvasPanel_Mate_Info->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UCombinationMainWidget::InitMateInfo(AItemActor* value)
+{
+	if (value != nullptr) {
+		//Image
+		Image_Mate_Image->SetBrushFromTexture(value->GetItemInfo<FIteminfo>()->item_Image);
+
+		//Stat
+		FString str = TEXT("공격력 : ") + FString::FromInt(value->GetItemStat().ATC) + "\n" + TEXT("방어력 : ") + FString::FromInt(value->GetItemStat().DEF) + "\n" +
+			TEXT("민첩성 : ") + FString::FromInt(value->GetItemStat().DEX) + "\n" + TEXT("체력 : ") + FString::FromInt(value->GetItemStat().MaxHP);
+		TextBlock_Mate_Stat->SetText(FText::FromString(str));
+
+		//AddOption
+		FString option;
+		for (auto iter : Cast<AMaterialBaseActor>(value)->GetAddOption())
+		{
+			option += GetAddOptionDescription_Material(iter) + "\n";
+		}
+		TextBlock_Mate_Option->SetText(FText::FromString(option));
 	}
 }

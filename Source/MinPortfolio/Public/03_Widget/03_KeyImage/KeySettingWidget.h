@@ -55,6 +55,9 @@ protected:
 		class UTextBlock* TextBlock_Going;
 
 	UPROPERTY()
+		class UTextBlock* TextBlock_ToCom;
+
+	UPROPERTY()
 		class UCanvasPanel* CanvasPanel_PickUp;
 
 	UPROPERTY()
@@ -66,6 +69,12 @@ protected:
 
 	UPROPERTY()
 		class UCanvasPanel* CanvasPanel_NPCTalk;
+
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_Com;
+
+	UPROPERTY()
+		class UCanvasPanel* CanvasPanel_ToCom;
 
 public:
 
@@ -86,4 +95,7 @@ public:
 	class UCanvasPanel* GetCanvasPanel_Reinforceinfo() { return CanvasPanel_Reinforceinfo; }
 	class UCanvasPanel* GetCanvasPanel_ReinforceAfter() { return CanvasPanel_ReinforceAfter; }
 	class UCanvasPanel* GetCanvasPanel_NPCTalk() { return CanvasPanel_NPCTalk; }
+	class UCanvasPanel* GetCanvasPanel_Com() { return CanvasPanel_Com; }
+	class UCanvasPanel* GetCanvasPanel_ToCom() { return CanvasPanel_ToCom; }
+	class UTextBlock* GetTextBlock_ToCom() { return TextBlock_ToCom; }
 };

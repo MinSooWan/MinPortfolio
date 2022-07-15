@@ -42,8 +42,6 @@ void UCombination_Mate_ButtonWidget::CancelItem()
 	Image_Button->SetBrushFromTexture(defaultImage_Button);
 	bApplyItem = false;
 	GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->RemoveApplyItem(apItem);
-	UKismetSystemLibrary::PrintString(GetOwningPlayer(),
-		FString::FromInt(GetOwningPlayer<ACustomController>()->GetMainWidget()->GetUMG_CombinationMain()->GetApplyItemList().Num()));
 
 }
 
