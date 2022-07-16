@@ -445,6 +445,7 @@ void APlayerCharacter::BeginPlay()
 				GetGameInstance<UMyGameInstance>()->GetTargetPoint()[0]);
 
 			if (monster != nullptr) {
+
 				monster->AIControllerClass = monster->GetBattle_Controller();
 
 				monster->SpawnDefaultController();

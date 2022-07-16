@@ -19,11 +19,17 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "97_Task/MoveToTarget_Battle_Task.h"
 #include "98_Instance/MyGameInstance.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "Components/ProgressBar.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 AMonsterCharacter::AMonsterCharacter()
 {
 	GetMesh()->SetCollisionProfileName(TEXT("Monster"));
+
+	widgetTimeAndHpComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("time and hp"));
+	widgetTimeAndHpComp->SetupAttachment(RootComponent);
+	widgetTimeAndHpComp->SetVisibility(false);
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -37,10 +43,6 @@ AMonsterCharacter::AMonsterCharacter()
 	widgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("widget"));
 	widgetComp->SetupAttachment(RootComponent);
 	widgetComp->SetVisibility(false);
-
-	widgetTimeAndHpComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("time and hp"));
-	widgetTimeAndHpComp->SetupAttachment(RootComponent);
-	widgetTimeAndHpComp->SetVisibility(false);
 }
 
 void AMonsterCharacter::BeginPlay()
@@ -130,6 +132,7 @@ void AMonsterCharacter::Tick(float DeltaTime)
 			}
 		}
 	}
+
 }
 
 void AMonsterCharacter::OnActorEndOverlapEvent(AActor* OverlappedActor, AActor* OtherActor)

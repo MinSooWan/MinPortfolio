@@ -7,5 +7,5 @@
 UBattleSaveGame::UBattleSaveGame()
 {
 	SaveSlotName = TEXT("TestSaveSlot");
-	UserIndex = 0;
+	UserIndex = 1;
 }

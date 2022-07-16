@@ -19,9 +19,16 @@ EBTNodeResult::Type UTask_BattleAction::ExecuteTask(UBehaviorTreeComponent& Owne
 		float num = FMath::RandRange(3, 9);
 
 		owner->GetwidgetTimeAndHpComp()->SetVisibility(true);
-		Cast<UTimeAndHpWidget>(owner->GetwidgetTimeAndHpComp()->GetWidget())->InitTime(num);
-		Cast<UTimeAndHpWidget>(owner->GetwidgetTimeAndHpComp()->GetWidget())->GetProgressBar_HP()->SetPercent(owner->GetStatusComponent()->GetHP() / owner->GetStatusComponent()->GetMaxHP());
-		owner->ActionChange(num);
+		if (owner->GetwidgetTimeAndHpComp() != nullptr) {
+			Cast<UTimeAndHpWidget>(owner->GetwidgetTimeAndHpComp()->GetWidget())->InitTime(num);
+			Cast<UTimeAndHpWidget>(owner->GetwidgetTimeAndHpComp()->GetWidget())->GetProgressBar_HP()->SetPercent(owner->GetStatusComponent()->GetHP() / owner->GetStatusComponent()->GetMaxHP());
+			owner->ActionChange(num);
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(owner, "Comp is null");
+
+		}
 	}
 
 	return EBTNodeResult::InProgress;

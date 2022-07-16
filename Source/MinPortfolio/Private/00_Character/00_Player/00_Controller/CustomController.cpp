@@ -264,6 +264,7 @@ void ACustomController::ChangeBattleLevel()
 					info.bIsDestroy = true;
 				}
 				GetGameInstance<UMyGameInstance>()->allMonInfo.Add(Cast<AMonsterCharacter>(iter)->GetHomeLocation(), info);
+
 			}
 		}
 

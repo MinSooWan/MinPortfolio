@@ -19,11 +19,23 @@ void ABattle_AIController::OnPossess(APawn* InPawn)
 	auto monster = Cast<AMonsterCharacter>(InPawn);
 	if (monster != nullptr)
 	{
-		if (monster->GetAiTree() != nullptr)
+		if (monster->GetBattle_aiTree() != nullptr)
 		{
+
 			RunBehaviorTree(monster->GetBattle_aiTree());
 			GetBlackboardComponent()->SetValueAsVector("HomeLocation", InPawn->GetActorLocation());
-
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(monster, "ai Tree null");
 		}
 	}
 }
+
+ void ABattle_AIController::OnBattleTree()
+ {
+	 auto monster = Cast<AMonsterCharacter>(GetPawn());
+	 if (monster != nullptr) {
+		 
+	 }
+ }

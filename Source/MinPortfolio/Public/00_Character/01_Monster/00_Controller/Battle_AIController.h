@@ -19,4 +19,6 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	virtual void OnPossess(APawn* InPawn) override;
+
+	void OnBattleTree();
 };

@@ -97,6 +97,9 @@ protected:
 	UPROPERTY()
 		FRotator playerRot;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> loadingWidgetClass;
+
 public:
 	UPROPERTY()
 		TMap<FVector, FAddOptions> materialActors;
@@ -113,6 +116,8 @@ public:
 		FCharacterStat stat;
 
 	void ClearArrays();
+
+	virtual void Init() override;
 
 	//Set Function
 	void SetTarget(TSubclassOf<class AMonsterCharacter> value) { target = value; }
@@ -141,4 +146,7 @@ public:
 	FVector GetPlayerLocation() { return playerLoc; }
 	FRotator GetPlayerRotation() { return playerRot; }
 	TArray<FHaveItemInfo> GetHaveItems() { return haveItems; }
+
+	UFUNCTION()
+		void ShowLoadingScreen(const FString& mapName);
 };

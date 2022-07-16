@@ -28,9 +28,9 @@ void UMenuWidget::NativeConstruct()
 	buttonArray.Emplace(Button_Inventory);
 	buttonArray.Emplace(Button_Skill);
 	buttonArray.Emplace(Button_Equipment);
-	buttonArray.Emplace(Button_Quest);
+	//buttonArray.Emplace(Button_Quest);
 
-	previous_button = Button_Quest;
+	previous_button = Button_Equipment;
 	next_button = Button_Skill;
 	now_button = Button_Inventory;
 
@@ -101,7 +101,7 @@ void UMenuWidget::EquipmentHovered()
 
 void UMenuWidget::QuestHovered()
 {
-	SetImage(Image_Quest, pressedImage);
+	//SetImage(Image_Quest, pressedImage);
 }
 
 //Unhovered
@@ -122,7 +122,7 @@ void UMenuWidget::EquipmentUnhovered()
 
 void UMenuWidget::QuestUnhovered()
 {
-	SetImage(Image_Quest, defaultImage);
+	//SetImage(Image_Quest, defaultImage);
 }
 
 void UMenuWidget::SetImage(UImage* widget_image, UTexture2D* image)
@@ -186,11 +186,11 @@ void UMenuWidget::pressedPrevious()
 
 void UMenuWidget::OnMenuWidget()
 {
-	previous_button = Button_Quest;
+	previous_button = Button_Equipment;
 	next_button = Button_Skill;
 	now_button = Button_Inventory;
 	Button_Equipment->OnUnhovered.Broadcast();
-	Button_Quest->OnUnhovered.Broadcast();
+	//Button_Quest->OnUnhovered.Broadcast();
 	Button_Skill->OnUnhovered.Broadcast();
 	SetVisibility(ESlateVisibility::Visible);
 	Button_Inventory->OnHovered.Broadcast();
