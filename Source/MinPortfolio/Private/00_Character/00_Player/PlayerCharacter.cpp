@@ -48,6 +48,7 @@
 #include "05_Combination/CombinationActor.h"
 #include "95_Zone/TeleportZone.h"
 #include "96_Save/BattleSaveGame.h"
+#include "96_Save/MySaveGame.h"
 #include "98_Instance/MyGameInstance.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -230,115 +231,125 @@ void APlayerCharacter::BeginPlay()
 			hand->UseItem(this);
 			GetGameInstance<UMyGameInstance>()->SetStartGame(true);
 		}
-		else 
+		else
 		{
-			//위치
-			if (!GetGameInstance<UMyGameInstance>()->GetPlayerLocation().IsZero()) {
-				LoadTransform.Broadcast(GetGameInstance<UMyGameInstance>()->GetPlayerLocation(), GetGameInstance<UMyGameInstance>()->GetPlayerRotation());
-			}
-			
-			//인벤
-			for (auto i = 0; i < GetGameInstance<UMyGameInstance>()->GetInven().Num(); i++)
-			{
-				auto item = GetWorld()->SpawnActor<AItemActor>(GetGameInstance<UMyGameInstance>()->GetInven()[i]);
-				item->SetActorHiddenInGame(true);
-				
-				switch (item->GetItemInfo<FIteminfo>()->item_Type)
+			UMySaveGame* loadGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+			if (loadGameInstance != nullptr) {
+				if(loadGameInstance->bSaveGame == true)
 				{
-				case EItemType::BATTLE_ITEM:
-					if (item->GetItemInfo<FBattleItem>()->battleItemType == EBattleItemType::BATTLE_CONSUME) {
-						for (auto iter : GetGameInstance<UMyGameInstance>()->haveItems[i].battleItemAddOptions)
+					LoadToSave();
+				}
+				else
+				{
+					//위치
+					if (!GetGameInstance<UMyGameInstance>()->GetPlayerLocation().IsZero()) {
+						LoadTransform.Broadcast(GetGameInstance<UMyGameInstance>()->GetPlayerLocation(), GetGameInstance<UMyGameInstance>()->GetPlayerRotation());
+					}
+
+					//인벤
+					for (auto i = 0; i < GetGameInstance<UMyGameInstance>()->GetInven().Num(); i++)
+					{
+						auto item = GetWorld()->SpawnActor<AItemActor>(GetGameInstance<UMyGameInstance>()->GetInven()[i]);
+						item->SetActorHiddenInGame(true);
+
+						switch (item->GetItemInfo<FIteminfo>()->item_Type)
 						{
-							Cast<ABattleItemActor>(item)->AddOption(iter);
+						case EItemType::BATTLE_ITEM:
+							if (item->GetItemInfo<FBattleItem>()->battleItemType == EBattleItemType::BATTLE_CONSUME) {
+								for (auto iter : GetGameInstance<UMyGameInstance>()->haveItems[i].battleItemAddOptions)
+								{
+									Cast<ABattleItemActor>(item)->AddOption(iter);
+								}
+							}
+							else
+							{
+								for (auto iter : GetGameInstance<UMyGameInstance>()->haveItems[i].recoveryItemAddOptions)
+								{
+									Cast<ARecoveryConsumeActor>(item)->AddOption(iter);
+								}
+							}
+							break;
+						case EItemType::EQUIPMENT:
+							if (item->GetItemInfo<FEquipment>()->equipment_Type == EEquipmentType::WEAPON)
+							{
+								for (auto iter : GetGameInstance<UMyGameInstance>()->haveItems[i].weaponAddOption)
+								{
+									Cast<AWeaponBaseActor>(item)->AddOption_Weapon(iter);
+								}
+							}
+							else
+							{
+								for (auto iter : GetGameInstance<UMyGameInstance>()->haveItems[i].armorAddOption)
+								{
+									Cast<AArmorBaseActor>(item)->AddOption(iter);
+								}
+							}
+
+							item->SetItemStat(GetGameInstance<UMyGameInstance>()->haveItems[i].stat);
+							break;
+						case EItemType::MATERIAL:
+							for (auto iter : GetGameInstance<UMyGameInstance>()->haveItems[i].materialAddOptions)
+							{
+								Cast<AMaterialBaseActor>(item)->AddOption(iter);
+							}
+							item->SetItemStat(GetGameInstance<UMyGameInstance>()->haveItems[i].stat);
+							break;
+						case EItemType::GATHERING_TOOL:
+							item->SetItemStat(GetGameInstance<UMyGameInstance>()->haveItems[i].stat);
+							break;
+						}
+
+						inventoryComp->AddItem(item);
+					}
+
+					//장비
+					for (auto i = 0; i < inventoryComp->GetItemArray().Num(); i++)
+					{
+						AItemActor* item = Cast<AItemActor>(inventoryComp->GetItemArray()[i]);
+						if (item->GetItemInfo<FIteminfo>()->item_Type == EItemType::EQUIPMENT)
+						{
+							if (GetGameInstance<UMyGameInstance>()->GetHaveItems()[i].bEquipped == true)
+							{
+								item->UseItem(this);
+							}
+						}
+						else if (item->GetItemInfo<FIteminfo>()->item_Type == EItemType::GATHERING_TOOL)
+						{
+							if (GetGameInstance<UMyGameInstance>()->GetHaveItems()[i].bEquipped == true)
+							{
+								item->UseItem(this);
+							}
 						}
 					}
-					else
+
+					//스킬
+					for (auto iter : GetGameInstance<UMyGameInstance>()->GetSkill())
 					{
-						for (auto iter : GetGameInstance<UMyGameInstance>()->haveItems[i].recoveryItemAddOptions)
-						{
-							Cast<ARecoveryConsumeActor>(item)->AddOption(iter);
-						}
+						auto skill = GetWorld()->SpawnActor<ASkillBaseActor>(iter);
+						skill->SetActorHiddenInGame(true);
+
+						skillComp->AddSkill(skill);
 					}
-					break;
-				case EItemType::EQUIPMENT:
-					if (item->GetItemInfo<FEquipment>()->equipment_Type == EEquipmentType::WEAPON)
-					{
-						for (auto iter : GetGameInstance<UMyGameInstance>()->haveItems[i].weaponAddOption)
+
+					for (auto iter : skillComp->GetSkills()) {
+						for (auto i : GetController<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetButtons())
 						{
-							Cast<AWeaponBaseActor>(item)->AddOption_Weapon(iter);
-						}
-					}
-					else
-					{
-						for (auto iter : GetGameInstance<UMyGameInstance>()->haveItems[i].armorAddOption)
-						{
-							Cast<AArmorBaseActor>(item)->AddOption(iter);
+							if (Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skill_code.IsEqual(i->skillInfo->skill_code))
+							{
+								i->NormalAvailableSkill();
+							}
 						}
 					}
 
-					item->SetItemStat(GetGameInstance<UMyGameInstance>()->haveItems[i].stat);
-					break;
-				case EItemType::MATERIAL:
-					for (auto iter : GetGameInstance<UMyGameInstance>()->haveItems[i].materialAddOptions)
-					{
-						Cast<AMaterialBaseActor>(item)->AddOption(iter);
+					//스텟
+					InitStat();
+					if (statComp->GetEXP() >= statComp->GetMaxEXP()) {
+						bLevelUp = true;
 					}
-					item->SetItemStat(GetGameInstance<UMyGameInstance>()->haveItems[i].stat);
-					break;
-				case EItemType::GATHERING_TOOL:
-					item->SetItemStat(GetGameInstance<UMyGameInstance>()->haveItems[i].stat);
-					break;
-				}
 
-				inventoryComp->AddItem(item);
-			}
-
-			//장비
-			for (auto i = 0; i < inventoryComp->GetItemArray().Num(); i++)
-			{
-				AItemActor* item = Cast<AItemActor>(inventoryComp->GetItemArray()[i]);
-				if (item->GetItemInfo<FIteminfo>()->item_Type == EItemType::EQUIPMENT)
-				{
-					if (GetGameInstance<UMyGameInstance>()->GetHaveItems()[i].bEquipped == true)
-					{
-						item->UseItem(this);
-					}
-				}
-				else if(item->GetItemInfo<FIteminfo>()->item_Type == EItemType::GATHERING_TOOL)
-				{
-					if (GetGameInstance<UMyGameInstance>()->GetHaveItems()[i].bEquipped == true)
-					{
-						item->UseItem(this);
-					}
+					GetController<ACustomController>()->GetMainWidget()->GetEquippedItemWidget()->InitImage();
 				}
 			}
-
-			//스킬
-			for (auto iter : GetGameInstance<UMyGameInstance>()->GetSkill())
-			{
-				auto skill = GetWorld()->SpawnActor<ASkillBaseActor>(iter);
-				skill->SetActorHiddenInGame(true);
-
-				skillComp->AddSkill(skill);
-			}
-
-			for (auto iter : skillComp->GetSkills()) {
-				for (auto i : GetController<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetButtons())
-				{
-					if (Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skill_code.IsEqual(i->skillInfo->skill_code))
-					{
-						i->NormalAvailableSkill();
-					}
-				}
-			}
-
-			//스텟
-			InitStat();
-			if (statComp->GetEXP() >= statComp->GetMaxEXP()) {
-				bLevelUp = true;
-			}
-
-			GetController<ACustomController>()->GetMainWidget()->GetEquippedItemWidget()->InitImage();
 		}
 	}
 	else if(GetController()->IsA<ABattleController>())
@@ -1034,4 +1045,121 @@ void APlayerCharacter::OnEndDieAnimation()
 {
 	GetController<ABattleController>()->GoingToHome();
 	UGameplayStatics::OpenLevel(this, "Home_Level");
+}
+
+void APlayerCharacter::LoadToSave()
+{
+	UMySaveGame* loadGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	if (loadGameInstance != nullptr) {	//위치
+		LoadTransform.Broadcast(loadGameInstance->playerLoc, loadGameInstance->playerRot);
+
+		//인벤
+		for (auto i = 0; i < loadGameInstance->inven.Num(); i++)
+		{
+			auto item = GetWorld()->SpawnActor<AItemActor>(loadGameInstance->inven[i]);
+			item->SetActorHiddenInGame(true);
+
+			switch (item->GetItemInfo<FIteminfo>()->item_Type)
+			{
+			case EItemType::BATTLE_ITEM:
+				if (item->GetItemInfo<FBattleItem>()->battleItemType == EBattleItemType::BATTLE_CONSUME) {
+					for (auto iter : loadGameInstance->haveItems[i].battleItemAddOptions)
+					{
+						Cast<ABattleItemActor>(item)->AddOption(iter);
+					}
+				}
+				else
+				{
+					for (auto iter : loadGameInstance->haveItems[i].recoveryItemAddOptions)
+					{
+						Cast<ARecoveryConsumeActor>(item)->AddOption(iter);
+					}
+				}
+				break;
+			case EItemType::EQUIPMENT:
+				if (item->GetItemInfo<FEquipment>()->equipment_Type == EEquipmentType::WEAPON)
+				{
+					for (auto iter : loadGameInstance->haveItems[i].weaponAddOption)
+					{
+						Cast<AWeaponBaseActor>(item)->AddOption_Weapon(iter);
+					}
+				}
+				else
+				{
+					for (auto iter : loadGameInstance->haveItems[i].armorAddOption)
+					{
+						Cast<AArmorBaseActor>(item)->AddOption(iter);
+					}
+				}
+
+				item->SetItemStat(loadGameInstance->haveItems[i].stat);
+				break;
+			case EItemType::MATERIAL:
+				for (auto iter : loadGameInstance->haveItems[i].materialAddOptions)
+				{
+					Cast<AMaterialBaseActor>(item)->AddOption(iter);
+				}
+				item->SetItemStat(loadGameInstance->haveItems[i].stat);
+				break;
+			case EItemType::GATHERING_TOOL:
+				item->SetItemStat(loadGameInstance->haveItems[i].stat);
+				break;
+			}
+
+			inventoryComp->AddItem(item);
+		}
+
+		//장비
+		for (auto i = 0; i < inventoryComp->GetItemArray().Num(); i++)
+		{
+			AItemActor* item = Cast<AItemActor>(inventoryComp->GetItemArray()[i]);
+			if (item->GetItemInfo<FIteminfo>()->item_Type == EItemType::EQUIPMENT)
+			{
+				if (loadGameInstance->haveItems[i].bEquipped == true)
+				{
+					item->UseItem(this);
+				}
+			}
+			else if (item->GetItemInfo<FIteminfo>()->item_Type == EItemType::GATHERING_TOOL)
+			{
+				if (loadGameInstance->haveItems[i].bEquipped == true)
+				{
+					item->UseItem(this);
+				}
+			}
+		}
+
+		//스킬
+		for (auto iter : loadGameInstance->skill)
+		{
+			auto skill = GetWorld()->SpawnActor<ASkillBaseActor>(iter);
+			skill->SetActorHiddenInGame(true);
+
+			skillComp->AddSkill(skill);
+		}
+
+		for (auto iter : skillComp->GetSkills()) {
+			for (auto i : GetController<ACustomController>()->GetMainWidget()->GetSkillMainWidget()->GetSkillTreeWidget()->GetButtons())
+			{
+				if (Cast<ASkillBaseActor>(iter)->GetSkillInfo<FSkill>()->skill_code.IsEqual(i->skillInfo->skill_code))
+				{
+					i->NormalAvailableSkill();
+				}
+			}
+		}
+
+		//스텟
+		statComp->SetHP(loadGameInstance->stat.HP);
+		statComp->SetATC(loadGameInstance->stat.ATC);
+		statComp->SetDEF(loadGameInstance->stat.DEF);
+		statComp->SetDEX(loadGameInstance->stat.DEX);
+		statComp->SetMaxHP(loadGameInstance->stat.MaxHP);
+		statComp->SetEXP(loadGameInstance->stat.EXP);
+		statComp->SetMaxEXP(loadGameInstance->stat.MaxEXP);
+		statComp->SetSP(loadGameInstance->stat.SkillPoint);
+		statComp->SetCharacterLevel(loadGameInstance->stat.Character_Level);
+		statComp->SetSP(loadGameInstance->stat.SkillPoint);
+
+		GetController<ACustomController>()->GetMainWidget()->GetEquippedItemWidget()->InitImage();
+	}
 }

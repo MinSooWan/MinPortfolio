@@ -73,6 +73,9 @@ protected:
 		bool bStartGame = false;
 
 	UPROPERTY()
+		bool bLoadGame = false;
+
+	UPROPERTY()
 		TSubclassOf<class AMonsterCharacter> target;
 
 	UPROPERTY(EditAnywhere)

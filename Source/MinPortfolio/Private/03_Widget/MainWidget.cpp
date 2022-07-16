@@ -16,6 +16,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
+#include "03_Widget/11_Pause/PauseWidget.h"
 
 void UMainWidget::NativeConstruct()
 {
@@ -85,6 +86,13 @@ void UMainWidget::ChangeKeyImage(bool IsKeyMode)
 		{
 			iter->SetVisibility(ESlateVisibility::Visible);
 		}
+	}
+}
+
+void UMainWidget::PresedOnPause()
+{
+	if (!UMG_Pause->IsVisible()) {
+		UMG_Pause->OnPauseWidget();
 	}
 }
 

@@ -73,6 +73,8 @@ void ACustomController::SetupInputComponent()
 		InputComponent->BindAction("Attack", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedAttack);
 
 		InputComponent->BindAction("OnMenu", EInputEvent::IE_Pressed, GetPawn<APlayerCharacter>(), &APlayerCharacter::PresedOnMenu);
+
+		InputComponent->BindAction("OnPause", EInputEvent::IE_Pressed, mainWidget, &UMainWidget::PresedOnPause);
 	}
 }
 

@@ -16,8 +16,8 @@ class MINPORTFOLIO_API UPauseWidget : public UUserWidget
 
 protected:
 
-	UPROPERTY()
-		class UButton* Button_Save;
+
+		//class UButton* Button_Save;
 	UPROPERTY()
 		class UButton* Button_Exit;
 
@@ -38,4 +38,6 @@ public:
 		void OnExitButton();
 	UFUNCTION()
 		void OnSaveButton();
+
+	void load();
 };

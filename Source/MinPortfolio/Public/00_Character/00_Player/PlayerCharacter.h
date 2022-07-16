@@ -260,4 +260,6 @@ protected:
 
 	UFUNCTION()
 		void OnEndDieAnimation();
+
+	void LoadToSave();
 };

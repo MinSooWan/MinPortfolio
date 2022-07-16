@@ -107,6 +107,9 @@ protected:
 	UPROPERTY()
 		class UCombinationMainWidget* UMG_ComninationMain;
 
+	UPROPERTY()
+		class UPauseWidget* UMG_Pause;
+
 public:
 	const TMap<FKey, class UTexture2D*> GetKeyImage() { return keyImage; }
 
@@ -117,6 +120,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void ChangeKeyImage(bool IsKeyMode);
+
+	UFUNCTION()
+		void PresedOnPause();
 
 	void OnMenu();
 	void OffMenu();
