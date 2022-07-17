@@ -17,7 +17,6 @@ void UCombination_Inven_PanelWidget::OnInvenList(UUserWidget* superButton)
 			auto arr = GetOwningPlayerPawn<APlayerCharacter>()->GetInventoryComp()->GetItemArray();
 			if (arr.Num() > 0)
 			{
-				UKismetSystemLibrary::PrintString(GetOwningPlayer(), needCode.ToString());
 				for (auto iter : arr)
 				{
 					if (Cast<AItemActor>(iter)->GetItemInfo<FIteminfo>()->item_Code.IsEqual(needCode))
