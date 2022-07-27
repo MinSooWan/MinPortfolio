@@ -341,6 +341,14 @@ void UEquipmentMainWidget::OnEquipmentWidget()
 	nowButton = Button_Weapon;
 	nowButton->WidgetStyle.Normal.SetResourceObject(hoveredTexture);
 
+	TextBlock_Stat_HP->SetText(FText::FromString(FString::FromInt(GetOwningPlayerPawn<APlayerCharacter>()->GetStatusComponent()->GetHP()) + 
+	" / " + FString::FromInt(GetOwningPlayerPawn<APlayerCharacter>()->GetStatusComponent()->GetMaxHP())));
+	//UKismetSystemLibrary::PrintString(GetOwningPlayer(),TextBlock_Stat_HP->Text.ToString());
+
+	TextBlock_Stat_DEX->SetText(FText::FromString(FString::FromInt(GetOwningPlayerPawn<APlayerCharacter>()->GetStatusComponent()->GetDEX())));
+	TextBlock_Stat_DEF->SetText(FText::FromString(FString::FromInt(GetOwningPlayerPawn<APlayerCharacter>()->GetStatusComponent()->GetDEF())));
+	TextBlock_Stat_SP->SetText(FText::FromString(FString::FromInt(GetOwningPlayerPawn<APlayerCharacter>()->GetStatusComponent()->GetSP())));
+	TextBlock_Stat_ATC->SetText(FText::FromString(FString::FromInt(GetOwningPlayerPawn<APlayerCharacter>()->GetStatusComponent()->GetATC())));
 	SetItemImage();
 }
 

@@ -47,6 +47,8 @@ public:
 	void InitShopItemlist();
 
 	FString GetAddOptionDescription_Material(EAddOptionsType_Material option);
+	FString GetAddOptionDescription_BattleItem(EAddOptionsType_BattleItem option);
+	FString GetAddOptionDescription_RecoveryItem(EAddOptionsType_RecoveryItem option);
 	void SetItemInfo(class AItemActor* value);
 
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;

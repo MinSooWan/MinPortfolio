@@ -82,6 +82,7 @@ void AWeaponBaseActor::UseItem(class ABaseCharacter* owner)
 		if (info != nullptr) {
 			AItemActor* spawnItem = Cast<AItemActor>(this);
 
+			spawnItem->SetActorHiddenInGame(true);
 			if (player->GetEquipmentComp()->GetWeaponActor() != nullptr) {
 				RemoveStat(player, player->GetEquipmentComp()->GetWeaponActor()->GetItemStat());
 				Cast<AEquipmentActor>(player->GetEquipmentComp()->GetWeaponActor())->SetEquipped(false);
@@ -176,8 +177,9 @@ void AWeaponBaseActor::ItemChange(APlayerCharacter* player, const FEquipment* in
 		Cast<AEquipmentActor>(player->GetWeaponChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(info->mesh);
 
 		player->GetWeaponChildActor()->SetVisibility(false);
+		player->GetWeaponChildActor()->SetHiddenInGame(true);
+		player->GetWeaponChildActor()->GetChildActor()->SetActorHiddenInGame(true);
 
-		//player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FWeapon>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
 		if (player->GetSkillComp()->GetSkillCodes().Contains("Skill_Passive_WeaponAtcUp"))
 		{
 			player->GetStatusComponent()->AddATC(30);

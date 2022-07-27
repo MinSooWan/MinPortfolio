@@ -78,6 +78,16 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		class UChildActorComponent* ToolChild;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = BPClasses)
+		UClass* OneHandAnim;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = BPClasses)
+		UClass* BowAnim;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = BPClasses)
+		UClass* TwoHandAnim;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = BPClasses)
+		UClass* WandAnim;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = BPClasses)
+		UClass* DoubleAnim;
 	/*
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 		class USceneCaptureComponent2D* sceneCapture;

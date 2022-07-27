@@ -51,7 +51,13 @@ void UEquipmentComponent::EquipmentCompInit()
 
 	if (spawnWeapon != nullptr && spawnArmor != nullptr && spawnPants != nullptr) {
 		if (CheckInven(spawnWeapon) && CheckInven(spawnArmor) && CheckInven(spawnPants)) {
+			spawnDouble->SetActorHiddenInGame(true);
+			spawnArmor->SetActorHiddenInGame(true);
+			spawnWeapon->SetActorHiddenInGame(true);
+			spawnPants->SetActorHiddenInGame(true);
+
 			GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->SetChildActorClass(defaultDoubleSwordActorClass);
+			
 			Cast<AEquipmentActor>(GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor())->
 				GetStaticMesh()->SetStaticMesh(spawnDouble->GetItemInfo<FWeapon>()->mesh);
 
@@ -86,6 +92,14 @@ void UEquipmentComponent::EquipmentCompInit()
 			spawnPants->Destroy();
 		}
 	}
+
+	GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->SetVisibility(false);
+	GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->SetHiddenInGame(true);
+	GetOwner<APlayerCharacter>()->GetDoubleSwordChild()->GetChildActor()->SetActorHiddenInGame(true);
+
+	GetOwner<APlayerCharacter>()->GetWeaponChildActor()->SetVisibility(false);
+	GetOwner<APlayerCharacter>()->GetWeaponChildActor()->SetHiddenInGame(true);
+	GetOwner<APlayerCharacter>()->GetWeaponChildActor()->GetChildActor()->SetActorHiddenInGame(true);
 }
 
 void UEquipmentComponent::SetWeaponActor(const FIteminfo& itemInfo, AItemActor* item)

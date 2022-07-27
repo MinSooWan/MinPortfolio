@@ -241,7 +241,7 @@ void AMonsterCharacter::ActionChange_Impossible()
 {
 	Super::ActionChange_Impossible();
 
-	EAttackType useAttackType;
+	EAttackType useAttackType = EAttackType::MELEE_ATTACK;
 	if (attackNum == 1) {
 		useAttackType = attack1_type;
 	}

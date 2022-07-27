@@ -14,9 +14,9 @@ void UCombination_List_PanelWidget::OnAllEquipment()
 
 	if(WeaponTable != nullptr)
 	{
-		for(auto iter : WeaponTable->GetRowNames())
+		for(auto iter : Cast<UDataTable>(WeaponTable)->GetRowNames())
 		{
-			auto info = WeaponTable->FindRow<FWeapon>(iter, "");
+			auto info = Cast<UDataTable>(WeaponTable)->FindRow<FWeapon>(iter, "");
 			if (info != nullptr) {
 				if (info->item_Code != "item_Equipment_NoWeapon") {
 					auto button = CreateWidget<UCombination_List_ButtonWidget>(GetOwningPlayer(), buttonClass);
@@ -31,9 +31,9 @@ void UCombination_List_PanelWidget::OnAllEquipment()
 	}
 	if(ArmorTable != nullptr)
 	{
-		for (auto iter : ArmorTable->GetRowNames())
+		for (auto iter : Cast<UDataTable>(ArmorTable)->GetRowNames())
 		{
-			auto info = ArmorTable->FindRow<FArmor>(iter, "");
+			auto info = Cast<UDataTable>(ArmorTable)->FindRow<FArmor>(iter, "");
 			if (info != nullptr) {
 				if (info->item_Code != "item_Equipment_NoArmor" && info->item_Code != "item_Equipment_NoShoes") {
 					auto button = CreateWidget<UCombination_List_ButtonWidget>(GetOwningPlayer(), buttonClass);
@@ -54,9 +54,9 @@ void UCombination_List_PanelWidget::OnWeapon()
 
 	if (WeaponTable != nullptr)
 	{
-		for (auto iter : WeaponTable->GetRowNames())
+		for (auto iter : Cast<UDataTable>(WeaponTable)->GetRowNames())
 		{
-			auto info = WeaponTable->FindRow<FWeapon>(iter, "");
+			auto info = Cast<UDataTable>(WeaponTable)->FindRow<FWeapon>(iter, "");
 			if (info != nullptr) {
 				if (info->item_Code != "item_Equipment_NoWeapon") {
 					auto button = CreateWidget<UCombination_List_ButtonWidget>(GetOwningPlayer(), buttonClass);
@@ -77,9 +77,9 @@ void UCombination_List_PanelWidget::OnArmor()
 
 	if (ArmorTable != nullptr)
 	{
-		for (auto iter : ArmorTable->GetRowNames())
+		for (auto iter : Cast<UDataTable>(ArmorTable)->GetRowNames())
 		{
-			auto info = ArmorTable->FindRow<FArmor>(iter, "");
+			auto info = Cast<UDataTable>(ArmorTable)->FindRow<FArmor>(iter, "");
 			if (info != nullptr) {
 				if (info->armorType == EArmorType::TOP) {
 					if (info->item_Code != "item_Equipment_NoArmor") {
@@ -102,9 +102,9 @@ void UCombination_List_PanelWidget::OnShoes()
 
 	if (ArmorTable != nullptr)
 	{
-		for (auto iter : ArmorTable->GetRowNames())
+		for (auto iter : Cast<UDataTable>(ArmorTable)->GetRowNames())
 		{
-			auto info = ArmorTable->FindRow<FArmor>(iter, "");
+			auto info = Cast<UDataTable>(ArmorTable)->FindRow<FArmor>(iter, "");
 			if (info != nullptr) {
 				if (info->armorType == EArmorType::SHOES) {
 					if (info->item_Code != "item_Equipment_NoShoes") {

@@ -37,7 +37,7 @@ void AToolBaseActor::ToolChange(APlayerCharacter* player, AItemActor* item)
 			player->GetToolChildActor()->SetChildActorClass(info->itemActorClass);
 			Cast<AToolBaseActor>(player->GetToolChildActor()->GetChildActor())->GetStaticMesh()->SetStaticMesh(staticMesh->GetStaticMesh());
 
-			player->GetMesh()->SetAnimInstanceClass(item->GetItemInfo<FGatheringTool>()->weaponAnimationBP->GetAnimBlueprintGeneratedClass());
+			player->GetMesh()->SetAnimInstanceClass(UseAnim);
 
 			Cast<AToolBaseActor>(player->GetToolComp()->GetToolActor())->playerOwner = player;
 		}

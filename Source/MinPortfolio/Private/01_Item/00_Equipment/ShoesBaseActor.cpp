@@ -63,6 +63,7 @@ void AShoesBaseActor::UseItem(ABaseCharacter* owner)
 		if (info != nullptr) {
 			AItemActor* spawnItem = Cast<AItemActor>(player->GetInventoryComp()->FindItem(this));
 			if (spawnItem != nullptr) {
+				spawnItem->SetActorHiddenInGame(true);
 
 				Cast<AEquipmentActor>(player->GetEquipmentComp()->GetShoesActor())->SetEquipped(false);
 				RemoveStat(player, player->GetEquipmentComp()->GetShoesActor()->GetItemStat());

@@ -43,6 +43,12 @@ void ACustomController::OnPossess(APawn* aPawn)
 			player->GetToolComp()->ToolCompInit();
 			player->GetEquipmentComp()->EquipmentCompInit();
 
+			player->GetDoubleSwordChild()->SetVisibility(false);
+			player->GetDoubleSwordChild()->SetHiddenInGame(true);
+
+			player->GetWeaponChildActor()->SetVisibility(false);
+			player->GetWeaponChildActor()->SetHiddenInGame(true);
+
 			mainWidget->AddToViewport();
 		}
 		SetupInputComponent();

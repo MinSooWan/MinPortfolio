@@ -20,7 +20,7 @@ void UMyGameInstance::Init()
 {
 	Super::Init();
 
-	FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UMyGameInstance::ShowLoadingScreen);
+	//FCoreUObjectDelegates::PreLoadMap.AddUObject(this, &UMyGameInstance::ShowLoadingScreen);
 }
 
 void UMyGameInstance::SetStat(FCharacterStat value)

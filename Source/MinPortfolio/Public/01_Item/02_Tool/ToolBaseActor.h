@@ -29,6 +29,9 @@ protected:
 	UFUNCTION()
 		void OnActorBeginOverlapEvent(AActor* OverlappedActor, AActor* OtherActor);
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = BPClasses)
+		UClass* UseAnim;
+
 public:
 
 	virtual void UseItem(class ABaseCharacter* owner) override;

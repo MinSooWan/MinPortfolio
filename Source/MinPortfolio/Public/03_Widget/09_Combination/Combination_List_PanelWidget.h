@@ -15,10 +15,10 @@ class MINPORTFOLIO_API UCombination_List_PanelWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere)
-		class UDataTable* WeaponTable;
-	UPROPERTY(EditAnywhere)
-		class UDataTable* ArmorTable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = BPObject)
+		UObject* WeaponTable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = BPObject)
+		UObject* ArmorTable;
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UCombination_List_ButtonWidget> buttonClass;

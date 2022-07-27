@@ -4,10 +4,13 @@
 #include "03_Widget/06_Shop/ShopMainWidget.h"
 
 #include "00_Character/00_Player/PlayerCharacter.h"
+#include "00_Character/00_Player/00_Controller/BattleController.h"
 #include "00_Character/00_Player/00_Controller/CustomController.h"
 #include "00_Character/02_NPC/NPCCharacter.h"
 #include "01_Item/ItemActor.h"
 #include "01_Item/01_Material/MaterialBaseActor.h"
+#include "01_Item/03_Battle_Item/BattleItemActor.h"
+#include "01_Item/03_Battle_Item/RecoveryConsumeActor.h"
 #include "03_Widget/MainWidget.h"
 #include "03_Widget/06_Shop/ShopButtonWidget.h"
 #include "Components/BackgroundBlur.h"
@@ -107,6 +110,59 @@ FString UShopMainWidget::GetAddOptionDescription_Material(EAddOptionsType_Materi
 	}return str;
 }
 
+FString UShopMainWidget::GetAddOptionDescription_BattleItem(EAddOptionsType_BattleItem option)
+{
+	FString str;
+	switch (option)
+	{
+	case EAddOptionsType_BattleItem::GIVE_ATC_DOWN:
+		str = TEXT("무력의 저주");
+		return str;
+	case EAddOptionsType_BattleItem::GIVE_BURN:
+		str = TEXT("광열의 열기");
+		return str;
+	case EAddOptionsType_BattleItem::GIVE_DAMAGE:
+		str = TEXT("강력한 파괴력");
+		return str;
+	case EAddOptionsType_BattleItem::GIVE_DEF_DOWN:
+		str = TEXT("방어의 저주");
+		return str;
+	case EAddOptionsType_BattleItem::GIVE_FROZEN:
+		str = TEXT("빙괴의 반향");
+		return str;
+	case EAddOptionsType_BattleItem::GIVE_SHOCK:
+		str = TEXT("봉뢰의 마찰");
+		return str;
+	case EAddOptionsType_BattleItem::GIVE_SLOW:
+		str = TEXT("속도의 저주");
+		return str;
+	}return str;
+}
+
+FString UShopMainWidget::GetAddOptionDescription_RecoveryItem(EAddOptionsType_RecoveryItem option)
+{
+	FString str;
+	switch (option)
+	{
+	case EAddOptionsType_RecoveryItem::ADD_ATC_TIME:
+		str = TEXT("힘의 축복");
+		return str;
+	case EAddOptionsType_RecoveryItem::RECOVERY_HP:
+		str = TEXT("강력한 회복력");
+		return str;
+	case EAddOptionsType_RecoveryItem::ADD_DEF_TIME:
+		str = TEXT("수호의 축복");
+		return str;
+	case EAddOptionsType_RecoveryItem::ADD_DEX_TIME:
+		str = TEXT("질풍의 축복");
+		return str;
+	case EAddOptionsType_RecoveryItem::ADD_HP_TIME:
+		str = TEXT("생명의 축복");
+		return str;
+	}
+	return str;
+}
+
 void UShopMainWidget::SetItemInfo(AItemActor* value)
 {
 	if (value != nullptr) {
@@ -123,13 +179,42 @@ void UShopMainWidget::SetItemInfo(AItemActor* value)
 		TextBlock_ItemName->SetText(FText::FromName(value->GetItemInfo<FIteminfo>()->item_Name));
 
 		str = "";
-		if (Cast<AMaterialBaseActor>(value)->GetAddOption().Num() != 0) {
-			for (auto iter : Cast<AMaterialBaseActor>(value)->GetAddOption())
-			{
-				str += GetAddOptionDescription_Material(iter) + "\n";
-			}
+		if (value->GetItemInfo<FIteminfo>()->item_Type == EItemType::MATERIAL) {
+			if (Cast<AMaterialBaseActor>(value)->GetAddOption().Num() != 0) {
+				for (auto iter : Cast<AMaterialBaseActor>(value)->GetAddOption())
+				{
+					str += GetAddOptionDescription_Material(iter) + "\n";
+				}
 
-			TextBlock_AddOption->SetText(FText::FromString(str));
+				TextBlock_AddOption->SetText(FText::FromString(str));
+			}
+		}
+		else if(value->GetItemInfo<FIteminfo>()->item_Type == EItemType::BATTLE_ITEM)
+		{
+			if(value->GetItemInfo<FBattleItem>()->battleItemType == EBattleItemType::BATTLE_CONSUME)
+			{
+				if(Cast<ABattleItemActor>(value)->GetAddOption().Num() != 0)
+				{
+					for(auto iter : Cast<ABattleItemActor>(value)->GetAddOption())
+					{
+						str += GetAddOptionDescription_BattleItem(iter) + "\n";
+					}
+
+					TextBlock_AddOption->SetText(FText::FromString(str));
+				}
+			}
+			else
+			{
+				if (Cast<ARecoveryConsumeActor>(value)->GetAddOption().Num() != 0)
+				{
+					for (auto iter : Cast<ARecoveryConsumeActor>(value)->GetAddOption())
+					{
+						str += GetAddOptionDescription_RecoveryItem(iter) + "\n";
+					}
+
+					TextBlock_AddOption->SetText(FText::FromString(str));
+				}
+			}
 		}
 
 		Item_Image->SetBrushFromTexture(value->GetItemInfo<FIteminfo>()->item_Image);

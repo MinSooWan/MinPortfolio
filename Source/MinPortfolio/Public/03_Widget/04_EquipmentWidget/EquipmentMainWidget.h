@@ -51,6 +51,17 @@ protected:
 	UPROPERTY()
 		class UEquipmentButtonWidget* nextItemButton;
 
+	UPROPERTY()
+		class UTextBlock* TextBlock_Stat_HP;
+	UPROPERTY()
+		class UTextBlock* TextBlock_Stat_DEX;
+	UPROPERTY()
+		class UTextBlock* TextBlock_Stat_DEF;
+	UPROPERTY()
+		class UTextBlock* TextBlock_Stat_SP;
+	UPROPERTY()
+		class UTextBlock* TextBlock_Stat_ATC;
+
 	virtual void NativeConstruct() override;
 
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;

@@ -81,12 +81,12 @@ void UStatusComponent::AddSP(const int32 value)
 
 void UStatusComponent::AddCharacterLevel()
 {
-	characterStat.ATC += 10;
-	characterStat.DEF += 10;
-	characterStat.DEX += 10;
-	characterStat.HP += 10;
-	characterStat.MaxHP += 10;
-	characterStat.SkillPoint += 10;
+	//characterStat.ATC += 10;
+	//characterStat.DEF += 10;
+	//characterStat.DEX += 10;
+	//characterStat.HP += 10;
+	//characterStat.MaxHP += 10;
+	//characterStat.SkillPoint += 10; 
 }
 
 void UStatusComponent::AddEXP(int32 value)

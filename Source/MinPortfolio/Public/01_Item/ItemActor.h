@@ -23,6 +23,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UDataTable* itemTable;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = BPObject)
+		UObject* item_temp_Table;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FName itemCode;
 
@@ -66,8 +69,8 @@ public:
 template <typename T>
 inline const T* AItemActor::GetItemInfo()
 {
-	if (itemTable != nullptr) {
-		return itemTable->FindRow<T>(itemCode, "");
+	if (item_temp_Table != nullptr) {
+		return Cast<UDataTable>(item_temp_Table)->FindRow<T>(itemCode, "");
 	}
 	return nullptr;
 }

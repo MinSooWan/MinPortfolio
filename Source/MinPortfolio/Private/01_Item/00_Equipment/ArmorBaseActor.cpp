@@ -21,8 +21,9 @@ void AArmorBaseActor::UseItem(class ABaseCharacter* owner)
 
 		if (info != nullptr) {
 			AItemActor* spawnItem = Cast<AItemActor>(this);
-
+			
 			if (spawnItem != nullptr) {
+				spawnItem->SetActorHiddenInGame(true);
 				Cast<AEquipmentActor>(player->GetEquipmentComp()->GetArmorActor())->SetEquipped(false);
 				RemoveStat(player, player->GetEquipmentComp()->GetArmorActor()->GetItemStat());
 				ItemChange(player, spawnItem->GetItemInfo<FArmor>(), spawnItem);
